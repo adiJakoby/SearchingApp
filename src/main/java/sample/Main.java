@@ -5,7 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import Parse.Parse;
 
 public class Main extends Application {
 
@@ -20,7 +19,7 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Parse p = new Parse();
-        p.parser("12.1 percent POLITICIANS,  PARTY PREFERENCES \n" +
+        p.parser("word))) January 23 November 1993 Feb 76/15   Dorin Dorin Adi adi   78/13 28/2023Z FEB 12.1 percent POLITICIANS,  PARTY PREFERENCES \n" +
                 "\n" +
                 "   Summary:  Newspapers in the Former Yugoslav Republic of \n" +
                 "   Macedonia have published the results of opinion polls, \n" +
