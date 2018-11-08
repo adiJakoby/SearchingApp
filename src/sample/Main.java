@@ -18,6 +18,11 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+        String x = "23";
+        double y = Double.parseDouble(x);
+        String z = Double.toString(y);
+        System.out.println(z);
+
         launch(args);
     }
 }

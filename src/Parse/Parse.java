@@ -7,6 +7,34 @@ import java.util.regex.Pattern;
 public class Parse {
     private String[] splitDoc;
     private Map<String, Integer> tokens = new HashMap<String, Integer>();
+    private int splitDocIndex = 0;
+    private Map<String, String> monthMap = new HashMap<String, String>();
+
+    public Parse(){
+        monthMap.put("january", "01");
+        monthMap.put("jan", "01");
+        monthMap.put("february", "02");
+        monthMap.put("feb", "02");
+        monthMap.put("march", "03");
+        monthMap.put("mar", "03");
+        monthMap.put("april", "04");
+        monthMap.put("apr", "04");
+        monthMap.put("may", "05");
+        monthMap.put("june", "06");
+        monthMap.put("jun", "06");
+        monthMap.put("july", "07");
+        monthMap.put("jul", "07");
+        monthMap.put("august", "08");
+        monthMap.put("aug", "08");
+        monthMap.put("september", "09");
+        monthMap.put("sep", "09");
+        monthMap.put("october", "10");
+        monthMap.put("oct", "10");
+        monthMap.put("november", "11");
+        monthMap.put("nov", "11");
+        monthMap.put("december", "12");
+        monthMap.put("dec", "12");
+    }
 
     public void parser(String doc){
         doc = doc.replace('\n', ' ');
@@ -22,13 +50,13 @@ public class Parse {
         //remove stop words
         stopWordsRemover();
 
-        for(int i = 0; i < splitDoc.length; i++){
-            String word = splitDoc[i];
+        while(splitDocIndex < splitDoc.length){
+            String word = splitDoc[splitDocIndex];
             if(Pattern.compile( "[0-9]" ).matcher(word).find() && !word.matches(".*[a-z].*")){
-                numberTests(word, i);
+                numberTests(word);
             }
             else{
-                wordTests(word, i);
+                wordTests(word);
             }
         }
     }
@@ -70,19 +98,132 @@ public class Parse {
 
 
     //TODO: number tests
-    private void numberTests(String word, int index){
+    private void numberTests(String word){
+        String secondWord = "";
+        String thirdWord = "";
+        String forthWord = "";
+        if(splitDocIndex + 1 < splitDoc.length) {
+            secondWord = splitDoc[splitDocIndex + 1];
+        }
+        if(splitDocIndex + 2 < splitDoc.length) {
+            thirdWord = splitDoc[splitDocIndex + 2];
+        }
+        if(splitDocIndex + 3 < splitDoc.length) {
+            forthWord = splitDoc[splitDocIndex + 3];
+        }
+        secondWord = secondWord.toLowerCase();
+        thirdWord = thirdWord.toLowerCase();
+        forthWord = forthWord.toLowerCase();
         if(word.contains("%")){
             addToMap(word);
         }
         else if(word.contains("$")){
-            priceCase(word, index);
+            dollarSignPriceCase(word);
         }
+        else if(secondWord == "percent" || secondWord == "percentage"){
+            addToMap(word+"%");
+            splitDocIndex++;
+        }
+        else if(secondWord == "dollars"){
+            word.replace(",", "");
+            numbersInMillionScale(word);
+            splitDocIndex++;
+        }
+        else if(secondWord.contains("/")){
+            String[] checkIfFraction = secondWord.split("/");
+            if(checkIfFraction.length == 2) {
+                if (isNumeric(checkIfFraction[0]) && isNumeric(checkIfFraction[1])) {
+                    splitDocIndex++;
+                    word.replace(",", "");
+                    if (thirdWord == "dollars") {
+                        splitDocIndex++;
+                        addToMap(word + " " + secondWord + " Dollars");
+                    }
+                    else{
+                        addToMap(word + " " + secondWord);
+                    }
+                }
+            }
+        }
+        else if(secondWord == "million"){
+            // 100 million u.s. dollars = 100 M Dollars
+            if(thirdWord == "u.s" && forthWord == "dollars"){
+                word.replace(",", "");
+                addToMap(word + " M Dollars");
+                splitDocIndex++;
+                splitDocIndex++;
+            }
+            // 10 million = 10M
+            else{
+                word.replace(",", "");
+                addToMap(word + "M");
+                splitDocIndex++;
+            }
+        }
+        else if(secondWord == "billion"){
+            // 100 billion U.S. Dollars = 100000 M Dollars
+            if(thirdWord == "u.s" && forthWord == "dollars"){
+                word.replace(",", "");
+                addToMap(word + "000 M Dollars");
+                splitDocIndex++;
+                splitDocIndex++;
+            }
+            // 10 billion = 10B
+            else{
+                word.replace(",", "");
+                addToMap(word + "B");
+                splitDocIndex++;
+            }
+        }
+        else if(secondWord == "trillion"){
+            // 100 trillion U.S. Dollars = 100000000 M Dollars
+            if(thirdWord == "u.s" && forthWord == "dollars"){
+                word.replace(",", "");
+                addToMap(word + "000000 M Dollars");
+                splitDocIndex++;
+                splitDocIndex++;
+            }
+            // 7 trillion = 700B
+            else{
+                word.replace(",", "");
+                addToMap(word + "B");
+                splitDocIndex++;
+            }
+        }
+        // 123 thousands = 123K
+        else if(secondWord == "thousand"){
+            word.replace(",", "");
+            addToMap(word + "K");
+            splitDocIndex++;
+        }
+        else if(secondWord == "bn"){
+            //100 bn dollars = 100000 M Dollars
+            if(thirdWord == "dollars"){
+                word.replace(",", "");
+                addToMap(word + "000 M Dollars");
+                splitDocIndex++;
+            }
+        }
+        else if(secondWord == "m"){
+            //100 m dollars = 100 M Dollars
+            if(thirdWord == "dollars"){
+                word.replace(",", "");
+                addToMap(word + " M Dollars");
+                splitDocIndex++;
+            }
+        }
+        //month case 14 May = 05-14
+        else if(monthMap.containsKey(secondWord)){
+            splitDocIndex++;
+            addToMap(monthMap.get(secondWord) + "-" + word);
+        }
+
+        splitDocIndex++;
     }
 
 
     //TODO: number words
-    private void wordTests(String word, int index){
-
+    private void wordTests(String word){
     }
 
     /**
@@ -101,12 +242,11 @@ public class Parse {
     /**
      * in case of price with the $ sign.
      * @param word
-     * @param index
      */
-    private void priceCase(String word, int index){
+    private void dollarSignPriceCase(String word){
         word.replace(",", "");
         word.replace("$", "");
-        String nextWord = splitDoc[index+1];
+        String nextWord = splitDoc[splitDocIndex+1];
         nextWord.toLowerCase();
         if(nextWord == "million"){
             addToMap(word + " M Dollars");
@@ -118,15 +258,38 @@ public class Parse {
             addToMap(word + "000000 M Dollars");
         }
         else{
-            int price = Integer.parseInt(word);
-            if(price >= 1000000){
-                price = price/1000000;
-                word = Integer.toString(price);
-                addToMap(word + " M Dollars");
-            }
-            else{
-                addToMap(word + " M Dollars");
-            }
+            numbersInMillionScale(word);
         }
+    }
+
+    /**
+     * get number, if the number is smaller than 1 million don't change, else divide and save it in million scale.
+     * add it to the map as Dollar
+     * @param orgNumber
+     */
+    private void numbersInMillionScale(String orgNumber){
+        double price = Double.parseDouble(orgNumber);
+        if(price >= 1000000){
+            price = price/1000000;
+            addToMap(Double.toString(price) + "M Dollars");
+        }
+        else{
+            addToMap(Double.toString(price) + " Dollars");
+        }
+    }
+
+    /**
+     *
+     * @param toCheck
+     * @return true if the string toCheck is a number
+     */
+    private boolean isNumeric(String toCheck){
+        try{
+            double d = Double.parseDouble(toCheck);
+        }
+        catch(NumberFormatException nfe){
+            return false;
+        }
+        return true;
     }
 }
