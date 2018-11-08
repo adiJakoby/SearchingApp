@@ -2,6 +2,7 @@ package Parse;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 public class Parse {
@@ -38,13 +39,16 @@ public class Parse {
 
     public void parser(String doc){
         doc = doc.replace('\n', ' ');
-        splitDoc = doc.split(" ");
+        //splitDoc = doc.split(" ");
+        splitDoc = mySplit(doc, " ");
 
         //remove '.' and ',' from the end of the words
         for(int i = 0; i < splitDoc.length; i++){
             String word = splitDoc[i];
-            if(word.charAt(word.length()-1) == '.' || word.charAt(word.length()-1) == ','){
-                word = word.substring(0, word.length()-1);
+            if(word.length() >= 1) {
+                if (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!') {
+                    splitDoc[i] = word.substring(0, word.length() - 1);
+                }
             }
         }
         //remove stop words
@@ -56,9 +60,12 @@ public class Parse {
                 numberTests(word);
             }
             else{
+                splitDocIndex++;
                 wordTests(word);
             }
         }
+        System.out.println("helloooo");
+
     }
 
     //TODO: write the function
@@ -120,22 +127,22 @@ public class Parse {
         else if(word.contains("$")){
             dollarSignPriceCase(word);
         }
-        else if(secondWord == "percent" || secondWord == "percentage"){
+        else if(secondWord.equals("percent") || secondWord.equals("percentage")){
             addToMap(word+"%");
             splitDocIndex++;
         }
-        else if(secondWord == "dollars"){
+        else if(secondWord.equals("dollars")){
             word.replace(",", "");
             numbersInMillionScale(word);
             splitDocIndex++;
         }
         else if(secondWord.contains("/")){
-            String[] checkIfFraction = secondWord.split("/");
+            String[] checkIfFraction = mySplit(secondWord, "/");
             if(checkIfFraction.length == 2) {
                 if (isNumeric(checkIfFraction[0]) && isNumeric(checkIfFraction[1])) {
                     splitDocIndex++;
                     word.replace(",", "");
-                    if (thirdWord == "dollars") {
+                    if (thirdWord.contains("dollars")) {
                         splitDocIndex++;
                         addToMap(word + " " + secondWord + " Dollars");
                     }
@@ -145,9 +152,9 @@ public class Parse {
                 }
             }
         }
-        else if(secondWord == "million"){
+        else if(secondWord.equals("million")){
             // 100 million u.s. dollars = 100 M Dollars
-            if(thirdWord == "u.s" && forthWord == "dollars"){
+            if(thirdWord.equals("u.s") && forthWord.equals("dollars")){
                 word.replace(",", "");
                 addToMap(word + " M Dollars");
                 splitDocIndex++;
@@ -160,9 +167,9 @@ public class Parse {
                 splitDocIndex++;
             }
         }
-        else if(secondWord == "billion"){
+        else if(secondWord.equals("billion")){
             // 100 billion U.S. Dollars = 100000 M Dollars
-            if(thirdWord == "u.s" && forthWord == "dollars"){
+            if(thirdWord.equals("u.s") && forthWord.equals("dollars")){
                 word.replace(",", "");
                 addToMap(word + "000 M Dollars");
                 splitDocIndex++;
@@ -175,9 +182,9 @@ public class Parse {
                 splitDocIndex++;
             }
         }
-        else if(secondWord == "trillion"){
+        else if(secondWord.equals("trillion")){
             // 100 trillion U.S. Dollars = 100000000 M Dollars
-            if(thirdWord == "u.s" && forthWord == "dollars"){
+            if(thirdWord.equals("u.s") && forthWord.equals("dollars")){
                 word.replace(",", "");
                 addToMap(word + "000000 M Dollars");
                 splitDocIndex++;
@@ -191,22 +198,22 @@ public class Parse {
             }
         }
         // 123 thousands = 123K
-        else if(secondWord == "thousand"){
+        else if(secondWord.equals("thousand")){
             word.replace(",", "");
             addToMap(word + "K");
             splitDocIndex++;
         }
-        else if(secondWord == "bn"){
+        else if(secondWord.equals("bn")){
             //100 bn dollars = 100000 M Dollars
-            if(thirdWord == "dollars"){
+            if(thirdWord.equals("dollars")){
                 word.replace(",", "");
                 addToMap(word + "000 M Dollars");
                 splitDocIndex++;
             }
         }
-        else if(secondWord == "m"){
+        else if(secondWord.equals("m")){
             //100 m dollars = 100 M Dollars
-            if(thirdWord == "dollars"){
+            if(thirdWord.equals("dollars")){
                 word.replace(",", "");
                 addToMap(word + " M Dollars");
                 splitDocIndex++;
@@ -216,6 +223,12 @@ public class Parse {
         else if(monthMap.containsKey(secondWord)){
             splitDocIndex++;
             addToMap(monthMap.get(secondWord) + "-" + word);
+        }
+        else{
+            word.replace(",", "");
+            if(isNumeric(word)){
+                divideNumbers(word);
+            }
         }
 
         splitDocIndex++;
@@ -248,13 +261,13 @@ public class Parse {
         word.replace("$", "");
         String nextWord = splitDoc[splitDocIndex+1];
         nextWord.toLowerCase();
-        if(nextWord == "million"){
+        if(nextWord.equals("million")){
             addToMap(word + " M Dollars");
         }
-        else if(nextWord == "billion"){
+        else if(nextWord.equals("billion")){
             addToMap(word + "000 M Dollars");
         }
-        else if(nextWord == "trillion"){
+        else if(nextWord.equals("trillion")){
             addToMap(word + "000000 M Dollars");
         }
         else{
@@ -288,6 +301,82 @@ public class Parse {
             double d = Double.parseDouble(toCheck);
         }
         catch(NumberFormatException nfe){
+            return false;
+        }
+        return true;
+    }
+
+    private void divideNumbers(String toDivide){
+        double d = Double.parseDouble(toDivide);
+        if(d >= 1000000000){
+            d = d/1000000000;
+            String toWrite;
+            if(isNaturalNumber(d)){
+                int di = (int)d;
+                toWrite = Integer.toString(di);
+            }else {
+                toWrite = Double.toString(d);
+            }
+            addToMap(toWrite + "B");
+        }
+        else if(d >= 1000000){
+            d = d/1000000;
+            String toWrite;
+            if(isNaturalNumber(d)){
+                int di = (int)d;
+                toWrite = Integer.toString(di);
+            }else {
+                toWrite = Double.toString(d);
+            }
+            addToMap(toWrite + "M");
+        }
+        else if(d >= 1000){
+            d = d/1000;
+            String toWrite;
+            if(isNaturalNumber(d)){
+                int di = (int)d;
+                toWrite = Integer.toString(di);
+            }else {
+                toWrite = Double.toString(d);
+            }
+            addToMap(toWrite + "K");
+        }
+        else{
+            String toWrite;
+            if(isNaturalNumber(d)){
+                int di = (int)d;
+                toWrite = Integer.toString(di);
+            }else {
+                toWrite = Double.toString(d);
+            }
+            addToMap(toWrite);
+        }
+    }
+
+    private static String[] mySplit(String str, String regex)
+    {
+        Vector<String> result = new Vector<String>();
+        int start = 0;
+        int pos = str.indexOf(regex);
+        while (pos >= start) {
+            if (pos > start) {
+                result.add(str.substring(start,pos));
+            }
+            start = pos + regex.length();
+            //result.add(regex);
+            pos = str.indexOf(regex,start);
+        }
+        if (start<str.length()) {
+            result.add(str.substring(start));
+        }
+        String[] array = result.toArray(new String[0]);
+        return array;
+    }
+
+    private boolean isNaturalNumber(double number){
+        int x = (int) number;
+        double y = number - x;
+        if(y > 0){
             return false;
         }
         return true;
