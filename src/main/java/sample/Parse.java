@@ -1,6 +1,11 @@
 package sample;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -10,6 +15,8 @@ public class Parse {
     private Map<String, Integer> tokens = new HashMap<String, Integer>();
     private int splitDocIndex = 0;
     private Map<String, String> monthMap = new HashMap<String, String>();
+    HashSet<String> stopWordsSet = new HashSet<String>();
+
 
     public Parse() {
         monthMap.put("january", "01");
@@ -35,11 +42,28 @@ public class Parse {
         monthMap.put("nov", "11");
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
+
+        String filePath = "C:\\Users\\adi\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String line;
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            try {
+                line = reader.readLine();
+                while (line != null) {
+                    stopWordsSet.add(line);
+                    line = reader.readLine();
+                }
+                reader.close();
+            }catch (IOException ioe){
+                System.out.println("Problem with the stop word file");
+            }
+        }catch(FileNotFoundException fnfe){
+            System.out.println("Problem with the stop word file");
+        }
     }
 
     public void parser(String doc) {
         doc = doc.replace('\n', ' ');
-        //splitDoc = doc.split(" ");
         splitDoc = mySplit(doc, " ");
 
         //remove '.' and ',' from the end of the words
@@ -48,65 +72,38 @@ public class Parse {
             if (word.length() >= 1) {
                 while (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
                         word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
-                        || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']') {
+                        || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
+                        || word.charAt(word.length() - 1) == '"') {
                     splitDoc[i] = word.substring(0, word.length() - 1);
                     word = splitDoc[i];
                 }
-                while(word.charAt(0) == '(' || word.charAt(0) == '{' || word.charAt(0) == '['){
+                while (word.charAt(0) == '(' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"') {
                     splitDoc[i] = splitDoc[i].substring(1, splitDoc[i].length());
                     word = splitDoc[i];
                 }
             }
         }
-        //remove stop words
-        stopWordsRemover();
 
         while (splitDocIndex < splitDoc.length) {
             String word = splitDoc[splitDocIndex];
-            if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
-                numberTests(word);
-            } else {
-                wordTests(word);
+            if(!stopWordsSet.contains(word.toLowerCase())) {
+                if (word.contains("-")) {
+                    hyphenTests(word);
+                } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
+                    numberTests(word);
+                } else {
+                    wordTests(word);
+                }
             }
+            else{
+                splitDocIndex++;
+            }
+            System.out.println(splitDocIndex);
         }
         System.out.println("helloooo");
 
     }
 
-    //TODO: write the function
-    private void stopWordsRemover() {
-
-    }
-
-    /**
-     * Check if the word is a special case (for examples: 55m or 55bn)
-     *
-     * @param word
-     * @return true if it is a special case od number and false if its a kind of word
-     */
-    private String isContainSpecialChar(String word) {
-        if (word.charAt(word.length() - 1) == 'm' || word.charAt(word.length() - 1) == 'M') {
-            String prefix = word.substring(0, word.length() - 1);
-            if (prefix.matches(".*[a-z].*")) {
-                return "*";
-            } else {
-                return "M";
-            }
-        } else if (word.charAt(word.length() - 1) == 'n' || word.charAt(word.length() - 1) == 'N') {
-            if (word.charAt(word.length() - 2) == 'b' || word.charAt(word.length() - 2) == 'B') {
-                String prefix = word.substring(0, word.length() - 2);
-                if (prefix.matches(".*[a-z].*")) {
-                    return "*";
-                } else {
-                    return "B";
-                }
-            }
-        }
-        return "Number";
-    }
-
-
-    //TODO: number tests
     private void numberTests(String word) {
         String secondWord = "";
         String thirdWord = "";
@@ -127,7 +124,7 @@ public class Parse {
             addToMap(word);
         } else if (word.contains("$")) {
             dollarSignPriceCase(word);
-        }else if(word.contains("/")) {
+        } else if (word.contains("/")) {
             String[] checkIfFraction = mySplit(word, "/");
             if (checkIfFraction.length == 2) {
                 if (isNumeric(checkIfFraction[0]) && isNumeric(checkIfFraction[1])) {
@@ -191,10 +188,10 @@ public class Parse {
                 splitDocIndex++;
                 splitDocIndex++;
             }
-            // 7 trillion = 700B
+            // 7 trillion = 7000B
             else {
                 word.replace(",", "");
-                addToMap(word + "B");
+                addToMap(word + "000" + "B");
                 splitDocIndex++;
             }
         }
@@ -246,34 +243,133 @@ public class Parse {
         if (splitDocIndex + 3 < splitDoc.length) {
             forthWord = splitDoc[splitDocIndex + 3];
         }
-        if(monthMap.containsKey(word.toLowerCase())){
-            if(isNumeric(secondWord)){
+        if (monthMap.containsKey(word.toLowerCase())) {
+            if (isNumeric(secondWord)) {
                 double d = Double.parseDouble(secondWord);
-                if(isNaturalNumber(d)){
+                if (isNaturalNumber(d)) {
                     int date = (int) d;
-                    if(date >= 1 && date <= 31){
+                    if (date >= 1 && date <= 31) {
                         addToMap(monthMap.get(word.toLowerCase()) + "-" + secondWord);
-                    }else if(secondWord.length() == 4){
-                        addToMap( secondWord + "-" + monthMap.get(word.toLowerCase()));
+                    } else if (secondWord.length() == 4) {
+                        addToMap(secondWord + "-" + monthMap.get(word.toLowerCase()));
                     }
                     splitDocIndex++;
                 }
             }
-        }else if((word.toLowerCase()).equals("between") && isNumeric(secondWord) && (thirdWord.toLowerCase()).equals("and") && isNumeric(forthWord)){
+        } else if ((word.toLowerCase()).equals("between") && isNumeric(secondWord) && (thirdWord.toLowerCase()).equals("and") && isNumeric(forthWord)) {
             splitDocIndex = splitDocIndex + 3;
             divideNumbers(secondWord);
             divideNumbers(forthWord);
             addToMap(secondWord + "-" + forthWord);
-        }else{
-            if(Character.isLowerCase(word.charAt(0))){
+        } else {
+            if (Character.isLowerCase(word.charAt(0))) {
                 addToMapLowCase(word);
-            }else{
+            } else {
                 addToMapUpCase(word);
             }
         }
-
         splitDocIndex++;
     }
+
+
+    private void hyphenTests(String word) {
+        String[] splitExpression = mySplit(word, "-");
+        String oneBeforeWord = "";
+        String oneAfterWord = "";
+        String termToAdd = "";
+
+        if (splitDocIndex - 1 >= 0) {
+            oneBeforeWord = splitDoc[splitDocIndex - 1];
+        }
+        if (splitDocIndex + 1 < splitDoc.length) {
+            oneAfterWord = splitDoc[splitDocIndex + 1];
+        }
+
+
+        //word-word-word case add to the map as an expression and each word by it self.
+        if (splitExpression.length == 3) {
+            addToMap(word);
+            for (int i = 0; i < 3; i++) {
+                if(!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
+                    if (Character.isLowerCase(splitExpression[i].charAt(0))) {
+                        addToMapLowCase(splitExpression[i]);
+                    } else {
+                        addToMapUpCase(splitExpression[i]);
+                    }
+                }
+            }
+            splitDocIndex++;
+        } else if (splitExpression.length == 2) {
+            if (isNumeric(oneBeforeWord)) {
+                if ((splitExpression[0].toLowerCase()).equals("thousand")) {
+                    oneBeforeWord.replace(",", "");
+                    addToMap(oneBeforeWord + "K");
+                    termToAdd = termToAdd + oneBeforeWord + "K";
+                } else if ((splitExpression[0].toLowerCase()).equals("million")) {
+                    oneBeforeWord.replace(",", "");
+                    addToMap(oneBeforeWord + "M");
+                    termToAdd = termToAdd + oneBeforeWord + "M";
+                } else if ((splitExpression[0].toLowerCase()).equals("billion")) {
+                    oneBeforeWord.replace(",", "");
+                    addToMap(oneBeforeWord + "B");
+                    termToAdd = termToAdd + oneBeforeWord + "B";
+                } else if ((splitExpression[0].toLowerCase()).equals("trillion")) {
+                    oneBeforeWord.replace(",", "");
+                    addToMap(oneBeforeWord + "000" + "B");
+                    termToAdd = termToAdd + oneBeforeWord + "000" + "B";
+                }
+            } else {
+                if(!stopWordsSet.contains(splitExpression[0].toLowerCase())){
+                    addToMap(splitExpression[0]);
+                }
+                termToAdd = termToAdd + splitExpression[0];
+            }
+            termToAdd = termToAdd + '-';
+            if (isNumeric(splitExpression[1])) {
+                splitExpression[1].replace(",", "");
+                if ((oneAfterWord.toLowerCase()).equals("thousand")) {
+                    addToMap(splitExpression[1] + "K");
+                    termToAdd = termToAdd + splitExpression[1] + "K";
+                    splitDocIndex++;
+                } else if ((oneAfterWord.toLowerCase()).equals("million")) {
+                    addToMap(splitExpression[1] + "M");
+                    termToAdd = termToAdd + splitExpression[1] + "M";
+                    splitDocIndex++;
+                } else if ((oneAfterWord.toLowerCase()).equals("billion")) {
+                    addToMap(splitExpression[1] + "B");
+                    termToAdd = termToAdd + splitExpression[1] + "B";
+                    splitDocIndex++;
+                } else if ((oneAfterWord.toLowerCase()).equals("trillion")) {
+                    addToMap(splitExpression[1] + "000" + "B");
+                    termToAdd = termToAdd + splitExpression[1] + "000" + "B";
+                    splitDocIndex++;
+                } else {
+                    termToAdd = termToAdd + splitExpression[1];
+                }
+            } else {
+                termToAdd = termToAdd + splitExpression[1];
+                if(!stopWordsSet.contains(splitExpression[1].toLowerCase())){
+                    addToMap(splitExpression[1]);
+                }
+            }
+            addToMap(termToAdd);
+            splitDocIndex++;
+        } else if (splitExpression.length == 1) {
+            if (isNumeric(splitExpression[0])) {
+                numberTests(word);
+            } else {
+                if(!stopWordsSet.contains(splitExpression[0].toLowerCase())){
+                    wordTests(splitExpression[0]);
+                }
+                else{
+                    splitDocIndex++;
+                }
+            }
+        } else {
+            splitDocIndex++;
+        }
+    }
+
 
     /**
      * add a token to the tokens map (if the token is already exist increasing it's counter)
@@ -431,16 +527,17 @@ public class Parse {
     /**
      * in case the word saved in up letters - change it to low letters.
      * else add it a usual
+     *
      * @param word the 1st char is low char
      */
-    private void addToMapLowCase(String word){
-        if(tokens.containsKey(word.toUpperCase())){
+    private void addToMapLowCase(String word) {
+        if (tokens.containsKey(word.toUpperCase())) {
             int counter = tokens.get(word.toUpperCase());
             counter++;
             tokens.remove(word.toUpperCase());
             tokens.put(word, counter);
 
-        }else{
+        } else {
             addToMap(word);
         }
     }
@@ -448,13 +545,41 @@ public class Parse {
     /**
      * in case the word saved in low case - saved it in low case
      * otherwise save it in up case
+     *
      * @param word - the 1st char is up char
      */
-    private void addToMapUpCase(String word){
-        if(tokens.containsKey(word.toLowerCase())){
+    private void addToMapUpCase(String word) {
+        if (tokens.containsKey(word.toLowerCase())) {
             addToMap(word.toLowerCase());
-        }else{
+        } else {
             addToMap(word.toUpperCase());
         }
+    }
+
+    /**
+     * Check if the word is a special case (for examples: 55m or 55bn)
+     *
+     * @param word
+     * @return true if it is a special case od number and false if its a kind of word
+     */
+    private String isContainSpecialChar(String word) {
+        if (word.charAt(word.length() - 1) == 'm' || word.charAt(word.length() - 1) == 'M') {
+            String prefix = word.substring(0, word.length() - 1);
+            if (prefix.matches(".*[a-z].*")) {
+                return "*";
+            } else {
+                return "M";
+            }
+        } else if (word.charAt(word.length() - 1) == 'n' || word.charAt(word.length() - 1) == 'N') {
+            if (word.charAt(word.length() - 2) == 'b' || word.charAt(word.length() - 2) == 'B') {
+                String prefix = word.substring(0, word.length() - 2);
+                if (prefix.matches(".*[a-z].*")) {
+                    return "*";
+                } else {
+                    return "B";
+                }
+            }
+        }
+        return "Number";
     }
 }
