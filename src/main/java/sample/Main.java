@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class Main extends Application {
 
     @Override
@@ -17,7 +19,9 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        ReadFile Myreader = new ReadFile();
+        Myreader.readFile("C:\\Users\\dorin\\IdeaProjects\\SearchingApp\\src\\main\\java\\sample\\Files");
         Parse p = new Parse();
         p.parser("word))) January 23 November 1993 Feb 76/15   Dorin Dorin Adi adi   78/13 28/2023Z FEB 12.1 percent POLITICIANS,  PARTY PREFERENCES \n" +
                 "\n" +
@@ -180,5 +184,6 @@ public class Main extends Application {
                 "BALKANS BRANCH AT (703) 733-6481) \n" +
                 "\n" +
                 "ELAG/25 February/POLCHF/EED/DEW 28/2023Z FEB");
+
     }
 }
