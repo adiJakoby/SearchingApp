@@ -1,5 +1,8 @@
 package sample;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -581,5 +584,17 @@ public class Parse {
             }
         }
         return "Number";
+    }
+
+    /**
+     *
+     * @param file
+     * @return the text tag content
+     */
+    private String getTextTagContent(String file){
+        Document doc = (Document) Jsoup.parse(file);
+        org.jsoup.nodes.Element link =  doc.select("Text").first();
+        String AllDoccontent = link.outerHtml();
+        return AllDoccontent;
     }
 }

@@ -56,16 +56,6 @@ public class ReadFile {
                 i++;
             }
         }
-
-        /*
-        Scanner sc = new Scanner(file);
-        int i=0;
-        while (sc.hasNextLine()) {
-            FileContent =FileContent + sc.nextLine();
-            System.out.println("line number:" + i);
-            i++;
-        }
-        */
         Document doc = (Document) Jsoup.parse(FileContent);
         org.jsoup.nodes.Element link =  doc.select("Doc").first();
         String AllDoccontent = link.outerHtml();
