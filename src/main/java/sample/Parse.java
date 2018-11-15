@@ -640,4 +640,30 @@ public class Parse {
         sb.append(s, start, s.length());
         return sb.toString();
     }
+
+    //TODO to check if it works and use it
+    private String OurReplace(String s, char[] targets, String replacement) {
+        StringBuilder sb = null;
+        int start = 0;
+        for (int i; (i = getSmallestIndexOf(s, targets, start)) != -1; ) {
+            if (sb == null) sb = new StringBuilder();
+            sb.append(s, start, i);
+            sb.append(replacement);
+            start = i + 1;
+        }
+        if (sb == null) return s;
+        sb.append(s, start, s.length());
+        return sb.toString();
+    }
+
+    private int getSmallestIndexOf(String s, char[] targets, int start){
+        int min = s.indexOf(targets[0], start);;
+        for(int i = 1; i < targets.length; i++){
+            int index = s.indexOf(targets[i], start);
+            if(min > index){
+                min = index;
+            }
+        }
+        return min;
+    }
 }
