@@ -19,6 +19,7 @@ public class Parse {
     private int splitDocIndex = 0;
     private Map<String, String> monthMap = new HashMap<String, String>();
     HashSet<String> stopWordsSet = new HashSet<String>();
+    Stemmer stemmer=new Stemmer();
 
 
     public Parse() {
@@ -66,7 +67,8 @@ public class Parse {
     }
 
     public void parser(String doc) {
-        doc = doc.replace('\n', ' ');
+        //TODO replace ( ) { } [ ] to space
+        doc = OurReplace(doc,"\n", " ");
         splitDoc = mySplit(doc, " ");
         for (int i = 0; i < splitDoc.length; i++) {
             splitDoc[i] = removeFromTheEdges(splitDoc[i]);
@@ -86,8 +88,7 @@ public class Parse {
                 splitDocIndex++;
             }
         }
-
-
+        stemmer.stemming(tokens);
     }
 
     private void numberTests(String word) {
@@ -121,7 +122,7 @@ public class Parse {
             addToMap(word + "%");
             splitDocIndex++;
         } else if (secondWord.equals("dollars")) {
-            word = word.replace(",", "");
+            word = OurReplace(word,",", "");
             numbersInMillionScale(word);
             splitDocIndex++;
         } else if (secondWord.contains("/")) {
@@ -129,7 +130,7 @@ public class Parse {
             if (checkIfFraction.length == 2) {
                 if (isNumeric(checkIfFraction[0]) && isNumeric(checkIfFraction[1])) {
                     splitDocIndex++;
-                    word.replace(",", "");
+                    word = OurReplace(word,",", "");
                     if (thirdWord.contains("dollars")) {
                         splitDocIndex++;
                         addToMap(word + " " + secondWord + " Dollars");
@@ -141,62 +142,62 @@ public class Parse {
         } else if (secondWord.equals("million")) {
             // 100 million u.s. dollars = 100 M Dollars
             if (thirdWord.equals("u.s") && forthWord.equals("dollars")) {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + " M Dollars");
                 splitDocIndex++;
                 splitDocIndex++;
             }
             // 10 million = 10M
             else {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "M");
                 splitDocIndex++;
             }
         } else if (secondWord.equals("billion")) {
             // 100 billion U.S. Dollars = 100000 M Dollars
             if (thirdWord.equals("u.s") && forthWord.equals("dollars")) {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "000 M Dollars");
                 splitDocIndex++;
                 splitDocIndex++;
             }
             // 10 billion = 10B
             else {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "B");
                 splitDocIndex++;
             }
         } else if (secondWord.equals("trillion")) {
             // 100 trillion U.S. Dollars = 100000000 M Dollars
             if (thirdWord.equals("u.s") && forthWord.equals("dollars")) {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "000000 M Dollars");
                 splitDocIndex++;
                 splitDocIndex++;
             }
             // 7 trillion = 7000B
             else {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "000" + "B");
                 splitDocIndex++;
             }
         }
         // 123 thousands = 123K
         else if (secondWord.equals("thousand")) {
-            word.replace(",", "");
+            word = OurReplace(word,",", "");
             addToMap(word + "K");
             splitDocIndex++;
         } else if (secondWord.equals("bn")) {
             //100 bn dollars = 100000 M Dollars
             if (thirdWord.equals("dollars")) {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + "000 M Dollars");
                 splitDocIndex++;
             }
         } else if (secondWord.equals("m")) {
             //100 m dollars = 100 M Dollars
             if (thirdWord.equals("dollars")) {
-                word.replace(",", "");
+                word = OurReplace(word,",", "");
                 addToMap(word + " M Dollars");
                 splitDocIndex++;
             }
@@ -206,7 +207,7 @@ public class Parse {
             splitDocIndex++;
             addToMap(monthMap.get(secondWord) + "-" + word);
         } else {
-            word.replace(",", "");
+            word = OurReplace(word,",", "");
             if (isNumeric(word)) {
                 divideNumbers(word);
             }
@@ -290,19 +291,19 @@ public class Parse {
         } else if (splitExpression.length == 2) {
             if (isNumeric(oneBeforeWord)) {
                 if ((splitExpression[0].toLowerCase()).equals("thousand")) {
-                    oneBeforeWord.replace(",", "");
+                    oneBeforeWord = OurReplace(oneBeforeWord,",", "");
                     addToMap(oneBeforeWord + "K");
                     termToAdd = termToAdd + oneBeforeWord + "K";
                 } else if ((splitExpression[0].toLowerCase()).equals("million")) {
-                    oneBeforeWord.replace(",", "");
+                    oneBeforeWord = OurReplace(oneBeforeWord,",", "");
                     addToMap(oneBeforeWord + "M");
                     termToAdd = termToAdd + oneBeforeWord + "M";
                 } else if ((splitExpression[0].toLowerCase()).equals("billion")) {
-                    oneBeforeWord.replace(",", "");
+                    oneBeforeWord = OurReplace(oneBeforeWord,",", "");
                     addToMap(oneBeforeWord + "B");
                     termToAdd = termToAdd + oneBeforeWord + "B";
                 } else if ((splitExpression[0].toLowerCase()).equals("trillion")) {
-                    oneBeforeWord.replace(",", "");
+                    oneBeforeWord = OurReplace(oneBeforeWord,",", "");
                     addToMap(oneBeforeWord + "000" + "B");
                     termToAdd = termToAdd + oneBeforeWord + "000" + "B";
                 }
@@ -314,7 +315,7 @@ public class Parse {
             }
             termToAdd = termToAdd + '-';
             if (isNumeric(splitExpression[1])) {
-                splitExpression[1].replace(",", "");
+                splitExpression[1] = OurReplace(splitExpression[1],",", "");
                 if ((oneAfterWord.toLowerCase()).equals("thousand")) {
                     addToMap(splitExpression[1] + "K");
                     termToAdd = termToAdd + splitExpression[1] + "K";
@@ -377,8 +378,8 @@ public class Parse {
      * @param word
      */
     private void dollarSignPriceCase(String word) {
-        word = word.replace(",", "");
-        word = word.replace("$", "");
+        word = OurReplace(word,",", "");
+        word = OurReplace(word,"$", "");
         String nextWord = "";
         if (splitDoc.length < splitDocIndex + 1) {
             nextWord = splitDoc[splitDocIndex + 1];
@@ -402,7 +403,6 @@ public class Parse {
      * @param orgNumber
      */
     private void numbersInMillionScale(String orgNumber) {
-        System.out.println(orgNumber);
         double price = ourParseToDouble(orgNumber);
         if (price >= 1000000) {
             price = price / 1000000;
@@ -575,16 +575,6 @@ public class Parse {
         return "Number";
     }
 
-    /**
-     * @param file
-     * @return the text tag content
-     */
-    private String getTextTagContent(String file) {
-        Document doc = (Document) Jsoup.parse(file);
-        org.jsoup.nodes.Element link = doc.select("Text").first();
-        String AllDoccontent = link.outerHtml();
-        return AllDoccontent;
-    }
 
     /**
      * parse string to double
@@ -595,7 +585,7 @@ public class Parse {
     private double ourParseToDouble(String toParse) {
         toParse = removeFromTheEdges(toParse);
         double result = 0;
-        toParse = toParse.replace(",", "");
+        toParse = OurReplace(toParse,",", "");
         if (toParse.contains("/")) {
             String[] splitToParse = mySplit(toParse, "/");
             if (splitToParse.length == 2) {
@@ -609,14 +599,18 @@ public class Parse {
             if (isNumeric(toParse)) {
                 result = Double.parseDouble(toParse);
             } else {
-                System.out.println("***************** " + toParse);
+                //System.out.println("***************** " + toParse);
             }
         }
         return result;
     }
 
+    /**
+     * remove from the start and the end of the words specific chars.
+     * @param toClean - the word we want to clean from those chars
+     * @return - the clean word.
+     */
     private String removeFromTheEdges(String toClean) {
-        //remove '.' and ',' from the end of the words
         String word = toClean;
         if (word.length() >= 1) {
             while (word.length() >= 1 && (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
@@ -630,5 +624,20 @@ public class Parse {
             }
         }
         return word;
+    }
+
+
+    private String OurReplace(String s, String target, String replacement) {
+        StringBuilder sb = null;
+        int start = 0;
+        for (int i; (i = s.indexOf(target, start)) != -1; ) {
+            if (sb == null) sb = new StringBuilder();
+            sb.append(s, start, i);
+            sb.append(replacement);
+            start = i + target.length();
+        }
+        if (sb == null) return s;
+        sb.append(s, start, s.length());
+        return sb.toString();
     }
 }
