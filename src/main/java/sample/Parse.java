@@ -46,7 +46,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = "C:\\Users\\adi\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String filePath = "C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -57,10 +57,10 @@ public class Parse {
                     line = reader.readLine();
                 }
                 reader.close();
-            }catch (IOException ioe){
+            } catch (IOException ioe) {
                 System.out.println("Problem with the stop word file");
             }
-        }catch(FileNotFoundException fnfe){
+        } catch (FileNotFoundException fnfe) {
             System.out.println("Problem with the stop word file");
         }
     }
@@ -68,28 +68,13 @@ public class Parse {
     public void parser(String doc) {
         doc = doc.replace('\n', ' ');
         splitDoc = mySplit(doc, " ");
-
-        //remove '.' and ',' from the end of the words
         for (int i = 0; i < splitDoc.length; i++) {
-            String word = splitDoc[i];
-            if (word.length() >= 1) {
-                while (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
-                        word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
-                        || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
-                        || word.charAt(word.length() - 1) == '"') {
-                    splitDoc[i] = word.substring(0, word.length() - 1);
-                    word = splitDoc[i];
-                }
-                while (word.charAt(0) == '(' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"') {
-                    splitDoc[i] = splitDoc[i].substring(1, splitDoc[i].length());
-                    word = splitDoc[i];
-                }
-            }
+            splitDoc[i] = removeFromTheEdges(splitDoc[i]);
         }
 
         while (splitDocIndex < splitDoc.length) {
             String word = splitDoc[splitDocIndex];
-            if(!stopWordsSet.contains(word.toLowerCase())) {
+            if (!stopWordsSet.contains(word.toLowerCase())) {
                 if (word.contains("-")) {
                     hyphenTests(word);
                 } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
@@ -97,13 +82,11 @@ public class Parse {
                 } else {
                     wordTests(word);
                 }
-            }
-            else{
+            } else {
                 splitDocIndex++;
             }
-            System.out.println(splitDocIndex);
         }
-        System.out.println("helloooo");
+
 
     }
 
@@ -138,7 +121,7 @@ public class Parse {
             addToMap(word + "%");
             splitDocIndex++;
         } else if (secondWord.equals("dollars")) {
-            word.replace(",", "");
+            word = word.replace(",", "");
             numbersInMillionScale(word);
             splitDocIndex++;
         } else if (secondWord.contains("/")) {
@@ -234,41 +217,43 @@ public class Parse {
 
 
     private void wordTests(String word) {
-        String secondWord = "";
-        String thirdWord = "";
-        String forthWord = "";
-        if (splitDocIndex + 1 < splitDoc.length) {
-            secondWord = splitDoc[splitDocIndex + 1];
-        }
-        if (splitDocIndex + 2 < splitDoc.length) {
-            thirdWord = splitDoc[splitDocIndex + 2];
-        }
-        if (splitDocIndex + 3 < splitDoc.length) {
-            forthWord = splitDoc[splitDocIndex + 3];
-        }
-        if (monthMap.containsKey(word.toLowerCase())) {
-            if (isNumeric(secondWord)) {
-                double d = Double.parseDouble(secondWord);
-                if (isNaturalNumber(d)) {
-                    int date = (int) d;
-                    if (date >= 1 && date <= 31) {
-                        addToMap(monthMap.get(word.toLowerCase()) + "-" + secondWord);
-                    } else if (secondWord.length() == 4) {
-                        addToMap(secondWord + "-" + monthMap.get(word.toLowerCase()));
-                    }
-                    splitDocIndex++;
-                }
+        if (word.length() > 0) {
+            String secondWord = "";
+            String thirdWord = "";
+            String forthWord = "";
+            if (splitDocIndex + 1 < splitDoc.length) {
+                secondWord = splitDoc[splitDocIndex + 1];
             }
-        } else if ((word.toLowerCase()).equals("between") && isNumeric(secondWord) && (thirdWord.toLowerCase()).equals("and") && isNumeric(forthWord)) {
-            splitDocIndex = splitDocIndex + 3;
-            divideNumbers(secondWord);
-            divideNumbers(forthWord);
-            addToMap(secondWord + "-" + forthWord);
-        } else {
-            if (Character.isLowerCase(word.charAt(0))) {
-                addToMapLowCase(word);
+            if (splitDocIndex + 2 < splitDoc.length) {
+                thirdWord = splitDoc[splitDocIndex + 2];
+            }
+            if (splitDocIndex + 3 < splitDoc.length) {
+                forthWord = splitDoc[splitDocIndex + 3];
+            }
+            if (monthMap.containsKey(word.toLowerCase())) {
+                if (isNumeric(secondWord)) {
+                    double d = ourParseToDouble(secondWord);
+                    if (isNaturalNumber(d)) {
+                        int date = (int) d;
+                        if (date >= 1 && date <= 31) {
+                            addToMap(monthMap.get(word.toLowerCase()) + "-" + secondWord);
+                        } else if (secondWord.length() == 4) {
+                            addToMap(secondWord + "-" + monthMap.get(word.toLowerCase()));
+                        }
+                        splitDocIndex++;
+                    }
+                }
+            } else if ((word.toLowerCase()).equals("between") && isNumeric(secondWord) && (thirdWord.toLowerCase()).equals("and") && isNumeric(forthWord)) {
+                splitDocIndex = splitDocIndex + 3;
+                divideNumbers(secondWord);
+                divideNumbers(forthWord);
+                addToMap(secondWord + "-" + forthWord);
             } else {
-                addToMapUpCase(word);
+                if (Character.isLowerCase(word.charAt(0))) {
+                    addToMapLowCase(word);
+                } else {
+                    addToMapUpCase(word);
+                }
             }
         }
         splitDocIndex++;
@@ -293,7 +278,7 @@ public class Parse {
         if (splitExpression.length == 3) {
             addToMap(word);
             for (int i = 0; i < 3; i++) {
-                if(!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
+                if (!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[i].charAt(0))) {
                         addToMapLowCase(splitExpression[i]);
                     } else {
@@ -322,7 +307,7 @@ public class Parse {
                     termToAdd = termToAdd + oneBeforeWord + "000" + "B";
                 }
             } else {
-                if(!stopWordsSet.contains(splitExpression[0].toLowerCase())){
+                if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
                     addToMap(splitExpression[0]);
                 }
                 termToAdd = termToAdd + splitExpression[0];
@@ -351,7 +336,7 @@ public class Parse {
                 }
             } else {
                 termToAdd = termToAdd + splitExpression[1];
-                if(!stopWordsSet.contains(splitExpression[1].toLowerCase())){
+                if (!stopWordsSet.contains(splitExpression[1].toLowerCase())) {
                     addToMap(splitExpression[1]);
                 }
             }
@@ -361,10 +346,9 @@ public class Parse {
             if (isNumeric(splitExpression[0])) {
                 numberTests(word);
             } else {
-                if(!stopWordsSet.contains(splitExpression[0].toLowerCase())){
+                if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
                     wordTests(splitExpression[0]);
-                }
-                else{
+                } else {
                     splitDocIndex++;
                 }
             }
@@ -393,10 +377,13 @@ public class Parse {
      * @param word
      */
     private void dollarSignPriceCase(String word) {
-        word.replace(",", "");
-        word.replace("$", "");
-        String nextWord = splitDoc[splitDocIndex + 1];
-        nextWord.toLowerCase();
+        word = word.replace(",", "");
+        word = word.replace("$", "");
+        String nextWord = "";
+        if (splitDoc.length < splitDocIndex + 1) {
+            nextWord = splitDoc[splitDocIndex + 1];
+        }
+        nextWord = nextWord.toLowerCase();
         if (nextWord.equals("million")) {
             addToMap(word + " M Dollars");
         } else if (nextWord.equals("billion")) {
@@ -415,13 +402,15 @@ public class Parse {
      * @param orgNumber
      */
     private void numbersInMillionScale(String orgNumber) {
-        double price = Double.parseDouble(orgNumber);
+        System.out.println(orgNumber);
+        double price = ourParseToDouble(orgNumber);
         if (price >= 1000000) {
             price = price / 1000000;
             addToMap(Double.toString(price) + "M Dollars");
         } else {
             addToMap(Double.toString(price) + " Dollars");
         }
+
     }
 
     /**
@@ -438,7 +427,7 @@ public class Parse {
     }
 
     private void divideNumbers(String toDivide) {
-        double d = Double.parseDouble(toDivide);
+        double d = ourParseToDouble(toDivide);
         if (d >= 1000000000) {
             d = d / 1000000000;
             String toWrite;
@@ -587,14 +576,59 @@ public class Parse {
     }
 
     /**
-     *
      * @param file
      * @return the text tag content
      */
-    private String getTextTagContent(String file){
+    private String getTextTagContent(String file) {
         Document doc = (Document) Jsoup.parse(file);
-        org.jsoup.nodes.Element link =  doc.select("Text").first();
+        org.jsoup.nodes.Element link = doc.select("Text").first();
         String AllDoccontent = link.outerHtml();
         return AllDoccontent;
+    }
+
+    /**
+     * parse string to double
+     *
+     * @param toParse
+     * @return the double
+     */
+    private double ourParseToDouble(String toParse) {
+        toParse = removeFromTheEdges(toParse);
+        double result = 0;
+        toParse = toParse.replace(",", "");
+        if (toParse.contains("/")) {
+            String[] splitToParse = mySplit(toParse, "/");
+            if (splitToParse.length == 2) {
+                if (isNumeric(splitToParse[0]) && isNumeric(splitToParse[1])) {
+                    double before = Double.parseDouble(splitToParse[0]);
+                    double after = Double.parseDouble(splitToParse[1]);
+                    result = before / after;
+                }
+            }
+        } else {
+            if (isNumeric(toParse)) {
+                result = Double.parseDouble(toParse);
+            } else {
+                System.out.println("***************** " + toParse);
+            }
+        }
+        return result;
+    }
+
+    private String removeFromTheEdges(String toClean) {
+        //remove '.' and ',' from the end of the words
+        String word = toClean;
+        if (word.length() >= 1) {
+            while (word.length() >= 1 && (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
+                    word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
+                    || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
+                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|')) {
+                word = word.substring(0, word.length() - 1);
+            }
+            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
+                word = word.substring(1, word.length());
+            }
+        }
+        return word;
     }
 }

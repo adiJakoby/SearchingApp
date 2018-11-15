@@ -5,72 +5,49 @@ import org.jsoup.Jsoup;
 import java.io.File;
 import java.io.IOException;
 import java.io.*;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 
 
 public class ReadFile {
 
-    /**
-     *
-     * @param Path
-     * @return the string that the file in the path parameter contains
-     */
-    public LinkedList<String> readFile(String Path) throws IOException {
-        File [] fileslist=listFiles(Path);
-        File [] eachFolderfiles;
-        LinkedList<String> AllFilesContent=new LinkedList<String>();
-        String FileContent;
-        String DirectoryName="";
-        for (File file : fileslist){
-            DirectoryName=file.getPath();
-            if (file.isDirectory()){
-                eachFolderfiles=listFiles(file.getPath());
-                FileContent="";
-                for (File doc : eachFolderfiles){
-                    if (doc.isFile()){
-                        FileContent+=readDocFromFile(doc);
+    public void ReadFile(String path) throws IOException {
+        int i = 0;
+        File file = new File(path);
+        for (File file2 : file.listFiles()) {
+            if (file2.isDirectory()) {
+                for (File file3 : file2.listFiles()) {
+                    if (file3.isFile()) {
+                        Document doc = Jsoup.parse(new String(Files.readAllBytes(file3.toPath())), "", Parser.xmlParser());
+                        Elements docs = doc.getElementsByTag("DOC");
+                        System.out.println("File name: " + file3.getName());
+                        for (Element e : docs) {
+                            Parse p = new Parse();
+                            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            Date date = new Date();
+                            System.out.println("Start doc number " + i + " " + dateFormat.format(date)); //2016/11/16 12:08:43
+                            //         Documents d=new Documents(e.getElementsByTag("DOCNO").text(),e.getElementsByTag("TEXT").text());
+                            //  System.out.println(e.getElementsByTag("DOCNO").text());
+                            //System.out.println(e.getElementsByTag("TEXT").text());
+                            p.parser(e.getElementsByTag("TEXT").text());
+                            Date date1 = new Date();
+                            System.out.println("Finish doc number " + i + " " + dateFormat.format(date1));
+                            i++;
+                        }
                     }
-                    AllFilesContent.push(FileContent);
                 }
             }
         }
-        return AllFilesContent;
-    }
-    /**
-     *
-     * @param file
-     * @return string that contain all the documents in the file Separated by <Doc> </Doc>
-     * @throws FileNotFoundException
-         */
-    public String readDocFromFile(File file) throws IOException {
-        String FileContent = "";
-        int i=0;
-        String line;
-        FileReader fileReader = new FileReader(file.getPath());
-        try (BufferedReader bufferedReader = new BufferedReader(fileReader)) {
-            while ((line = bufferedReader.readLine()) != null) {
-                FileContent += line;
-                System.out.println("line number:" + i);
-                i++;
-            }
-        }
-        Document doc = (Document) Jsoup.parse(FileContent);
-        org.jsoup.nodes.Element link =  doc.select("Doc").first();
-        String AllDoccontent = link.outerHtml();
-        return AllDoccontent;
-    }
-
-
-    /**
-     * List all the files under a directory
-     * @param directoryName to be listed
-     */
-    public File[] listFiles(String directoryName){
-        File directory = new File(directoryName);
-        //get all the files from a directory
-        File[] fList = directory.listFiles();
-        return fList;
     }
 }
+
+

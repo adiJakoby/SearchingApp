@@ -7,6 +7,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
 
 public class Main extends Application {
 
@@ -20,10 +24,16 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws IOException {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
         ReadFile Myreader = new ReadFile();
-        Myreader.readFile("C:\\Users\\dorin\\IdeaProjects\\SearchingApp\\src\\main\\java\\sample\\Files");
-        Parse p = new Parse();
-        p.parser("the a The-Dollar XX-XX-XX -aabbccdd -133 million hey 122 Million-44 word))) January 23 November 1993 Feb 76/15   Dorin Dorin Adi adi   78/13 28/2023Z FEB 12.1 percent POLITICIANS,  PARTY PREFERENCES \n" +
+        Myreader.ReadFile("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\corpus");
+        Date date1 = new Date();
+        System.out.println(dateFormat.format(date1));
+       // Parse p = new Parse();
+
+        /*p.parser("the a The-Dollar XX-XX-XX -aabbccdd -133 million hey 122 Million-44 word))) January 23 November 1993 Feb 76/15   Dorin Dorin Adi adi   78/13 28/2023Z FEB 12.1 percent POLITICIANS,  PARTY PREFERENCES \n" +
                 "\n" +
                 "   Summary:  Newspapers in the Former Yugoslav Republic of \n" +
                 "   Macedonia have published the results of opinion polls, \n" +
@@ -183,7 +193,6 @@ public class Main extends Application {
                 "   (AUTHOR:  GALYEAN.  QUESTIONS AND/OR COMMENTS, PLEASE CALL CHIEF, \n" +
                 "BALKANS BRANCH AT (703) 733-6481) \n" +
                 "\n" +
-                "ELAG/25 February/POLCHF/EED/DEW 28/2023Z FEB");
-
+                "ELAG/25 February/POLCHF/EED/DEW 28/2023Z FEB");*/
     }
 }
