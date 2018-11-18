@@ -41,7 +41,7 @@ public class ReadFile {
                             //         Documents d=new Documents(e.getElementsByTag("DOCNO").text(),e.getElementsByTag("TEXT").text());
                             //  System.out.println(e.getElementsByTag("DOCNO").text());
                             //System.out.println(e.getElementsByTag("TEXT").text());
-                            p.parser(e.getElementsByTag("TEXT").text());
+                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), file3.getName());
                             Date date1 = new Date();
                             //System.out.println("Finish doc number " + i + " " + dateFormat.format(date1));
                             i++;

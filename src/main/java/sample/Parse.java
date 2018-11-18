@@ -7,15 +7,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Parse {
     private String[] splitDoc;
-    private Map<String, Integer> tokens = new HashMap<String, Integer>();
+    private Map<String, Integer> tokens = new HashMap<>();
     private int splitDocIndex = 0;
     private Map<String, String> monthMap = new HashMap<String, String>();
     HashSet<String> stopWordsSet = new HashSet<String>();
@@ -66,7 +63,7 @@ public class Parse {
         }
     }
 
-    public void parser(String doc) {
+    public void parser(String doc, String docNo, String fileName) {
         //TODO replace ( ) { } [ ] to space
         doc = OurReplace(doc,"\n", " ");
         splitDoc = mySplit(doc, " ");
@@ -88,7 +85,7 @@ public class Parse {
                 splitDocIndex++;
             }
         }
-        stemmer.stemming(tokens);
+        stemmer.stemming(tokens, docNo, fileName);
     }
 
     private void numberTests(String word) {
@@ -616,10 +613,10 @@ public class Parse {
             while (word.length() >= 1 && (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
                     word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
                     || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
-                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|')) {
+                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|' || word.charAt(word.length() - 1) == '*')) {
                 word = word.substring(0, word.length() - 1);
             }
-            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
+            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '*' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
                 word = word.substring(1, word.length());
             }
         }

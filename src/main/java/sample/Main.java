@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 public class Main extends Application {
 
@@ -24,9 +26,6 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws IOException {
-        String s = "adi";
-        int i = System.identityHashCode(s);
-        System.out.println(i);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
