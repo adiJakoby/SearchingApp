@@ -278,7 +278,7 @@ public class Parse {
             for (int i = 0; i < 3; i++) {
                 if (!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[i].charAt(0))) {
-                        addToMapLowCase(splitExpression[i]);
+                        addToMapLowCase(splitExpression[i].toLowerCase());
                     } else {
                         addToMapUpCase(splitExpression[i]);
                     }
@@ -303,10 +303,24 @@ public class Parse {
                     oneBeforeWord = OurReplace(oneBeforeWord,",", "");
                     addToMap(oneBeforeWord + "000" + "B");
                     termToAdd = termToAdd + oneBeforeWord + "000" + "B";
+                }else{
+                    splitExpression[0] = OurReplace(splitExpression[0],",", "");
+                    termToAdd = termToAdd + splitExpression[0];
+                    if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
+                        if (Character.isLowerCase(splitExpression[0].charAt(0))) {
+                            addToMapLowCase(splitExpression[0].toLowerCase());
+                        } else {
+                            addToMapUpCase(splitExpression[0]);
+                        }
+                    }
                 }
             } else {
                 if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
-                    addToMap(splitExpression[0]);
+                    if (Character.isLowerCase(splitExpression[0].charAt(0))) {
+                        addToMapLowCase(splitExpression[0].toLowerCase());
+                    } else {
+                        addToMapUpCase(splitExpression[0]);
+                    }
                 }
                 termToAdd = termToAdd + splitExpression[0];
             }
@@ -335,7 +349,11 @@ public class Parse {
             } else {
                 termToAdd = termToAdd + splitExpression[1];
                 if (!stopWordsSet.contains(splitExpression[1].toLowerCase())) {
-                    addToMap(splitExpression[1]);
+                    if (Character.isLowerCase(splitExpression[1].charAt(0))) {
+                        addToMapLowCase(splitExpression[1].toLowerCase());
+                    } else {
+                        addToMapUpCase(splitExpression[1]);
+                    }
                 }
             }
             addToMap(termToAdd);
@@ -515,7 +533,7 @@ public class Parse {
 
     /**
      * in case the word saved in up letters - change it to low letters.
-     * else add it a usual
+     * else add it as usual
      *
      * @param word the 1st char is low char
      */

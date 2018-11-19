@@ -36,6 +36,9 @@ public class Stemmer {
         public int compare(String s1, String s2) {
             String s1l = s1.toLowerCase();
             String s2l = s2.toLowerCase();
+            if(s1l.equals(s2l)){
+                return s1.compareTo(s2);
+            }
             return s1l.compareTo(s2l);
         }
     }
