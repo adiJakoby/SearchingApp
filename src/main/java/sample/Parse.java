@@ -44,7 +44,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = "C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String filePath = "C:\\Users\\adi\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -246,7 +246,28 @@ public class Parse {
                 divideNumbers(secondWord);
                 divideNumbers(forthWord);
                 addToMap(secondWord + "-" + forthWord);
-            } else {
+            } else if (word.toLowerCase().equals("mr") || word.toLowerCase().equals("mrs")
+                    || word.toLowerCase().equals("ms") || word.toLowerCase().equals("dr")){
+                addToMap(word.toUpperCase() + "." + " " + secondWord + " " + thirdWord);
+                if (Character.isLowerCase(word.charAt(0))) {
+                    addToMapLowCase(word);
+                } else {
+                    addToMapUpCase(word);
+                }
+            } else if (word.length() > 2 && word.charAt(word.length()-2) == '\'' && (word.charAt(word.length()-1) == 's')){
+                if (Character.isLowerCase(word.charAt(0))) {
+                    addToMapLowCase(word);
+                } else {
+                    addToMapUpCase(word);
+                }
+                word = word.substring(0,word.length()-2);
+                if (Character.isLowerCase(word.charAt(0))) {
+                    addToMapLowCase(word);
+                } else {
+                    addToMapUpCase(word);
+                }
+            }
+            else {
                 if (Character.isLowerCase(word.charAt(0))) {
                     addToMapLowCase(word);
                 } else {

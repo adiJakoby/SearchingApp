@@ -12,6 +12,7 @@ import java.util.TreeMap;
 public class Stemmer {
 
     SnowballStemmer snowballStemmer = new englishStemmer();
+    Indexer indexer = new Indexer();
 
     public void stemming(Map<String, Integer> tokens, String docNo, String fileName) {
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());
@@ -27,8 +28,8 @@ public class Stemmer {
                 stems.put(newStem,tokens.get(key));
             }
         }
-        Indexer indexer = new Indexer();
-        indexer.indexing(stems, docNo, fileName);
+
+        //indexer.indexing(stems, docNo, fileName);
     }
 
     class MyComp implements Comparator<String> {
