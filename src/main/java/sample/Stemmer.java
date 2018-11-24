@@ -14,7 +14,7 @@ public class Stemmer {
     SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer indexer = new Indexer();
 
-    public void stemming(Map<String, Integer> tokens, String docNo, String fileName) {
+    public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile) {
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());
         for (String key : tokens.keySet()) {
             snowballStemmer.setCurrent(key);
@@ -29,7 +29,7 @@ public class Stemmer {
             }
         }
 
-        //indexer.indexing(stems, docNo, fileName);
+        indexer.indexing(stems, docNo, doneFile);
     }
 
     class MyComp implements Comparator<String> {

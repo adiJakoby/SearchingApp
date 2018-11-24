@@ -33,17 +33,13 @@ public class ReadFile {
                         Document doc = Jsoup.parse(new String(Files.readAllBytes(file3.toPath())), "", Parser.xmlParser());
                         Elements docs = doc.getElementsByTag("DOC");
                         //System.out.println("File name: " + file3.getName());
+                        //System.out.println(docs.size());
+                        //System.out.println();
                         for (Element e : docs) {
+                            boolean done = e.siblingIndex() == docs.last().siblingIndex();
                             Parse p = new Parse();
-                            //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                            //Date date = new Date();
-                            //System.out.println("Start doc number " + i + " " + dateFormat.format(date)); //2016/11/16 12:08:43
-                            //         Documents d=new Documents(e.getElementsByTag("DOCNO").text(),e.getElementsByTag("TEXT").text());
-                            //  System.out.println(e.getElementsByTag("DOCNO").text());
-                            //System.out.println(e.getElementsByTag("TEXT").text());
-                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), file3.getName());
+                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done);
                             Date date1 = new Date();
-                            //System.out.println("Finish doc number " + i + " " + dateFormat.format(date1));
                             i++;
                         }
                     }

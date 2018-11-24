@@ -16,7 +16,7 @@ public class Parse {
     private int splitDocIndex = 0;
     private Map<String, String> monthMap = new HashMap<String, String>();
     HashSet<String> stopWordsSet = new HashSet<String>();
-    Stemmer stemmer=new Stemmer();
+    Stemmer stemmer = new Stemmer();
 
 
     public Parse() {
@@ -63,7 +63,7 @@ public class Parse {
         }
     }
 
-    public void parser(String doc, String docNo, String fileName) {
+    public void parser(String doc, String docNo, boolean doneFile) {
         //TODO replace ( ) { } [ ] to space
         doc = OurReplace(doc,"\n", " ");
         splitDoc = mySplit(doc, " ");
@@ -85,7 +85,7 @@ public class Parse {
                 splitDocIndex++;
             }
         }
-        stemmer.stemming(tokens, docNo, fileName);
+        stemmer.stemming(tokens, docNo, doneFile);
     }
 
     private void numberTests(String word) {
