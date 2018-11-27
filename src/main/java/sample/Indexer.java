@@ -260,7 +260,7 @@ public class Indexer {
                     line = bufferedReader.readLine();
                     counter++;
                 }
-                seekIndex[i] = 2;
+                seekIndex[i] = 3;
                 howMuchTerms[i] = 3;
                 fileReader.close();
             } catch (IOException e) {
@@ -298,8 +298,30 @@ public class Indexer {
 
     }
 
-    private void updateTerm(int file){
-
+    private void updateTerm(int fileIndex){
+        howMuchTerms[fileIndex]--;
+        if(howMuchTerms[fileIndex] == 0){
+            try {
+                File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + fileIndex + ".txt");
+                Scanner sc = new Scanner(file);
+                String line;
+                int counter = 0;
+                for (int i = 0; i < seekIndex[fileIndex] ; i++) {
+                    sc.nextLine();
+                }
+                line = sc.nextLine();
+                while (line != null && counter != 3) {
+                    terms.put(line, fileIndex);
+                    line = sc.nextLine();
+                    howMuchTerms[fileIndex]++;
+                    seekIndex[fileIndex]++;
+                    counter++;
+                }
+                sc.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void writeToPosting(StringBuilder toWrite){}
