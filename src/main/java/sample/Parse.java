@@ -44,7 +44,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = "C:\\Users\\adi\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String filePath = "C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));

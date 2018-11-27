@@ -1,16 +1,19 @@
 package sample;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 public class Indexer {
     static int postingIndex = 0;
     private static LinkedList<TreeMap<String, Integer>> allMaps = new LinkedList();
     private static LinkedList<String> docsNames = new LinkedList();
-    //static Map<String, String path>
+    private static HashSet<String> dictionary = new HashSet<>();
+    private TreeMap<String, Integer> terms;
+    private int[] seekIndex;
+    private int[] howMuchTerms;
 
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
+        dictionary.addAll(tokens.keySet());
         if (doneFile) {
             allMaps.add(tokens);
             docsNames.add(docName);
@@ -74,7 +77,7 @@ public class Indexer {
         }
 
         try {
-            PrintWriter writer = new PrintWriter("C:\\Users\\adi\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
             LinkedList<String[]> allTermsMerged = afterFirstMerge.pollFirst();
             while (allTermsMerged.size() > 0) {
@@ -235,4 +238,69 @@ public class Indexer {
             return result;
         }
     }
+
+    public void mergePostingFile(){
+        terms = new TreeMap<>();
+        seekIndex = new int[postingIndex];
+        howMuchTerms = new int[postingIndex];
+        StringBuilder toWrite = new StringBuilder();
+
+        //initial the tree map terms with the X first lines.
+        for(int i = 0; i < postingIndex; i++){
+            try {
+                File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + i + ".txt");
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                String line;
+                int counter = 0;
+                line = bufferedReader.readLine();
+                //queue[i] = new LinkedList<>();
+                while (line != null && counter != 3) {
+                    terms.put(line, i);
+                    line = bufferedReader.readLine();
+                    counter++;
+                }
+                seekIndex[i] = 2;
+                howMuchTerms[i] = 3;
+                fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String currentTerm = terms.firstKey();
+        int index = currentTerm.indexOf(" ");
+        currentTerm = currentTerm.substring(0, index);
+        toWrite.append(terms.firstKey());
+        String lastTerm = currentTerm;
+        updateTerm(terms.pollFirstEntry().getValue());
+        int counter = 1;
+        while(terms.size() > 0){
+            currentTerm = terms.firstKey();
+            index = currentTerm.indexOf(" ");
+            currentTerm = currentTerm.substring(0, index);
+            if(currentTerm.equals(lastTerm)){
+                toWrite.append(terms.firstKey().substring(index));
+            }
+            else{
+                if(counter == 10){
+                    writeToPosting(toWrite);
+                    toWrite.append(terms.firstKey());
+                    counter = 1;
+                }else {
+                    toWrite.append("\n" + terms.firstKey());
+                    counter++;
+                }
+                lastTerm = currentTerm;
+            }
+            updateTerm(terms.pollFirstEntry().getValue());
+        }
+
+    }
+
+    private void updateTerm(int file){
+
+    }
+
+    private void writeToPosting(StringBuilder toWrite){}
 }
