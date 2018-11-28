@@ -47,7 +47,7 @@ public class ReadFile {
             }
         }
         Date date1 = new Date();
-        System.out.println("Finish time: " + dateFormat.format(date1));
+        //System.out.println("Finish time: " + dateFormat.format(date1));
     }
 }
 

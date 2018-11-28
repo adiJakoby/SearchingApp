@@ -11,6 +11,7 @@ public class Indexer {
     private TreeMap<String, Integer> terms;
     private int[] seekIndex;
     private int[] howMuchTerms;
+    private int finalPostingIndex = 0;
 
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
         dictionary.addAll(tokens.keySet());
@@ -239,90 +240,150 @@ public class Indexer {
         }
     }
 
-    public void mergePostingFile(){
-        terms = new TreeMap<>();
-        seekIndex = new int[postingIndex];
-        howMuchTerms = new int[postingIndex];
-        StringBuilder toWrite = new StringBuilder();
+    public void mergePostingFile() {
+        try {
+            FileWriter fw = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\Posting.txt");
+            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
+            terms = new TreeMap<>(new Indexer.MyComp());
+            //seekIndex = new int[postingIndex];
+            howMuchTerms = new int[postingIndex];
+            StringBuilder toWrite = new StringBuilder();
 
-        //initial the tree map terms with the X first lines.
-        for(int i = 0; i < postingIndex; i++){
-            try {
+            //initial the tree map terms with the X first lines.
+            for (int i = 0; i < postingIndex; i++) {
                 File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + i + ".txt");
                 FileReader fileReader = new FileReader(file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                bufferReaders[i] = new BufferedReader(fileReader);
                 String line;
-                int counter = 0;
-                line = bufferedReader.readLine();
+                int counter = 1;
+                line = bufferReaders[i].readLine();
+                terms.put(line, i);
                 //queue[i] = new LinkedList<>();
                 while (line != null && counter != 3) {
+                    line = bufferReaders[i].readLine();
                     terms.put(line, i);
-                    line = bufferedReader.readLine();
                     counter++;
                 }
-                seekIndex[i] = 3;
+                //seekIndex[i] = 3;
                 howMuchTerms[i] = 3;
-                fileReader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-        }
 
-        String currentTerm = terms.firstKey();
-        int index = currentTerm.indexOf(" ");
-        currentTerm = currentTerm.substring(0, index);
-        toWrite.append(terms.firstKey());
-        String lastTerm = currentTerm;
-        updateTerm(terms.pollFirstEntry().getValue());
-        int counter = 1;
-        while(terms.size() > 0){
-            currentTerm = terms.firstKey();
-            index = currentTerm.indexOf(" ");
+            String currentTerm = terms.firstKey();
+            int index = currentTerm.indexOf(" ");
             currentTerm = currentTerm.substring(0, index);
-            if(currentTerm.equals(lastTerm)){
-                toWrite.append(terms.firstKey().substring(index));
-            }
-            else{
-                if(counter == 10){
-                    writeToPosting(toWrite);
-                    toWrite.append(terms.firstKey());
-                    counter = 1;
-                }else {
-                    toWrite.append("\n" + terms.firstKey());
-                    counter++;
+            toWrite.append(terms.firstKey());
+            String lastTerm = currentTerm;
+            updateTerm(terms.firstEntry().getValue(), bufferReaders[terms.pollFirstEntry().getValue()]);
+            int counter = 1;
+            while (terms.size() > 0) {
+                currentTerm = terms.firstKey();
+                index = currentTerm.indexOf(" ");
+                currentTerm = currentTerm.substring(0, index);
+                if (currentTerm.equals(lastTerm)) {
+                    toWrite.append(terms.firstKey().substring(index));
+                } else {
+                    if (counter == 10) {
+                        writeToPosting(toWrite, WriteFileBuffer);
+                        toWrite = new StringBuilder();
+                        toWrite.append("\n" + terms.firstKey());
+                        counter = 1;
+                    } else {
+                        toWrite.append("\n" + terms.firstKey());
+                        counter++;
+                    }
+                    lastTerm = currentTerm;
                 }
-                lastTerm = currentTerm;
+                updateTerm(terms.firstEntry().getValue(), bufferReaders[terms.pollFirstEntry().getValue()]);
             }
-            updateTerm(terms.pollFirstEntry().getValue());
+
+            WriteFileBuffer.close();
+            for (int i = 0; i < postingIndex; i++) {
+                bufferReaders[i].close();
+            }
+        } catch (IOException Ex) {
+            System.out.println(Ex.getMessage());
         }
 
     }
 
-    private void updateTerm(int fileIndex){
+    private void updateTerm(int fileIndex, BufferedReader bufferedReader) {
         howMuchTerms[fileIndex]--;
-        if(howMuchTerms[fileIndex] == 0){
+        if (howMuchTerms[fileIndex] == 0) {
             try {
+                String line;
+                int counter = 1;
+                line = bufferedReader.readLine();
+                terms.put(line, fileIndex);
+                howMuchTerms[fileIndex]++;
+                while (line != null && counter != 3) {
+                    line = bufferedReader.readLine();
+                    terms.put(line, fileIndex);
+                    howMuchTerms[fileIndex]++;
+                    //seekIndex[fileIndex]++;
+                    counter++;
+                }
+                /*
                 File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + fileIndex + ".txt");
                 Scanner sc = new Scanner(file);
                 String line;
                 int counter = 0;
-                for (int i = 0; i < seekIndex[fileIndex] ; i++) {
+                for (int i = 0; i < seekIndex[fileIndex]; i++) {
                     sc.nextLine();
                 }
-                line = sc.nextLine();
-                while (line != null && counter != 3) {
-                    terms.put(line, fileIndex);
+                if (sc.hasNext()) {
                     line = sc.nextLine();
-                    howMuchTerms[fileIndex]++;
-                    seekIndex[fileIndex]++;
-                    counter++;
+                    while (line != null && counter != 3) {
+                        terms.put(line, fileIndex);
+                        if (sc.hasNext()) {
+                            line = sc.nextLine();
+                            howMuchTerms[fileIndex]++;
+                            seekIndex[fileIndex]++;
+                            counter++;
+                        } else {
+                            counter = 3;
+                        }
+
+                    }
                 }
-                sc.close();
+                sc.close();*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void writeToPosting(StringBuilder toWrite){}
+    private void writeToPosting(StringBuilder toWrite, BufferedWriter WriteFileBuffer) {
+        try {
+            WriteFileBuffer.write(toWrite.toString());
+            /*
+            // create a new RandomAccessFile with filename test
+            RandomAccessFile raf = new RandomAccessFile("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\Posting.txt", "rw");
+
+            // set the file pointer at position
+            raf.seek(finalPostingIndex);
+            String stringToWrite = toWrite.toString() + " ";
+            // write something in the file
+            raf.writeUTF(stringToWrite);
+
+            finalPostingIndex = finalPostingIndex + stringToWrite.length();
+
+            raf.close();*/
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    class MyComp implements Comparator<String> {
+        @Override
+        public int compare(String s1, String s2) {
+            String s1l = s1.toLowerCase();
+            String s2l = s2.toLowerCase();
+            if (s1l.equals(s2l)) {
+                return s1.compareTo(s2);
+            }
+            return s1l.compareTo(s2l);
+        }
+    }
 }
