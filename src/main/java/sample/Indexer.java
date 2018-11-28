@@ -5,32 +5,56 @@ import java.util.*;
 
 public class Indexer {
     static int postingIndex = 0;
-    private static LinkedList<TreeMap<String, Integer>> allMaps = new LinkedList();
-    private static LinkedList<String> docsNames = new LinkedList();
+    private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
+    //private static LinkedList<TreeMap<String, Integer>> allMaps = new LinkedList();
+    //private static LinkedList<String> docsNames = new LinkedList();
     private static HashSet<String> dictionary = new HashSet<>();
     private TreeMap<String, Integer> terms;
-    private int[] seekIndex;
+    //private int[] seekIndex;
     private int[] howMuchTerms;
-    private int finalPostingIndex = 0;
+    //private int finalPostingIndex = 0;
+    private static int doneCounter = 0;
 
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
         dictionary.addAll(tokens.keySet());
         if (doneFile) {
-            allMaps.add(tokens);
-            docsNames.add(docName);
-            if (allMaps.size() > 0) {
+            doneCounter++;
+        }
+        if(doneCounter == 33){
+            addToMap(tokens, docName);
+            //allMaps.add(tokens);
+            //docsNames.add(docName);
+            if (mergedTerms.size() > 0) {
                 executePosting();
             }
-            allMaps.clear();
-            docsNames.clear();
+            mergedTerms.clear();
+            //docsNames.clear();
+            doneCounter = 0;
             //allMaps = new LinkedList();
             //docsNames = new LinkedList();
         }
-        allMaps.add(tokens);
-        docsNames.add(docName);
+        addToMap(tokens, docName);
+        //docsNames.add(docName);
+    }
+
+    private void addToMap(TreeMap<String, Integer> tokens, String docName){
+        while(tokens.size() > 0){
+            String token = tokens.firstKey();
+            int counter = tokens.pollFirstEntry().getValue();
+            if (mergedTerms.containsKey(token)){
+                StringBuilder temp = new StringBuilder();
+                temp.append(mergedTerms.get(token));
+                temp.append(" " + docName + " " + counter);
+                mergedTerms.put(token, temp.toString());
+            }
+            else{
+                mergedTerms.put(token, docName + " " + counter);
+            }
+        }
     }
 
     private void executePosting() {
+        /*
         LinkedList<LinkedList<String[]>> afterFirstMerge = new LinkedList<>();
         LinkedList<LinkedList<String[]>> tempMerge = new LinkedList<>();
 
@@ -75,16 +99,19 @@ public class Indexer {
                     done = true;
                 }
             }
-        }
+        }*/
 
         try {
             PrintWriter writer = new PrintWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
-            LinkedList<String[]> allTermsMerged = afterFirstMerge.pollFirst();
+            while(mergedTerms.size() > 0){
+                toWrite.append(mergedTerms.firstKey() + " " + mergedTerms.pollFirstEntry().getValue() + '\n');
+            }
+            /*LinkedList<String[]> allTermsMerged = afterFirstMerge.pollFirst();
             while (allTermsMerged.size() > 0) {
                 String[] toWriteA = allTermsMerged.pollFirst();
                 toWrite.append(toWriteA[0] + " " + toWriteA[1] + "\n");
-            }
+            }*/
             writer.print(toWrite);
             writer.close();
             postingIndex++;
@@ -93,8 +120,9 @@ public class Indexer {
         }
     }
 
+    /*
     private LinkedList<String[]> firstMerge(TreeMap<String, Integer> map1, TreeMap<String, Integer> map2,
-                                            String docName1, String docName2) {
+                                            String docName1, String docName2){
         LinkedList<String[]> result = new LinkedList<>();
         if (map2.size() == 0) {
             while (map1.size() > 0) {
@@ -161,7 +189,7 @@ public class Indexer {
             }
         }
         return result;
-    }
+    }*/
 
 
     private int OurStringComp(String s1, String s2) {
@@ -173,6 +201,7 @@ public class Indexer {
         return s1l.compareTo(s2l);
     }
 
+    /*
     private LinkedList<String[]> merge(LinkedList<String[]> map1,
                                        LinkedList<String[]> map2) {
         LinkedList<String[]> result = new LinkedList<>();
@@ -238,7 +267,7 @@ public class Indexer {
             }
             return result;
         }
-    }
+    }*/
 
     public void mergePostingFile() {
         try {
@@ -246,7 +275,6 @@ public class Indexer {
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
             terms = new TreeMap<>(new Indexer.MyComp());
-            //seekIndex = new int[postingIndex];
             howMuchTerms = new int[postingIndex];
             StringBuilder toWrite = new StringBuilder();
 
@@ -259,13 +287,11 @@ public class Indexer {
                 int counter = 1;
                 line = bufferReaders[i].readLine();
                 terms.put(line, i);
-                //queue[i] = new LinkedList<>();
                 while (line != null && counter != 3) {
                     line = bufferReaders[i].readLine();
                     terms.put(line, i);
                     counter++;
                 }
-                //seekIndex[i] = 3;
                 howMuchTerms[i] = 3;
             }
 
@@ -274,7 +300,8 @@ public class Indexer {
             currentTerm = currentTerm.substring(0, index);
             toWrite.append(terms.firstKey());
             String lastTerm = currentTerm;
-            updateTerm(terms.firstEntry().getValue(), bufferReaders[terms.pollFirstEntry().getValue()]);
+            int j = terms.pollFirstEntry().getValue();
+            updateTerm(j, bufferReaders[j]);
             int counter = 1;
             while (terms.size() > 0) {
                 currentTerm = terms.firstKey();
@@ -294,7 +321,8 @@ public class Indexer {
                     }
                     lastTerm = currentTerm;
                 }
-                updateTerm(terms.firstEntry().getValue(), bufferReaders[terms.pollFirstEntry().getValue()]);
+                int i = terms.pollFirstEntry().getValue();
+                updateTerm(i, bufferReaders[i]);
             }
 
             WriteFileBuffer.close();
@@ -304,7 +332,6 @@ public class Indexer {
         } catch (IOException Ex) {
             System.out.println(Ex.getMessage());
         }
-
     }
 
     private void updateTerm(int fileIndex, BufferedReader bufferedReader) {
@@ -314,39 +341,18 @@ public class Indexer {
                 String line;
                 int counter = 1;
                 line = bufferedReader.readLine();
-                terms.put(line, fileIndex);
-                howMuchTerms[fileIndex]++;
-                while (line != null && counter != 3) {
-                    line = bufferedReader.readLine();
+                if(line != null) {
                     terms.put(line, fileIndex);
                     howMuchTerms[fileIndex]++;
-                    //seekIndex[fileIndex]++;
-                    counter++;
                 }
-                /*
-                File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + fileIndex + ".txt");
-                Scanner sc = new Scanner(file);
-                String line;
-                int counter = 0;
-                for (int i = 0; i < seekIndex[fileIndex]; i++) {
-                    sc.nextLine();
-                }
-                if (sc.hasNext()) {
-                    line = sc.nextLine();
-                    while (line != null && counter != 3) {
+                while (line != null && counter != 3) {
+                    line = bufferedReader.readLine();
+                    if(line != null) {
                         terms.put(line, fileIndex);
-                        if (sc.hasNext()) {
-                            line = sc.nextLine();
-                            howMuchTerms[fileIndex]++;
-                            seekIndex[fileIndex]++;
-                            counter++;
-                        } else {
-                            counter = 3;
-                        }
-
+                        howMuchTerms[fileIndex]++;
+                        counter++;
                     }
                 }
-                sc.close();*/
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -356,20 +362,6 @@ public class Indexer {
     private void writeToPosting(StringBuilder toWrite, BufferedWriter WriteFileBuffer) {
         try {
             WriteFileBuffer.write(toWrite.toString());
-            /*
-            // create a new RandomAccessFile with filename test
-            RandomAccessFile raf = new RandomAccessFile("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\Posting.txt", "rw");
-
-            // set the file pointer at position
-            raf.seek(finalPostingIndex);
-            String stringToWrite = toWrite.toString() + " ";
-            // write something in the file
-            raf.writeUTF(stringToWrite);
-
-            finalPostingIndex = finalPostingIndex + stringToWrite.length();
-
-            raf.close();*/
-
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -378,9 +370,30 @@ public class Indexer {
     class MyComp implements Comparator<String> {
         @Override
         public int compare(String s1, String s2) {
+            int index1 = s1.indexOf(" ");
+            int index2 = s2.indexOf(" ");
+            String s11 = s1.substring(0, index1);
+            String s22 = s2.substring(0, index2);
+            String s1l = s11.toLowerCase();
+            String s2l = s22.toLowerCase();
+            if (s1l.equals(s2l)) {
+                if(s11.equals(s22)){
+                    return s1.compareTo(s2);
+                }else{
+                    return s1.compareTo(s2);
+                }
+
+            }
+            return s1l.compareTo(s2l);
+        }
+    }
+
+    static class MyComp2 implements Comparator<String> {
+        @Override
+        public int compare(String s1, String s2) {
             String s1l = s1.toLowerCase();
             String s2l = s2.toLowerCase();
-            if (s1l.equals(s2l)) {
+            if(s1l.equals(s2l)){
                 return s1.compareTo(s2);
             }
             return s1l.compareTo(s2l);
