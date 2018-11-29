@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class Indexer {
+    //globals
     static int postingIndex = 0;
     private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
     private static HashSet<String> dictionary = new HashSet<>();
