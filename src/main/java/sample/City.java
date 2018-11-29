@@ -38,7 +38,7 @@ public class City {
     }
 
     //adding to the city map the docname that contain the city and it location per doc
-    public void addToMap( String doc, String location){
+    public void addDocToMap( String doc, String location){
         //case that its not the first time that the city appears in the doc
         if(citiesInDoc.containsKey(doc)){
             citiesInDoc.put(doc ,citiesInDoc.get(doc)+ " and " + location);

@@ -19,11 +19,11 @@ import java.util.TreeMap;
 public class CitiesIndexer {
 
     static Map<String, City> citiesDetails = new HashMap<>();
+    //contain for each doc where it was write
     static Map<String, City> cities = new HashMap<>();
     private org.json.simple.parser.JSONParser myParser;
 
-    public void findCity(String cityName ) {
-        getCapitalName(cityName);
+    public void findCity(String docName, String cityName, int location) {
 
 
     }
@@ -41,7 +41,7 @@ public class CitiesIndexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Object object=null;
+        Object object = null;
         myParser = new org.json.simple.parser.JSONParser();
         try {
             try {
@@ -52,46 +52,39 @@ public class CitiesIndexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(object!=null){
-            String capital = "",country="",coin="";
-            Long population=0L;
+        if (object != null) {
+            String capital = "", country = "", coin = "";
+            Long population = 0L;
             Object[] parsed_json = ((JSONArray) object).toArray();
-            for (Object O: parsed_json) {
-                capital=(String)((JSONObject)O).get("capital");
-                country=(String)((JSONObject)O).get("name");
-                JSONArray theArray = (JSONArray)(((JSONObject)O).get("currencies"));
-                for (Object obj:theArray) {
-                    coin=(String)((JSONObject)obj).get("code");
+            for (Object O : parsed_json) {
+                capital = (String) ((JSONObject) O).get("capital");
+                country = (String) ((JSONObject) O).get("name");
+                JSONArray theArray = (JSONArray) (((JSONObject) O).get("currencies"));
+                for (Object obj : theArray) {
+                    coin = (String) ((JSONObject) obj).get("code");
                 }
-                population = (Long)((JSONObject)O).get("population");
-                String pop =  divideNumbers(population);
-                citiesDetails.put(capital.toUpperCase(),new City(capital,country,coin,pop));
+                population = (Long) ((JSONObject) O).get("population");
+                String pop = divideNumbers(population);
+                citiesDetails.put(capital.toUpperCase(), new City(capital, country, coin, pop));
             }
         }
     }
 
     //check if the city name is one word or to and add to the city dictionary the doc that contain the city and it location
-    private void getCapitalName(String capital,String doc, String location) {
-        int index=-1;
-        String[] allCapitalParts=capital.split(" ");
-        if(allCapitalParts.length>1) {
+    private void addCityToCorpusMap(String capital, String doc) {
+        int index = -1;
+        String[] allCapitalParts = capital.split(" ");
+        if (allCapitalParts.length > 1) {
             if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
-                //not the first time that the city cpears
-                if(cities.containsKey(allCapitalParts[0].toUpperCase())){
-                    cities.get(allCapitalParts[0].toUpperCase()).addToMap(doc , location);
-                }
-                else{
-                    cities.put(allCapitalParts[0].toUpperCase(),citiesDetails.get(allCapitalParts[0].toUpperCase()));
-                }
-            } else if (citiesDetails.containsKey(allCapitalParts[0] + " " + allCapitalParts[1])) {
-                String capital2 = allCapitalParts[0] + " " + allCapitalParts[1];
+                cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
             }
+        } else if (citiesDetails.containsKey(allCapitalParts[0] + " " + allCapitalParts[1])) {
+            cities.put(doc, citiesDetails.get(allCapitalParts[0] + " " + allCapitalParts[1].toUpperCase()));
         }
     }
 
 
     /**
-     *
      * @param population
      * @return the population divide by 1000000,or more..
      */
@@ -101,17 +94,17 @@ public class CitiesIndexer {
             population = population / 1000000000;
             String toWrite;
             if (isNaturalNumber(population)) {
-                int di = (int)(long)population;
+                int di = (int) (long) population;
                 toWrite = Integer.toString(di);
             } else {
                 toWrite = Double.toString(population);
             }
-            return toWrite+"B";
+            return toWrite + "B";
         } else if (population >= 1000000) {
             population = population / 1000000;
             String toWrite;
             if (isNaturalNumber(population)) {
-                int di = (int)(long)population;
+                int di = (int) (long) population;
                 toWrite = Integer.toString(di);
             } else {
                 toWrite = Double.toString(population);
@@ -121,7 +114,7 @@ public class CitiesIndexer {
             population = population / 1000;
             String toWrite;
             if (isNaturalNumber(population)) {
-                int di = (int)(long)population;
+                int di = (int) (long) population;
                 toWrite = Integer.toString(di);
             } else {
                 toWrite = Double.toString(population);
@@ -130,7 +123,7 @@ public class CitiesIndexer {
         } else {
             String toWrite;
             if (isNaturalNumber(population)) {
-                int di = (int)(long) population;
+                int di = (int) (long) population;
                 toWrite = Integer.toString(di);
             } else {
                 toWrite = Double.toString(population);
