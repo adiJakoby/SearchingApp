@@ -18,6 +18,7 @@ public class Parse {
     HashSet<String> stopWordsSet = new HashSet<String>();
     Stemmer stemmer = new Stemmer();
     static CitiesIndexer myCitiesIndexer = new CitiesIndexer();
+    String docName;
 
 
     public Parse() {
@@ -45,7 +46,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = "C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String filePath = "C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -64,9 +65,16 @@ public class Parse {
         }
     }
 
+    static void apiGetStart(){
+        myCitiesIndexer.api_Connection();
+    }
+
     public void parser(String doc, String docNo, boolean doneFile,String city) {
         //TODO replace ( ) { } [ ] to space
-        //myCitiesIndexer.api_Connection();
+        if(!city.equals("")&&!city.contains("<F P=")) {
+            myCitiesIndexer.addCityToCorpusMap(city, docNo);
+        }
+        this.docName=docNo;
         char[] toReplace = {',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
         doc = OurReplace(doc,"\n", " ");
         doc = OurReplace(doc, toReplace, " ");
@@ -405,6 +413,10 @@ public class Parse {
      * @param newToken
      */
     private void addToMap(String newToken) {
+        //case when the new token it a city
+        if(myCitiesIndexer.citiesDetails.containsKey(newToken.toUpperCase())){
+            myCitiesIndexer.citiesDetails.get(newToken.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
+        }
         if (tokens.containsKey(newToken)) {
             tokens.put(newToken, tokens.get(newToken) + 1);
         } else {
@@ -564,6 +576,9 @@ public class Parse {
      */
     private void addToMapLowCase(String word) {
         if (tokens.containsKey(word.toUpperCase())) {
+            if(myCitiesIndexer.citiesDetails.containsKey(word.toUpperCase())){
+                myCitiesIndexer.citiesDetails.get(word.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
+            }
             int counter = tokens.get(word.toUpperCase());
             counter++;
             tokens.remove(word.toUpperCase());

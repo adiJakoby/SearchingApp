@@ -6,36 +6,18 @@ import java.util.Map;
 public class City {
 
     private String name;
+    private String country;
     private String coin;
     private String population;
     private Map<String, String> citiesInDoc = new HashMap<>();
 
     public City(String capital, String country, String code, String pop) {
-        this.name=country;
+        this.name=capital;
+        this.country=country;
         this.coin=code;
         this.population=pop;
     }
 
-
-    public String getCoin() {
-        return coin;
-    }
-
-    public String getPopulation() {
-        return population;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setCoin(String coin) {
-        this.coin = coin;
-    }
-
-    public void setPopulation(String population) {
-        this.population = population;
-    }
 
     //adding to the city map the docname that contain the city and it location per doc
     public void addDocToMap( String doc, String location){
@@ -46,5 +28,9 @@ public class City {
         else {
             citiesInDoc.put(doc , location);
         }
+    }
+
+    public String getName() {
+        return name;
     }
 }

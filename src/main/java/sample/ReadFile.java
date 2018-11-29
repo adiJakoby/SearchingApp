@@ -26,6 +26,7 @@ public class ReadFile {
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
         File file = new File(path);
+        Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
             if (file2.isDirectory()) {
                 for (File file3 : file2.listFiles()) {
