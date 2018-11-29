@@ -150,7 +150,7 @@ public class CitiesIndexer {
             return toWrite;
         }
     }
-
+    //checking if natural number
     private boolean isNaturalNumber(double number) {
         int x = (int) number;
         double y = number - x;
