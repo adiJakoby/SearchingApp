@@ -38,7 +38,18 @@ public class ReadFile {
                         for (Element e : docs) {
                             boolean done = e.siblingIndex() == docs.last().siblingIndex();
                             Parse p = new Parse();
-                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done);
+                            String city = e.getElementsByTag("F").toString();
+                            if(!city.equals("")) {
+                                city = city.substring(city.indexOf("<f p=\"104\">", city.indexOf("</f>")));
+                                if (city.length() > 15) {
+                                    city = city.substring(city.indexOf("\n "), city.indexOf(" \n"));
+                                    city = city.replaceAll("\n", "");
+                                    String cityline[] = city.split(" ");
+                                    city = cityline[2].toUpperCase();
+
+                                }
+                            }
+                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done,city);
                             Date date1 = new Date();
                             i++;
                         }

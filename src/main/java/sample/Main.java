@@ -30,7 +30,7 @@ public class Main extends Application {
         Date date = new Date();
         System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
         ReadFile Myreader = new ReadFile();
-        Myreader.ReadFile("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\corpus");
+        Myreader.ReadFile("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\corpus");
         Indexer indexer = new Indexer();
         indexer.mergePostingFile();
         Date date1 = new Date();

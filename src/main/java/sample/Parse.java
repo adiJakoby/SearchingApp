@@ -17,6 +17,7 @@ public class Parse {
     private Map<String, String> monthMap = new HashMap<String, String>();
     HashSet<String> stopWordsSet = new HashSet<String>();
     Stemmer stemmer = new Stemmer();
+    static CitiesIndexer myCitiesIndexer = new CitiesIndexer();
 
 
     public Parse() {
@@ -63,8 +64,9 @@ public class Parse {
         }
     }
 
-    public void parser(String doc, String docNo, boolean doneFile) {
+    public void parser(String doc, String docNo, boolean doneFile,String city) {
         //TODO replace ( ) { } [ ] to space
+        myCitiesIndexer.api_Connection();
         doc = OurReplace(doc,"\n", " ");
         splitDoc = mySplit(doc, " ");
         for (int i = 0; i < splitDoc.length; i++) {
