@@ -66,8 +66,10 @@ public class Parse {
 
     public void parser(String doc, String docNo, boolean doneFile,String city) {
         //TODO replace ( ) { } [ ] to space
-        myCitiesIndexer.api_Connection();
+        //myCitiesIndexer.api_Connection();
+        char[] toReplace = {',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
         doc = OurReplace(doc,"\n", " ");
+        doc = OurReplace(doc, toReplace, " ");
         splitDoc = mySplit(doc, " ");
         for (int i = 0; i < splitDoc.length; i++) {
             splitDoc[i] = removeFromTheEdges(splitDoc[i]);
@@ -681,18 +683,25 @@ public class Parse {
 
     //TODO to check if it works and use it
     private String OurReplace(String s, char[] targets, String replacement) {
-        StringBuilder sb = null;
-        int start = 0;
-        for (int i; (i = getSmallestIndexOf(s, targets, start)) != -1; ) {
-            if (sb == null) sb = new StringBuilder();
-            sb.append(s, start, i);
-            sb.append(replacement);
-            start = i + 1;
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < s.length(); i++){
+            char check = s.charAt(i);
+            boolean contain = false;
+            for(int j = 0; !contain && j < targets.length; j++){
+                if(check == targets[j]){
+                    contain = true;
+                }
+            }
+            if(contain){
+                sb.append(" ");
+            }
+            else{
+                sb.append(check);
+            }
         }
-        if (sb == null) return s;
-        sb.append(s, start, s.length());
         return sb.toString();
     }
+
 
     private int getSmallestIndexOf(String s, char[] targets, int start){
         int min = s.indexOf(targets[0], start);;

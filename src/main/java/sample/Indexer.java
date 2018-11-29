@@ -6,15 +6,18 @@ import java.util.*;
 public class Indexer {
     static int postingIndex = 0;
     private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
-    //private static LinkedList<TreeMap<String, Integer>> allMaps = new LinkedList();
-    //private static LinkedList<String> docsNames = new LinkedList();
     private static HashSet<String> dictionary = new HashSet<>();
     private TreeMap<String, Integer> terms;
-    //private int[] seekIndex;
     private int[] howMuchTerms;
-    //private int finalPostingIndex = 0;
     private static int doneCounter = 0;
 
+    /**
+     * get a sorted map of tokens of doc, add the tokens to the generic dictionary of the corpus, and every few calls to
+     * this function write to the disk the temporally posting files.
+     * @param tokens - the given map of a docName doc
+     * @param docName - the name of the doc.
+     * @param doneFile - if a specific file is done.
+     */
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
         dictionary.addAll(tokens.keySet());
         if (doneFile) {
@@ -22,21 +25,20 @@ public class Indexer {
         }
         if(doneCounter == 33){
             addToMap(tokens, docName);
-            //allMaps.add(tokens);
-            //docsNames.add(docName);
             if (mergedTerms.size() > 0) {
                 executePosting();
             }
             mergedTerms.clear();
-            //docsNames.clear();
             doneCounter = 0;
-            //allMaps = new LinkedList();
-            //docsNames = new LinkedList();
         }
         addToMap(tokens, docName);
-        //docsNames.add(docName);
     }
 
+    /**
+     * adding the map of the tokens of a doc to the local map of a few docs. merge the tokens map.
+     * @param tokens
+     * @param docName
+     */
     private void addToMap(TreeMap<String, Integer> tokens, String docName){
         while(tokens.size() > 0){
             String token = tokens.firstKey();
@@ -53,65 +55,16 @@ public class Indexer {
         }
     }
 
+    /**
+     * writing to the disk a temporally posting file of a few documents.
+     */
     private void executePosting() {
-        /*
-        LinkedList<LinkedList<String[]>> afterFirstMerge = new LinkedList<>();
-        LinkedList<LinkedList<String[]>> tempMerge = new LinkedList<>();
-
-        while (allMaps.size() > 0) {
-            String docName1 = "";
-            String docName2 = "";
-            TreeMap<String, Integer> map1 = new TreeMap<>();
-            TreeMap<String, Integer> map2 = new TreeMap<>();
-            while (allMaps.size() > 0 && allMaps.peekFirst().size() == 0) {
-                allMaps.pollFirst();
-                docsNames.pollFirst();
-            }
-            if (allMaps.size() > 0) {
-                map1 = allMaps.pollFirst();
-                docName1 = docsNames.pollFirst();
-            }
-            while (allMaps.size() > 0 && allMaps.peekFirst().size() == 0) {
-                allMaps.pollFirst();
-                docsNames.pollFirst();
-            }
-            if (allMaps.size() > 0) {
-                map2 = allMaps.pollFirst();
-                docName2 = docsNames.pollFirst();
-            }
-            afterFirstMerge.add(firstMerge(map1, map2, docName1, docName2));
-        }
-
-        boolean done = false;
-        while (afterFirstMerge.size() >= 1 && !done) {
-            LinkedList<String[]> map1 = new LinkedList<>();
-            LinkedList<String[]> map2 = new LinkedList<>();
-            map1 = afterFirstMerge.pollFirst();
-            if (afterFirstMerge.size() >= 1) {
-                map2 = afterFirstMerge.pollFirst();
-            }
-            tempMerge.add(merge(map1, map2));
-
-            if (afterFirstMerge.size() == 0) {
-                afterFirstMerge.addAll(tempMerge);
-                tempMerge.clear();
-                if (afterFirstMerge.size() == 1) {
-                    done = true;
-                }
-            }
-        }*/
-
         try {
             PrintWriter writer = new PrintWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
             while(mergedTerms.size() > 0){
                 toWrite.append(mergedTerms.firstKey() + " " + mergedTerms.pollFirstEntry().getValue() + '\n');
             }
-            /*LinkedList<String[]> allTermsMerged = afterFirstMerge.pollFirst();
-            while (allTermsMerged.size() > 0) {
-                String[] toWriteA = allTermsMerged.pollFirst();
-                toWrite.append(toWriteA[0] + " " + toWriteA[1] + "\n");
-            }*/
             writer.print(toWrite);
             writer.close();
             postingIndex++;
@@ -119,77 +72,6 @@ public class Indexer {
             ioe.printStackTrace();
         }
     }
-
-    /*
-    private LinkedList<String[]> firstMerge(TreeMap<String, Integer> map1, TreeMap<String, Integer> map2,
-                                            String docName1, String docName2){
-        LinkedList<String[]> result = new LinkedList<>();
-        if (map2.size() == 0) {
-            while (map1.size() > 0) {
-                String[] toAdd = {map1.firstKey(), docName1 + " " + map1.firstEntry().getValue()};
-                result.add(toAdd);
-                map1.pollFirstEntry();
-            }
-        } else {
-            String term1 = map1.firstKey();
-            Integer count1 = map1.firstEntry().getValue();
-            String term2 = map2.firstKey();
-            Integer count2 = map2.firstEntry().getValue();
-
-            while (map1.size() > 0 && map2.size() > 0) {
-                int isEquals = OurStringComp(term1, term2);
-                if (isEquals == 0) {
-                    String[] toAdd = {term1, docName1 + " " + Integer.toString(count1) + " " + docName2 + " " + Integer.toString(count2)};
-                    result.add(toAdd);
-                    map1.pollFirstEntry();
-                    if (map1.size() > 0) {
-                        term1 = map1.firstKey();
-                        count1 = map1.firstEntry().getValue();
-                    }
-                    map2.pollFirstEntry();
-                    if (map2.size() > 0) {
-                        term2 = map2.firstKey();
-                        count2 = map2.firstEntry().getValue();
-                    }
-                } else if (isEquals < 0) {
-                    String[] toAdd = {term1, docName1 + " " + Integer.toString(count1)};
-                    result.add(toAdd);
-                    map1.pollFirstEntry();
-                    if (map1.size() > 0) {
-                        term1 = map1.firstKey();
-                        count1 = map1.firstEntry().getValue();
-                    }
-                } else {
-                    String[] toAdd = {term2, docName2 + " " + Integer.toString(count2)};
-                    result.add(toAdd);
-                    map2.pollFirstEntry();
-                    if (map2.size() > 0) {
-                        term2 = map2.firstKey();
-                        count2 = map2.firstEntry().getValue();
-                    }
-                }
-            }
-            while (map1.size() > 0) {
-                String[] toAdd = {term1, docName1 + " " + Integer.toString(count1)};
-                result.add(toAdd);
-                map1.pollFirstEntry();
-                if (map1.size() > 0) {
-                    term1 = map1.firstKey();
-                    count1 = map1.firstEntry().getValue();
-                }
-            }
-            while (map2.size() > 0) {
-                String[] toAdd = {term2, docName2 + " " + Integer.toString(count2)};
-                result.add(toAdd);
-                map2.pollFirstEntry();
-                if (map2.size() > 0) {
-                    term2 = map2.firstKey();
-                    count2 = map2.firstEntry().getValue();
-                }
-            }
-        }
-        return result;
-    }*/
 
 
     private int OurStringComp(String s1, String s2) {
@@ -201,79 +83,18 @@ public class Indexer {
         return s1l.compareTo(s2l);
     }
 
-    /*
-    private LinkedList<String[]> merge(LinkedList<String[]> map1,
-                                       LinkedList<String[]> map2) {
-        LinkedList<String[]> result = new LinkedList<>();
 
-        if (map2.size() == 0) {
-            return map1;
-        } else {
-            String term1 = map1.peekFirst()[0];
-            String count1 = map1.peekFirst()[1];
-            String term2 = map2.peekFirst()[0];
-            String count2 = map2.peekFirst()[1];
-
-            while (map1.size() > 0 && map2.size() > 0) {
-                int isEquals = OurStringComp(term1, term2);
-                if (isEquals == 0) {
-                    String[] toAdd = {term1, count1 + " " + count2};
-                    result.add(toAdd);
-                    map1.pollFirst();
-                    if (map1.size() > 0) {
-                        term1 = map1.peekFirst()[0];
-                        count1 = map1.peekFirst()[1];
-                    }
-                    map2.pollFirst();
-                    if (map2.size() > 0) {
-                        term2 = map2.peekFirst()[0];
-                        count2 = map2.peekFirst()[1];
-                    }
-                } else if (isEquals < 0) {
-                    String[] toAdd = {term1, count1};
-                    result.add(toAdd);
-                    map1.pollFirst();
-                    if (map1.size() > 0) {
-                        term1 = map1.peekFirst()[0];
-                        count1 = map1.peekFirst()[1];
-                    }
-                } else {
-                    String[] toAdd = {term2, count2};
-                    result.add(toAdd);
-                    map2.pollFirst();
-                    if (map2.size() > 0) {
-                        term2 = map2.peekFirst()[0];
-                        count2 = map2.peekFirst()[1];
-                    }
-                }
-            }
-            while (map1.size() > 0) {
-                String[] toAdd = {term1, count1};
-                result.add(toAdd);
-                map1.pollFirst();
-                if (map1.size() > 0) {
-                    term1 = map1.peekFirst()[0];
-                    count1 = map1.peekFirst()[1];
-                }
-            }
-            while (map2.size() > 0) {
-                String[] toAdd = {term2, count2};
-                result.add(toAdd);
-                map2.pollFirst();
-                if (map2.size() > 0) {
-                    term2 = map2.peekFirst()[0];
-                    count2 = map2.peekFirst()[1];
-                }
-            }
-            return result;
-        }
-    }*/
-
+    /**
+     * merge all the temporally posting files to one.
+     */
     public void mergePostingFile() {
         try {
+            // open a buffer writer to the final posting file
             FileWriter fw = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\Posting.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
+            //tree map that keeps 3 terms from the each temp posting files
             terms = new TreeMap<>(new Indexer.MyComp());
             howMuchTerms = new int[postingIndex];
             StringBuilder toWrite = new StringBuilder();
@@ -295,6 +116,7 @@ public class Indexer {
                 howMuchTerms[i] = 3;
             }
 
+            //running over the the tree map with 3 term from each temp posting file. and writing to the final posting file every 10 terms.
             String currentTerm = terms.firstKey();
             int index = currentTerm.indexOf(" ");
             currentTerm = currentTerm.substring(0, index);
@@ -334,6 +156,12 @@ public class Indexer {
         }
     }
 
+    /**
+     * checks if the tree map of the terms contain at least 1 term from the temp posting file (file Index)
+     * if not, add 3 terms fron this temp posting file to the tree map.
+     * @param fileIndex
+     * @param bufferedReader
+     */
     private void updateTerm(int fileIndex, BufferedReader bufferedReader) {
         howMuchTerms[fileIndex]--;
         if (howMuchTerms[fileIndex] == 0) {
@@ -359,6 +187,11 @@ public class Indexer {
         }
     }
 
+    /**
+     * writing to the final posting file the string to write
+     * @param toWrite
+     * @param WriteFileBuffer
+     */
     private void writeToPosting(StringBuilder toWrite, BufferedWriter WriteFileBuffer) {
         try {
             WriteFileBuffer.write(toWrite.toString());
@@ -367,6 +200,9 @@ public class Indexer {
         }
     }
 
+    /**
+     * compare just by the term
+     */
     class MyComp implements Comparator<String> {
         @Override
         public int compare(String s1, String s2) {
