@@ -10,6 +10,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +32,8 @@ public class CitiesIndexer {
 
     //connecting to the cities API and get all cities details into cities hashmap
     public void api_Connection() {
+        //int maxlength=0;
+        //String maxCity="";
         OkHttpClient myClient = new OkHttpClient();
         //HttpUrl.Builder urlBuilder = HttpUrl.parse("https://restcountries.eu/rest/v2/all?fielss=capital;name;pop;");
         String url = "https://restcountries.eu/rest/v2/all?fielss=capital;name;population;currency";
@@ -63,23 +67,38 @@ public class CitiesIndexer {
                 for (Object obj : theArray) {
                     coin = (String) ((JSONObject) obj).get("code");
                 }
+                /*
+                if(maxlength<capital.length()){
+                    maxlength=capital.length();
+                    maxCity=capital;
+                }*/
                 population = (Long) ((JSONObject) O).get("population");
                 String pop = divideNumbers(population);
-                citiesDetails.put(capital.toUpperCase(), new City(capital, country, coin, pop));
+                citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, coin, pop));
+
             }
+            //System.out.println(maxlength);
+            //System.out.println(maxCity);
         }
     }
 
     //check if the city name is one word or to and add to the city dictionary the doc that contain the city and it location
-    private void addCityToCorpusMap(String capital, String doc) {
-        int index = -1;
+    public void addCityToCorpusMap(String capital, String doc) {
         String[] allCapitalParts = capital.split(" ");
         if (allCapitalParts.length > 1) {
-            if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
-                cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
+            if(allCapitalParts.length == 3) {
+                if (citiesDetails.containsKey(allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2].toUpperCase())) {
+                    cities.put(doc, citiesDetails.get(allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2].toUpperCase()));
+                }
             }
-        } else if (citiesDetails.containsKey(allCapitalParts[0] + " " + allCapitalParts[1])) {
-            cities.put(doc, citiesDetails.get(allCapitalParts[0] + " " + allCapitalParts[1].toUpperCase()));
+            else if(allCapitalParts.length == 2) {
+                if (citiesDetails.containsKey(allCapitalParts[0] + " " + allCapitalParts[1].toUpperCase())) {
+                    cities.put(doc, citiesDetails.get(allCapitalParts[0] + " " + allCapitalParts[1].toUpperCase()));
+                }
+            }
+        }
+        else{
+            cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
         }
     }
 
@@ -141,6 +160,26 @@ public class CitiesIndexer {
         return true;
     }
 
+    //http://getcitydetails.geobytes.com/GetCityDetails?fqcn=USNYNYOR', true);
 
+    public static void writeDocPostingFile() {
+        try {
+            FileWriter fw = new FileWriter("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\CitiesPosting.txt");
+            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            StringBuilder toWrite = new StringBuilder();
+            for(Map.Entry<String, City> entry : cities.entrySet()) {
+                String key = entry.getKey();
+                City value = entry.getValue();
+                if(value!=null) {
+                    toWrite.append(key + " " + value.getName() + "\n");
+                }
+            }
+            WriteFileBuffer.write(toWrite.toString());
+            WriteFileBuffer.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }
 
