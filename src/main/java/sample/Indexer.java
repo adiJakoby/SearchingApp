@@ -24,6 +24,7 @@ public class Indexer {
         if (doneFile) {
             doneCounter++;
         }
+
         if (doneCounter == 33) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
@@ -64,7 +65,7 @@ public class Indexer {
             PrintWriter writer = new PrintWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
             while (mergedTerms.size() > 0) {
-                toWrite.append(mergedTerms.firstKey() + " " + mergedTerms.pollFirstEntry().getValue() + '\n');
+                toWrite.append(mergedTerms.firstKey() + ": " + mergedTerms.pollFirstEntry().getValue() + '\n');
             }
             writer.print(toWrite);
             writer.close();
@@ -120,7 +121,7 @@ public class Indexer {
 
             //running over the the tree map with 3 term from each temp posting file. and writing to the final posting file every 10 terms.
             String currentTerm = terms.firstKey();
-            int index = currentTerm.indexOf(" ");
+            int index = currentTerm.indexOf(":");
             currentTerm = currentTerm.substring(0, index);
             if (Character.isUpperCase(currentTerm.charAt(0))){
                 if(dictionary.contains(currentTerm.toLowerCase())){
@@ -135,7 +136,7 @@ public class Indexer {
             int counter = 1;
             while (terms.size() > 0) {
                 currentTerm = terms.firstKey();
-                index = currentTerm.indexOf(" ");
+                index = currentTerm.indexOf(":");
                 currentTerm = currentTerm.substring(0, index);
                 if (Character.isUpperCase(currentTerm.charAt(0))){
                     if(dictionary.contains(currentTerm.toLowerCase())){
@@ -145,7 +146,7 @@ public class Indexer {
                 }
 
                 if (currentTerm.equals(lastTerm)) {
-                    toWrite.append(terms.firstKey().substring(index));
+                    toWrite.append(terms.firstKey().substring(index+1));
                 } else {
                     if (counter == 10) {
                         writeToPosting(toWrite, WriteFileBuffer);
@@ -224,8 +225,8 @@ public class Indexer {
     class MyComp implements Comparator<String> {
         @Override
         public int compare(String s1, String s2) {
-            int index1 = s1.indexOf(" ");
-            int index2 = s2.indexOf(" ");
+            int index1 = s1.indexOf(":");
+            int index2 = s2.indexOf(":");
             String s11 = s1.substring(0, index1);
             String s22 = s2.substring(0, index2);
             String s1l = s11.toLowerCase();

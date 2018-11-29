@@ -20,6 +20,12 @@ public class Stemmer {
             snowballStemmer.setCurrent(key);
             snowballStemmer.stem();
             String newStem = snowballStemmer.getCurrent();
+            if(Character.isLowerCase(key.charAt(0))) {
+                newStem = newStem.toLowerCase();
+            }
+            else{
+                newStem = newStem.toUpperCase();
+            }
             if (stems.containsKey(newStem)) {
                 int counter = stems.get(newStem);
                 stems.put(newStem, counter + tokens.get(key));
