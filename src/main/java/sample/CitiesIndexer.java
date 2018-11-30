@@ -1,6 +1,11 @@
 
 package sample;
 
+import com.wirefreethought.geodb.client.GeoDbApi;
+import com.wirefreethought.geodb.client.model.*;
+import com.wirefreethought.geodb.client.net.GeoDbApiClient;
+import com.wirefreethought.geodb.client.request.FindCitiesRequest;
+import com.wirefreethought.geodb.client.request.FindCurrenciesRequest;
 import jdk.nashorn.internal.parser.JSONParser;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -13,10 +18,7 @@ import org.json.simple.parser.ParseException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
+import java.util.*;
 
 
 public class CitiesIndexer {
@@ -27,10 +29,6 @@ public class CitiesIndexer {
     private org.json.simple.parser.JSONParser myParser;
     static String workingDir = System.getProperty("user.dir");
 
-    public void findCity(String docName, String cityName, int location) {
-
-
-    }
 
     //connecting to the cities API and get all cities details into cities hashmap
     public void api_Connection() {
@@ -78,6 +76,7 @@ public class CitiesIndexer {
 
     //check if the city name is one word or to and add to the city dictionary the doc that contain the city and it location
     public void addCityToCorpusMap(String capital, String doc) {
+        //TODO take care in cases that our all cities dictionary does not contain the city
         char[] mychars = {'(', ')'};
         if (capital.contains("(")) {
             capital = OurReplace(capital, mychars, "");
@@ -85,7 +84,9 @@ public class CitiesIndexer {
         String[] allCapitalParts = mySplit(capital," ");
         if (allCapitalParts.length > 1) {
             if (allCapitalParts.length == 3) {
-                if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase())) {
+                if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()))
+                {
+                    citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()).addDocToCity(doc);
                     cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()));
                     //System.out.println(doc);
                 } else {
@@ -94,6 +95,7 @@ public class CitiesIndexer {
                 }
             } else if (allCapitalParts.length == 2) {
                 if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase())) {
+                    citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase()).addDocToCity(doc);
                     cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase()));
                     //System.out.println(doc);
                 } else {
@@ -102,6 +104,7 @@ public class CitiesIndexer {
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
+            citiesDetails.get((allCapitalParts[0]).toUpperCase()).addDocToCity(doc);
             cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
             //System.out.println(doc);
         } else {
@@ -112,6 +115,24 @@ public class CitiesIndexer {
 
     //in case that the city it not a capital
     private void getCityDetails(String city, String doc) {
+        /*GeoDbApiClient apiClient = new GeoDbApiClient(GeoDbInstanceType.FREE);
+        GeoDbApi geoDbApi = new GeoDbApi(apiClient);
+
+// Execute service calls. (See below for examples.)
+        CitiesResponse citiesResponse = geoDbApi.findCities(
+                FindCitiesRequest.builder()
+                        .namePrefix("New York")
+                        .build()
+        );
+
+        Metadata m = citiesResponse.getMetadata();
+        CitySummary c = citiesResponse.getData().get(0);
+
+        //citiesResponse.setData();
+        System.out.println(citiesResponse.getData());
+        System.out.println(geoDbApi.findCurrencies(FindCurrenciesRequest.builder().countryId(citiesResponse.getData().get(0).getCountryCode()).build()));
+        System.out.println();
+        */
         OkHttpClient myClient = new OkHttpClient();
         String url = "http://getcitydetails.geobytes.com/GetCityDetails?fqcn=" + city;
         Request req = new Request.Builder().url(url).build();
@@ -149,50 +170,56 @@ public class CitiesIndexer {
     }
 
     /**
-     * @param population
+     * @param pop
      * @return the population divide by 1000000,or more..
      */
-    private String divideNumbers(Long population) {
-        //double d = ourParseToDouble(toDivide);
+    private String divideNumbers(Long pop) {
+        int population=(int)(long)pop;
+        int rest=0;
+        String restbyString="";
         if (population >= 1000000000) {
+            rest=population%1000000000;
             population = population / 1000000000;
-            String toWrite;
-            if (isNaturalNumber(population)) {
-                int di = (int) (long) population;
-                toWrite = Integer.toString(di);
-            } else {
-                toWrite = Double.toString(population);
+            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
+                restbyString=Integer.toString(population)+".0"+(Integer.toString(rest)).substring(0,1);
             }
-            return toWrite + "B";
+            else {
+                restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
+            }
+            return restbyString + "B";
         } else if (population >= 1000000) {
+            rest=population%1000000;
             population = population / 1000000;
-            String toWrite;
-            if (isNaturalNumber(population)) {
-                int di = (int) (long) population;
-                toWrite = Integer.toString(di);
-            } else {
-                toWrite = Double.toString(population);
+            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
+                restbyString=Integer.toString(population)+".0"+(Integer.toString(rest)).substring(0,1);
             }
-            return toWrite + "M";
+            else {
+                restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
+            }
+            return restbyString + "M";
         } else if (population >= 1000) {
+            rest = population % 1000;
             population = population / 1000;
-            String toWrite;
-            if (isNaturalNumber(population)) {
-                int di = (int) (long) population;
-                toWrite = Integer.toString(di);
-            } else {
-                toWrite = Double.toString(population);
+            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
+                if(Integer.toString(rest).length()>=2) {
+                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
+                }
+                else if(Integer.toString(rest).length()==1){
+                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
+                }
             }
-            return toWrite + "K";
+            else {
+                if(Integer.toString(rest).length()>=2) {
+                    restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
+                }
+                else if(Integer.toString(rest).length()==1){
+                    restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 1);
+                }
+            }
+            return restbyString + "K";
         } else {
-            String toWrite;
-            if (isNaturalNumber(population)) {
-                int di = (int) (long) population;
-                toWrite = Integer.toString(di);
-            } else {
-                toWrite = Double.toString(population);
-            }
-            return toWrite;
+            restbyString=pop.toString();
+            return restbyString;
         }
     }
 
