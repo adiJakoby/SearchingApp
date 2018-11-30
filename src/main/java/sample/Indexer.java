@@ -6,7 +6,7 @@ import java.util.*;
 public class Indexer {
     static int postingIndex = 0;
     private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
-    private static HashSet<String> dictionary = new HashSet<>();
+    private static HashMap<String, Integer> dictionary = new HashMap<>();
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     private static int doneCounter = 0;
@@ -21,11 +21,11 @@ public class Indexer {
      * @param doneFile - if a specific file is done.
      */
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
-        dictionary.addAll(tokens.keySet());
+        dictionary.putAll(tokens);
+        //dictionary.addAll(tokens.keySet());
         if (doneFile) {
             doneCounter++;
         }
-
         if (doneCounter == 33) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
@@ -105,7 +105,7 @@ public class Indexer {
 
             //initial the tree map terms with the X first lines.
             for (int i = 0; i < postingIndex; i++) {
-                File file = new File(workingDir + "\\SearchingApp\\src\\main\\java\\" + i + ".txt");
+                File file = new File(workingDir + "\\src\\main\\java\\" + i + ".txt");
                 FileReader fileReader = new FileReader(file);
                 bufferReaders[i] = new BufferedReader(fileReader);
                 String line;
@@ -125,7 +125,8 @@ public class Indexer {
             int index = currentTerm.indexOf(":");
             currentTerm = currentTerm.substring(0, index);
             if (Character.isUpperCase(currentTerm.charAt(0))){
-                if(dictionary.contains(currentTerm.toLowerCase())){
+                //dictionary.contains(currentTerm.toLowerCase())
+                if(dictionary.containsKey(currentTerm.toLowerCase())){
                     dictionary.remove(currentTerm);
                     currentTerm = currentTerm.toLowerCase();
                 }
@@ -140,7 +141,8 @@ public class Indexer {
                 index = currentTerm.indexOf(":");
                 currentTerm = currentTerm.substring(0, index);
                 if (Character.isUpperCase(currentTerm.charAt(0))){
-                    if(dictionary.contains(currentTerm.toLowerCase())){
+                    //dictionary.contains(currentTerm.toLowerCase()
+                    if(dictionary.containsKey(currentTerm.toLowerCase())){
                         dictionary.remove(currentTerm);
                         currentTerm = currentTerm.toLowerCase();
                     }
@@ -149,6 +151,8 @@ public class Indexer {
                 if (currentTerm.equals(lastTerm)) {
                     toWrite.append(terms.firstKey().substring(index+1));
                 } else {
+                    dictionary.put(lastTerm, pointer);
+                    pointer++;
                     if (counter == 10) {
                         writeToPosting(toWrite, WriteFileBuffer);
                         toWrite = new StringBuilder();
@@ -171,7 +175,7 @@ public class Indexer {
         } catch (IOException Ex) {
             System.out.println(Ex.getMessage());
         }
-        System.out.println("we have: " + dictionary.size() + " terms");
+        System.out.println(dictionary.entrySet());
     }
 
     /**

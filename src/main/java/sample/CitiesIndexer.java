@@ -87,26 +87,26 @@ public class CitiesIndexer {
             if (allCapitalParts.length == 3) {
                 if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase())) {
                     cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()));
-                    System.out.println(doc);
+                    //System.out.println(doc);
                 } else {
-                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
-                    System.out.println(doc);
+                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
+                    //System.out.println(doc);
                 }
             } else if (allCapitalParts.length == 2) {
                 if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase())) {
                     cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase()));
-                    System.out.println(doc);
+                    //System.out.println(doc);
                 } else {
-                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
-                    System.out.println(doc);
+                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
+                   // System.out.println(doc);
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
             cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
-            System.out.println(doc);
+            //System.out.println(doc);
         } else {
-            getCityDetails(allCapitalParts[0].toUpperCase(), doc);
-            System.out.println(doc);
+            //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
+            //System.out.println(doc);
         }
     }
 
@@ -210,7 +210,7 @@ public class CitiesIndexer {
 
     public static void writeDocPostingFile() {
         try {
-            FileWriter fw = new FileWriter(workingDir + "\\SearchingApp\\src\\main\\java\\CitiesPosting.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\CitiesPosting.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             StringBuilder toWrite = new StringBuilder();
             for (Map.Entry<String, City> entry : cities.entrySet()) {
