@@ -26,11 +26,13 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws IOException {
+        String workingDir = System.getProperty("user.dir");
+        System.out.println(workingDir);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
         ReadFile Myreader = new ReadFile();
-        Myreader.ReadFile("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\corpus");
+        Myreader.ReadFile(workingDir + "\\src\\main\\java\\corpus");
         Indexer indexer = new Indexer();
         indexer.mergePostingFile();
         CitiesIndexer.writeDocPostingFile();

@@ -10,6 +10,7 @@ public class Indexer {
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     private static int doneCounter = 0;
+    String workingDir = System.getProperty("user.dir");
 
     /**
      * get a sorted map of tokens of doc, add the tokens to the generic dictionary of the corpus, and every few calls to
@@ -62,7 +63,7 @@ public class Indexer {
      */
     private void executePosting() {
         try {
-            PrintWriter writer = new PrintWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter(workingDir + "\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
             while (mergedTerms.size() > 0) {
                 toWrite.append(mergedTerms.firstKey() + ": " + mergedTerms.pollFirstEntry().getValue() + '\n');
@@ -93,7 +94,7 @@ public class Indexer {
         try {
             int pointer = 0;
             // open a buffer writer to the final posting file
-            FileWriter fw = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\Posting.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\Posting.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
@@ -104,7 +105,7 @@ public class Indexer {
 
             //initial the tree map terms with the X first lines.
             for (int i = 0; i < postingIndex; i++) {
-                File file = new File("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\" + i + ".txt");
+                File file = new File(workingDir + "\\SearchingApp\\src\\main\\java\\" + i + ".txt");
                 FileReader fileReader = new FileReader(file);
                 bufferReaders[i] = new BufferedReader(fileReader);
                 String line;

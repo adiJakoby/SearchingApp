@@ -19,6 +19,7 @@ public class Parse {
     Stemmer stemmer = new Stemmer();
     static CitiesIndexer myCitiesIndexer = new CitiesIndexer();
     String docName;
+    String workingDir = System.getProperty("user.dir");
 
 
     public Parse() {
@@ -46,7 +47,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = "C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\stop_words.txt";
+        String filePath = workingDir + "\\src\\main\\java\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));

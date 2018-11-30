@@ -25,6 +25,7 @@ public class CitiesIndexer {
     //contain for each doc where it was write
     static Map<String, City> cities = new HashMap<>();
     private org.json.simple.parser.JSONParser myParser;
+    static String workingDir = System.getProperty("user.dir");
 
     public void findCity(String docName, String cityName, int location) {
 
@@ -209,7 +210,7 @@ public class CitiesIndexer {
 
     public static void writeDocPostingFile() {
         try {
-            FileWriter fw = new FileWriter("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\CitiesPosting.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\SearchingApp\\src\\main\\java\\CitiesPosting.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             StringBuilder toWrite = new StringBuilder();
             for (Map.Entry<String, City> entry : cities.entrySet()) {
