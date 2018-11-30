@@ -26,6 +26,7 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws IOException {
+        DocsInformation docsInformation = new DocsInformation();
         String workingDir = System.getProperty("user.dir");
         System.out.println(workingDir);
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -35,7 +36,8 @@ public class Main extends Application {
         Myreader.ReadFile(workingDir + "\\src\\main\\java\\corpus");
         Indexer indexer = new Indexer();
         indexer.mergePostingFile();
-        CitiesIndexer.writeDocPostingFile();
+        docsInformation.saveTheInformation(workingDir + "\\src\\main\\java\\");
+        //CitiesIndexer.writeDocPostingFile();
         Date date1 = new Date();
         System.out.println(dateFormat.format(date1));
     }

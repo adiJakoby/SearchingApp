@@ -1,13 +1,6 @@
 
 package sample;
 
-import com.wirefreethought.geodb.client.GeoDbApi;
-import com.wirefreethought.geodb.client.model.*;
-import com.wirefreethought.geodb.client.net.GeoDbApiClient;
-import com.wirefreethought.geodb.client.request.FindCitiesRequest;
-import com.wirefreethought.geodb.client.request.FindCurrenciesRequest;
-import jdk.nashorn.internal.parser.JSONParser;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -28,6 +21,7 @@ public class CitiesIndexer {
     static Map<String, City> cities = new HashMap<>();
     private org.json.simple.parser.JSONParser myParser;
     static String workingDir = System.getProperty("user.dir");
+    DocsInformation docsInformation = new DocsInformation();
 
 
     //connecting to the cities API and get all cities details into cities hashmap
@@ -81,31 +75,37 @@ public class CitiesIndexer {
         if (capital.contains("(")) {
             capital = OurReplace(capital, mychars, "");
         }
-        String[] allCapitalParts = mySplit(capital," ");
+        String[] allCapitalParts = mySplit(capital, " ");
+        String cityName;
         if (allCapitalParts.length > 1) {
             if (allCapitalParts.length == 3) {
-                if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()))
-                {
-                    citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()).addDocToCity(doc);
-                    cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase()));
+                cityName = (allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase();
+                if (citiesDetails.containsKey(cityName)) {
+                    citiesDetails.get(cityName).addDocToCity(doc);
+                    docsInformation.addOriginCity(doc, cityName);
+                    cities.put(doc, citiesDetails.get(cityName));
                     //System.out.println(doc);
                 } else {
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
                     //System.out.println(doc);
                 }
             } else if (allCapitalParts.length == 2) {
-                if (citiesDetails.containsKey((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase())) {
-                    citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase()).addDocToCity(doc);
-                    cities.put(doc, citiesDetails.get((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase()));
+                cityName = (allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase();
+                if (citiesDetails.containsKey(cityName)) {
+                    citiesDetails.get(cityName).addDocToCity(doc);
+                    docsInformation.addOriginCity(doc, cityName);
+                    cities.put(doc, citiesDetails.get(cityName));
                     //System.out.println(doc);
                 } else {
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
-                   // System.out.println(doc);
+                    // System.out.println(doc);
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
-            citiesDetails.get((allCapitalParts[0]).toUpperCase()).addDocToCity(doc);
-            cities.put(doc, citiesDetails.get(allCapitalParts[0].toUpperCase()));
+            cityName = allCapitalParts[0].toUpperCase();
+            citiesDetails.get(cityName).addDocToCity(doc);
+            docsInformation.addOriginCity(doc, cityName);
+            cities.put(doc, citiesDetails.get(cityName));
             //System.out.println(doc);
         } else {
             //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
@@ -174,51 +174,46 @@ public class CitiesIndexer {
      * @return the population divide by 1000000,or more..
      */
     private String divideNumbers(Long pop) {
-        int population=(int)(long)pop;
-        int rest=0;
-        String restbyString="";
+        int population = (int) (long) pop;
+        int rest = 0;
+        String restbyString = "";
         if (population >= 1000000000) {
-            rest=population%1000000000;
+            rest = population % 1000000000;
             population = population / 1000000000;
-            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
-                restbyString=Integer.toString(population)+".0"+(Integer.toString(rest)).substring(0,1);
-            }
-            else {
+            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
+                restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
+            } else {
                 restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
             }
             return restbyString + "B";
         } else if (population >= 1000000) {
-            rest=population%1000000;
+            rest = population % 1000000;
             population = population / 1000000;
-            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
-                restbyString=Integer.toString(population)+".0"+(Integer.toString(rest)).substring(0,1);
-            }
-            else {
+            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
+                restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
+            } else {
                 restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
             }
             return restbyString + "M";
         } else if (population >= 1000) {
             rest = population % 1000;
             population = population / 1000;
-            if(Long.toString(pop).charAt(Integer.toString(population).length())=='0'){
-                if(Integer.toString(rest).length()>=2) {
+            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
+                if (Integer.toString(rest).length() >= 2) {
+                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
+                } else if (Integer.toString(rest).length() == 1) {
                     restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
                 }
-                else if(Integer.toString(rest).length()==1){
-                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
-                }
-            }
-            else {
-                if(Integer.toString(rest).length()>=2) {
+            } else {
+                if (Integer.toString(rest).length() >= 2) {
                     restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
-                }
-                else if(Integer.toString(rest).length()==1){
+                } else if (Integer.toString(rest).length() == 1) {
                     restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 1);
                 }
             }
             return restbyString + "K";
         } else {
-            restbyString=pop.toString();
+            restbyString = pop.toString();
             return restbyString;
         }
     }

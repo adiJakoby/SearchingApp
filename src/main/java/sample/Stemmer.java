@@ -2,10 +2,8 @@ package sample;
 
 import org.tartarus.snowball.SnowballStemmer;
 import org.tartarus.snowball.ext.englishStemmer;
-import sun.reflect.generics.tree.Tree;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -13,10 +11,17 @@ public class Stemmer {
 
     SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer indexer = new Indexer();
+    DocsInformation docsInformation = new DocsInformation();
 
     public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile) {
+        int max = 0;
+        String maxTerm = "";
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());
         for (String key : tokens.keySet()) {
+            if(tokens.get(key) > max){
+                maxTerm = key;
+                max = tokens.get(key);
+            }
             snowballStemmer.setCurrent(key);
             snowballStemmer.stem();
             String newStem = snowballStemmer.getCurrent();
@@ -35,6 +40,8 @@ public class Stemmer {
             }
         }
 
+        docsInformation.addMaxTf(maxTerm, docNo);
+        docsInformation.addUniqueTermsAmount(docNo, stems.size());
         indexer.indexing(stems, docNo, doneFile);
     }
 

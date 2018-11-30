@@ -1,8 +1,5 @@
 package sample;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,6 +17,7 @@ public class Parse {
     static CitiesIndexer myCitiesIndexer = new CitiesIndexer();
     String docName;
     String workingDir = System.getProperty("user.dir");
+    DocsInformation docsInformation = new DocsInformation();
 
 
     public Parse() {
@@ -84,9 +82,11 @@ public class Parse {
             splitDoc[i] = removeFromTheEdges(splitDoc[i]);
         }
 
+        int docLength = 0;
         while (splitDocIndex < splitDoc.length) {
             String word = splitDoc[splitDocIndex];
             if (!stopWordsSet.contains(word.toLowerCase())) {
+                docLength++;
                 if (word.contains("-")) {
                     hyphenTests(word);
                 } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
@@ -98,6 +98,7 @@ public class Parse {
                 splitDocIndex++;
             }
         }
+        docsInformation.addDocLength(docNo, docLength);
         stemmer.stemming(tokens, docNo, doneFile);
     }
 

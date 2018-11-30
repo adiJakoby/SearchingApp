@@ -4,13 +4,10 @@ import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.*;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,6 +16,8 @@ import org.jsoup.select.Elements;
 
 
 public class ReadFile {
+
+    DocsInformation docsInformation = new DocsInformation();
 
     public void ReadFile(String path) throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -54,6 +53,7 @@ public class ReadFile {
                                 }
                             }
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city);
+                            docsInformation.addDateOfWrite( e.getElementsByTag("DOCNO").text(),  e.getElementsByTag("Date1").text());
                             Date date1 = new Date();
                             i++;
                         }

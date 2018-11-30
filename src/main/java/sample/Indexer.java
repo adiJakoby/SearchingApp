@@ -26,7 +26,7 @@ public class Indexer {
         if (doneFile) {
             doneCounter++;
         }
-        if (doneCounter == 33) {
+        if (doneCounter == 15) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
                 executePosting();
@@ -175,7 +175,7 @@ public class Indexer {
         } catch (IOException Ex) {
             System.out.println(Ex.getMessage());
         }
-        System.out.println(dictionary.entrySet());
+        //System.out.println(dictionary.entrySet());
     }
 
     /**
