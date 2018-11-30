@@ -1,6 +1,12 @@
 
 package sample;
 
+import com.wirefreethought.geodb.client.GeoDbApi;
+import com.wirefreethought.geodb.client.model.*;
+import com.wirefreethought.geodb.client.net.GeoDbApiClient;
+import com.wirefreethought.geodb.client.request.FindCitiesRequest;
+import com.wirefreethought.geodb.client.request.FindCityRequest;
+import com.wirefreethought.geodb.client.request.FindCurrenciesRequest;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -84,10 +90,8 @@ public class CitiesIndexer {
                     citiesDetails.get(cityName).addDocToCity(doc);
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
-                    //System.out.println(doc);
                 } else {
-                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
-                    //System.out.println(doc);
+                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
                 }
             } else if (allCapitalParts.length == 2) {
                 cityName = (allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase();
@@ -95,10 +99,8 @@ public class CitiesIndexer {
                     citiesDetails.get(cityName).addDocToCity(doc);
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
-                    //System.out.println(doc);
                 } else {
-                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
-                    // System.out.println(doc);
+                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
@@ -106,66 +108,56 @@ public class CitiesIndexer {
             citiesDetails.get(cityName).addDocToCity(doc);
             docsInformation.addOriginCity(doc, cityName);
             cities.put(doc, citiesDetails.get(cityName));
-            //System.out.println(doc);
         } else {
-            //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
-            //System.out.println(doc);
+            getCityDetails(allCapitalParts[0].toUpperCase(), doc);
         }
     }
 
     //in case that the city it not a capital
     private void getCityDetails(String city, String doc) {
-        /*GeoDbApiClient apiClient = new GeoDbApiClient(GeoDbInstanceType.FREE);
+        GeoDbApiClient apiClient = new GeoDbApiClient(GeoDbInstanceType.FREE);
         GeoDbApi geoDbApi = new GeoDbApi(apiClient);
 
-// Execute service calls. (See below for examples.)
         CitiesResponse citiesResponse = geoDbApi.findCities(
                 FindCitiesRequest.builder()
-                        .namePrefix("New York")
+                        .namePrefix(city)
                         .build()
         );
 
-        Metadata m = citiesResponse.getMetadata();
-        CitySummary c = citiesResponse.getData().get(0);
+        try {
+            if (!citiesResponse.getData().isEmpty()) {
+                CitySummary c = citiesResponse.getData().get(0);
 
-        //citiesResponse.setData();
-        System.out.println(citiesResponse.getData());
-        System.out.println(geoDbApi.findCurrencies(FindCurrenciesRequest.builder().countryId(citiesResponse.getData().get(0).getCountryCode()).build()));
+                CityResponse cityResponse = geoDbApi.findCity(
+                        FindCityRequest.builder()
+                                .cityId(c.getWikiDataId())
+                                .build()
+                );
+
+
+                CurrenciesResponse currenciesResponse = geoDbApi.findCurrencies(
+                        FindCurrenciesRequest.builder()
+                                .countryId(c.getCountryCode())
+                                .build()
+                );
+
+        /*System.out.println(citiesResponse.getData());
         System.out.println();
-        */
-        OkHttpClient myClient = new OkHttpClient();
-        String url = "http://getcitydetails.geobytes.com/GetCityDetails?fqcn=" + city;
-        Request req = new Request.Builder().url(url).build();
-        Response res = null;
-        try {
-            res = myClient.newCall(req).execute();
+        System.out.println();
+        System.out.println(cityResponse.getData());*/
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Object object = null;
-        myParser = new org.json.simple.parser.JSONParser();
-        try {
-            try {
-                object = myParser.parse(res.body().string());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (object != null) {
-            String capital = "", country = "", coin = "";
-            String population = "";
-            capital = (String) ((JSONObject) object).get("geobytescity");
-            country = (String) ((JSONObject) object).get("geobytescountry");
-            population = (String) ((JSONObject) object).get("geobytespopulation");
-            coin = (String) ((JSONObject) object).get("geobytescurrencycode");
-            if (!population.equals("")) {
-                population = divideNumbers(Long.parseLong(population));
-                citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, coin, population));
+                String capital = c.getCity();
+                String country = c.getCountry();
+                String currency = currenciesResponse.toString();
+                int population = cityResponse.getData().getPopulation();
+
+                //population = divideNumbers(population);
+                citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, currency, Integer.toString(population)));
                 cities.put(doc, citiesDetails.get(city));
             }
+        }
+        catch(Exception e){
+            System.out.println(city);
         }
     }
 
