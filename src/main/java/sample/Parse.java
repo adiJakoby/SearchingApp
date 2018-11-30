@@ -281,10 +281,14 @@ public class Parse {
                 }
             }
             else {
-                if (Character.isLowerCase(word.charAt(0))) {
-                    addToMapLowCase(word);
-                } else {
-                    addToMapUpCase(word);
+                char[] charsToRemove = {'-', '$', '.', '/'};
+                word = OurReplace(word, charsToRemove, "");
+                if(word.length() > 0) {
+                    if (Character.isLowerCase(word.charAt(0))) {
+                        addToMapLowCase(word);
+                    } else {
+                        addToMapUpCase(word);
+                    }
                 }
             }
         }
@@ -297,6 +301,7 @@ public class Parse {
         String oneBeforeWord = "";
         String oneAfterWord = "";
         String termToAdd = "";
+        char[] charsToRemove = {'-', '$', '.', '/'};
 
         if (splitDocIndex - 1 >= 0) {
             oneBeforeWord = splitDoc[splitDocIndex - 1];
@@ -312,9 +317,15 @@ public class Parse {
             for (int i = 0; i < 3; i++) {
                 if (!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[i].charAt(0))) {
-                        addToMapLowCase(splitExpression[i].toLowerCase());
+                        String temp = OurReplace(splitExpression[i].toLowerCase(), charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapLowCase(temp);
+                        }
                     } else {
-                        addToMapUpCase(splitExpression[i]);
+                        String temp = OurReplace(splitExpression[i], charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapUpCase(temp);
+                        }
                     }
                 }
             }
@@ -342,18 +353,30 @@ public class Parse {
                     termToAdd = termToAdd + splitExpression[0];
                     if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
                         if (Character.isLowerCase(splitExpression[0].charAt(0))) {
-                            addToMapLowCase(splitExpression[0].toLowerCase());
+                            String temp = OurReplace(splitExpression[0].toLowerCase(), charsToRemove, "");
+                            if(temp.length() > 0) {
+                                addToMapLowCase(temp);
+                            }
                         } else {
-                            addToMapUpCase(splitExpression[0]);
+                            String temp = OurReplace(splitExpression[0], charsToRemove, "");
+                            if(temp.length() > 0) {
+                                addToMapUpCase(temp);
+                            }
                         }
                     }
                 }
             } else {
                 if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[0].charAt(0))) {
-                        addToMapLowCase(splitExpression[0].toLowerCase());
+                        String temp = OurReplace(splitExpression[0].toLowerCase(), charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapLowCase(temp);
+                        }
                     } else {
-                        addToMapUpCase(splitExpression[0]);
+                        String temp = OurReplace(splitExpression[0], charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapUpCase(temp);
+                        }
                     }
                 }
                 termToAdd = termToAdd + splitExpression[0];
@@ -384,9 +407,15 @@ public class Parse {
                 termToAdd = termToAdd + splitExpression[1];
                 if (!stopWordsSet.contains(splitExpression[1].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[1].charAt(0))) {
-                        addToMapLowCase(splitExpression[1].toLowerCase());
+                        String temp = OurReplace(splitExpression[1].toLowerCase(), charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapLowCase(temp);
+                        }
                     } else {
-                        addToMapUpCase(splitExpression[1]);
+                        String temp = OurReplace(splitExpression[1], charsToRemove, "");
+                        if(temp.length() > 0) {
+                            addToMapUpCase(temp);
+                        }
                     }
                 }
             }
@@ -709,7 +738,7 @@ public class Parse {
                 }
             }
             if(contain){
-                sb.append(" ");
+                sb.append(replacement);
             }
             else{
                 sb.append(check);
