@@ -153,7 +153,7 @@ public class Indexer {
                 } else {
                     dictionary.put(lastTerm, pointer);
                     pointer++;
-                    if (counter == 10) {
+                    if (counter == 35) {
                         writeToPosting(toWrite, WriteFileBuffer);
                         toWrite = new StringBuilder();
                         toWrite.append("\n" + currentTerm + terms.firstKey().substring(index));
@@ -175,7 +175,8 @@ public class Indexer {
         } catch (IOException Ex) {
             System.out.println(Ex.getMessage());
         }
-        //System.out.println(dictionary.entrySet());
+       //
+        // System.out.println(dictionary.entrySet());
     }
 
     /**
