@@ -57,7 +57,6 @@ public class Indexer {
             }
         }
     }
-
     /**
      * writing to the disk a temporally posting file of a few documents.
      */

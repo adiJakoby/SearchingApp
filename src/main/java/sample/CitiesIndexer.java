@@ -55,7 +55,7 @@ public class CitiesIndexer {
         }
         if (object != null) {
             String capital = "", country = "", coin = "";
-            Long population = 0L;
+            String population = "";
             Object[] parsed_json = ((JSONArray) object).toArray();
             for (Object O : parsed_json) {
                 capital = (String) ((JSONObject) O).get("capital");
@@ -64,8 +64,8 @@ public class CitiesIndexer {
                 for (Object obj : theArray) {
                     coin = (String) ((JSONObject) obj).get("code");
                 }
-                population = (Long) ((JSONObject) O).get("population");
-                String pop = divideNumbers(population);
+                population =((JSONObject) O).get("population").toString();
+                String pop = divideNumbers(Double.parseDouble(population));
                 citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, coin, pop));
 
             }
@@ -165,48 +165,24 @@ public class CitiesIndexer {
      * @param pop
      * @return the population divide by 1000000,or more..
      */
-    private String divideNumbers(Long pop) {
-        int population = (int) (long) pop;
-        int rest = 0;
-        String restbyString = "";
-        if (population >= 1000000000) {
-            rest = population % 1000000000;
-            population = population / 1000000000;
-            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
-                restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
-            } else {
-                restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
-            }
-            return restbyString + "B";
-        } else if (population >= 1000000) {
-            rest = population % 1000000;
-            population = population / 1000000;
-            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
-                restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
-            } else {
-                restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
-            }
-            return restbyString + "M";
-        } else if (population >= 1000) {
-            rest = population % 1000;
-            population = population / 1000;
-            if (Long.toString(pop).charAt(Integer.toString(population).length()) == '0') {
-                if (Integer.toString(rest).length() >= 2) {
-                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
-                } else if (Integer.toString(rest).length() == 1) {
-                    restbyString = Integer.toString(population) + ".0" + (Integer.toString(rest)).substring(0, 1);
-                }
-            } else {
-                if (Integer.toString(rest).length() >= 2) {
-                    restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 2);
-                } else if (Integer.toString(rest).length() == 1) {
-                    restbyString = Integer.toString(population) + "." + (Integer.toString(rest)).substring(0, 1);
-                }
-            }
-            return restbyString + "K";
+    private String divideNumbers(Double pop) {
+        if (pop >= 1000000000) {
+            pop = pop / 1000000000;
+            pop = (double)Math.round(pop*100);
+            pop = pop / 100;
+            return Double.toString(pop) + "B";
+        } else if (pop >= 1000000) {
+            pop = pop / 1000000;
+            pop = (double)Math.round(pop*100);
+            pop = pop / 100;
+            return Double.toString(pop) + "M";
+        } else if (pop >= 1000) {
+            pop = pop / 1000;
+            pop = (double)Math.round(pop*100);
+            pop = pop / 100;
+            return Double.toString(pop) + "K";
         } else {
-            restbyString = pop.toString();
-            return restbyString;
+            return Double.toString(pop);
         }
     }
 
@@ -219,26 +195,6 @@ public class CitiesIndexer {
             return false;
         }
         return true;
-    }
-
-
-    public static void writeDocPostingFile() {
-        try {
-            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\CitiesPosting.txt");
-            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
-            StringBuilder toWrite = new StringBuilder();
-            for (Map.Entry<String, City> entry : cities.entrySet()) {
-                String key = entry.getKey();
-                City value = entry.getValue();
-                if (value != null) {
-                    toWrite.append(key + " " + value.getName() + "\n");
-                }
-            }
-            WriteFileBuffer.write(toWrite.toString());
-            WriteFileBuffer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private String OurReplace(String s, char[] targets, String replacement) {

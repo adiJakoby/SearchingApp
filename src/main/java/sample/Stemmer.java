@@ -40,7 +40,7 @@ public class Stemmer {
             }
         }
 
-        docsInformation.addMaxTf(maxTerm, docNo);
+        docsInformation.addMaxTf(max, docNo);
         docsInformation.addUniqueTermsAmount(docNo, stems.size());
         indexer.indexing(stems, docNo, doneFile);
     }

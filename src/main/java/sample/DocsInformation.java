@@ -8,15 +8,15 @@ import java.util.Map;
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
 
-    public void addMaxTf(String term, String docName){
+    public void addMaxTf(int max_tf, String docName){
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
-            temp[0] = term;
+            temp[0] = Integer.toString(max_tf);
             allDocsInformation.put(docName, temp);
         }
         else{
             String[] temp = new String[5];
-            temp[0] = term;
+            temp[0] = Integer.toString(max_tf);
             allDocsInformation.put(docName, temp);
         }
     }
@@ -81,9 +81,9 @@ public class DocsInformation {
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
                  String key = entry.getKey();
                  String[] value = entry.getValue();
-                 WriteFileBuffer.write("Doc number: " + key + ":\n" +
-                         "max_tf: " + value[0] + "\n" + "unique terms: " + value[1] + "\n" +
-                 "Origin city: " + value[2] + "\n" + "document length: " + value[3] + "\n" +
+                 WriteFileBuffer.write("Doc number: " + key + ", " +
+                         "max_tf: " + value[0] + " " + "unique terms: " + value[1] + " " +
+                 "Origin city: " + value[2] + " " + "document length: " + value[3] + " " +
                  "date of write: " + value[4] + "\n");
              }
              WriteFileBuffer.write(toWrite.toString());
