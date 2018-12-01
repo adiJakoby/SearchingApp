@@ -70,8 +70,6 @@ public class CitiesIndexer {
                 citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, coin, pop));
 
             }
-            //System.out.println(maxlength);
-            //System.out.println(maxCity);
         }
     }
 

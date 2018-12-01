@@ -24,7 +24,7 @@ public class ReadFile {
         Date date = new Date();
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
-        File file = new File(path + "\\corpus");
+        File file = new File(path + "\\testCorpus");
         Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
             if (file2.isDirectory()) {
@@ -40,8 +40,9 @@ public class ReadFile {
                             Parse p = new Parse(path);
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
-                                int index = city.indexOf("<F P=\"104\">");
-                                if (city.charAt(index + 1)!=('<')) {
+                                int cityIndex = city.indexOf("<F P=\"104\">");
+                                //int languageIndex = city.indexOf("<F P=\"105\">");
+                                if (city.charAt(cityIndex + 1)!=('<')) {
                                     city = city.substring(city.indexOf("<F P=\"104\">", city.indexOf("</F>")));
                                     if (city.length() > 15) {
                                         city = city.substring(city.indexOf("\n "), city.indexOf(" \n"));
