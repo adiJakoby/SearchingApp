@@ -77,7 +77,7 @@ public class Parse {
             myCitiesIndexer.addCityToCorpusMap(city, docNo);
         }
         this.docName=docNo;
-        char[] toReplace = {',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
+        char[] toReplace = {'_', ',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
         doc = OurReplace(doc,"\n", " ");
         doc = OurReplace(doc, toReplace, " ");
         splitDoc = mySplit(doc, " ");

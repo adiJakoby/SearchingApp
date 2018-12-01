@@ -13,7 +13,7 @@ public class Indexer {
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     private static int doneCounter = 0;
-    String workingDir;
+    static String workingDir;
 
     public Indexer(String path){
         workingDir = path;
@@ -161,7 +161,7 @@ public class Indexer {
                 } else {
                     dictionary.put(lastTerm, pointer);
                     pointer++;
-                    if (counter == 15) {
+                    if (counter == 15 || terms.size() == 0) {
                         writeToPosting(toWrite, WriteFileBuffer);
                         toWrite = new StringBuilder();
                         toWrite.append("\n" + currentTerm + terms.firstKey().substring(index));

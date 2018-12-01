@@ -250,7 +250,7 @@ public class CitiesIndexer {
                 WriteFileBuffer.write("City:"+key.getName() + " " + "Country:" + key.getCountry() + " "
                 + "Coin:" + key.getCoin() + "\n" + "Documents:");
                 for (Map.Entry<String, String> entry: key.getDocsList().entrySet()) {
-                    WriteFileBuffer.write( entry.getKey() + " Locations:" + entry.getValue()+"," );
+                    WriteFileBuffer.write( entry.getKey() + ": " + entry.getValue()+";" );
                 }
                 WriteFileBuffer.write( "\n");
             }
