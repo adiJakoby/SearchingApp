@@ -28,6 +28,7 @@ public class CitiesIndexer {
     private org.json.simple.parser.JSONParser myParser;
     static String workingDir = System.getProperty("user.dir");
     DocsInformation docsInformation = new DocsInformation();
+    static HashSet <City> allCitiesInCorpus = new HashSet<>();
 
 
     //connecting to the cities API and get all cities details into cities hashmap
@@ -90,6 +91,7 @@ public class CitiesIndexer {
                     citiesDetails.get(cityName).addDocToCity(doc);
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
+                    allCitiesInCorpus.add(citiesDetails.get(cityName));
                 } else {
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
                 }
@@ -99,6 +101,7 @@ public class CitiesIndexer {
                     citiesDetails.get(cityName).addDocToCity(doc);
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
+                    allCitiesInCorpus.add(citiesDetails.get(cityName));
                 } else {
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
                 }
@@ -108,6 +111,7 @@ public class CitiesIndexer {
             citiesDetails.get(cityName).addDocToCity(doc);
             docsInformation.addOriginCity(doc, cityName);
             cities.put(doc, citiesDetails.get(cityName));
+            allCitiesInCorpus.add(citiesDetails.get(cityName));
         } else {
             //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
         }
@@ -154,6 +158,7 @@ public class CitiesIndexer {
                 //population = divideNumbers(population);
                 citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, currency, Integer.toString(population)));
                 cities.put(doc, citiesDetails.get(city));
+                allCitiesInCorpus.add(citiesDetails.get(city));
             }
         }
         catch(Exception e){
@@ -233,6 +238,29 @@ public class CitiesIndexer {
         }
         String[] array = result.toArray(new String[0]);
         return array;
+    }
+
+    //write each city population, coin and country
+    public void writeCitiesPosting(String path){
+        try {
+            FileWriter fw = new FileWriter(path + "Cities Information.txt");
+            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            StringBuilder toWrite = new StringBuilder();
+            for (City key: allCitiesInCorpus) {
+                WriteFileBuffer.write("City:"+key.getName() + " " + "Country:" + key.getCountry() + " "
+                + "Coin:" + key.getCoin() + "\n" + "Documents:");
+                for (Map.Entry<String, String> entry: key.getDocsList().entrySet()) {
+                    WriteFileBuffer.write( entry.getKey() + " Locations:" + entry.getValue()+"," );
+                }
+                WriteFileBuffer.write( "\n");
+            }
+            WriteFileBuffer.write(toWrite.toString());
+            WriteFileBuffer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 }
 

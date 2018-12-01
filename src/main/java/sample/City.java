@@ -24,7 +24,7 @@ public class City {
     public void addDocToMap( String doc, String location){
         //case that its not the first time that the city appears in the doc
         if(docsContainMe.containsKey(doc)){
-            docsContainMe.put(doc , docsContainMe.get(doc)+ " and " + location);
+            docsContainMe.put(doc , docsContainMe.get(doc)+ ", " + location);
         }
         else {
             docsContainMe.put(doc , location);
@@ -38,5 +38,21 @@ public class City {
     //add the doc to the set of documents that was written in this city
     public void addDocToCity(String docName){
         allDocsWrittenHere.add(docName);
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getCoin() {
+        return coin;
+    }
+
+    public String getPopulation() {
+        return population;
+    }
+
+    public Map<String, String> getDocsList(){
+        return docsContainMe;
     }
 }
