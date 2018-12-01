@@ -61,7 +61,8 @@ public class ReadFile {
                 }
             }
         }
-        Date date1 = new Date();
+        Indexer indexer = new Indexer();
+        indexer.executePosting();
         //System.out.println("Finish time: " + dateFormat.format(date1));
     }
 }

@@ -92,8 +92,8 @@ public class Controller {
             e.getStackTrace();
         }
 
-        indexer.mergePostingFile();
-        docsInformation.saveTheInformation(txt_savePath.getText());
+        indexer.mergePostingFile(stemmer);
+        docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
         citiesIndexer.writeCitiesPosting(txt_savePath.getText());
 
         Date date1 = new Date();

@@ -69,7 +69,7 @@ public class Indexer {
     /**
      * writing to the disk a temporally posting file of a few documents.
      */
-    private void executePosting() {
+    public void executePosting() {
         try {
             PrintWriter writer = new PrintWriter(workingDir + "\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
@@ -84,25 +84,21 @@ public class Indexer {
         }
     }
 
-
-    private int OurStringComp(String s1, String s2) {
-        String s1l = s1.toLowerCase();
-        String s2l = s2.toLowerCase();
-        if (s1l.equals(s2l)) {
-            return s1.compareTo(s2);
-        }
-        return s1l.compareTo(s2l);
-    }
-
-
     /**
      * merge all the temporally posting files to one.
      */
-    public void mergePostingFile() {
+    public void mergePostingFile(boolean stemmer) {
+        String fileName = "";
+        if(stemmer){
+            fileName = " with stemmer.txt";
+        }
+        else{
+            fileName = " without stemmer.txt";
+        }
         try {
             int pointer = 0;
             // open a buffer writer to the final posting file
-            FileWriter fw = new FileWriter(workingDir + "\\Posting.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\Posting" + fileName);
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
@@ -119,13 +115,17 @@ public class Indexer {
                 String line;
                 int counter = 1;
                 line = bufferReaders[i].readLine();
-                terms.put(line, i);
+                if(line != null) {
+                    terms.put(line, i);
+                    howMuchTerms[i] = counter;
+                }
                 while (line != null && counter != 3) {
                     line = bufferReaders[i].readLine();
                     terms.put(line, i);
                     counter++;
+                    howMuchTerms[i] = counter;
                 }
-                howMuchTerms[i] = 3;
+
             }
 
             //running over the the tree map with 3 term from each temp posting file. and writing to the final posting file every 10 terms.
@@ -161,7 +161,7 @@ public class Indexer {
                 } else {
                     dictionary.put(lastTerm, pointer);
                     pointer++;
-                    if (counter == 15 || terms.size() == 0) {
+                    if (counter == 1000 || terms.size() == 1) {
                         writeToPosting(toWrite, WriteFileBuffer);
                         toWrite = new StringBuilder();
                         toWrite.append("\n" + currentTerm + terms.firstKey().substring(index));
@@ -191,7 +191,7 @@ public class Indexer {
             System.out.println(Ex.getMessage());
         }
         try {
-            FileWriter fw = new FileWriter(workingDir + "\\Dictionary.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             for (Map.Entry<String, Integer> e : dictionary.entrySet()
                     ) {

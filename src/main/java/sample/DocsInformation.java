@@ -73,9 +73,16 @@ public class DocsInformation {
         }
      }
 
-     public void saveTheInformation(String path){
+     public void saveTheInformation(String path, boolean stemmer){
+        String fileName = "";
+        if(stemmer){
+            fileName = " with stemmer.txt";
+        }
+        else{
+            fileName = " without stemmer.txt";
+        }
          try {
-             FileWriter fw = new FileWriter(path + "\\Docs Information.txt");
+             FileWriter fw = new FileWriter(path + "\\Docs Information" + fileName);
              BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
