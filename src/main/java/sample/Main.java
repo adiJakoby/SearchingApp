@@ -59,6 +59,7 @@ public class Main extends Application {
 
     public static void main(String[] args) throws IOException {
         launch(args);
+        /*
         DocsInformation docsInformation = new DocsInformation();
         String workingDir = System.getProperty("user.dir");
         System.out.println(workingDir);
@@ -71,7 +72,7 @@ public class Main extends Application {
         indexer.mergePostingFile();
         docsInformation.saveTheInformation(workingDir + "\\src\\main\\java\\");
         Date date1 = new Date();
-        System.out.println(dateFormat.format(date1));
+        System.out.println(dateFormat.format(date1));*/
     }
 
 }

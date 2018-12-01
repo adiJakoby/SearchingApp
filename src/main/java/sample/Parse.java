@@ -314,7 +314,7 @@ public class Parse {
 
         //word-word-word case add to the map as an expression and each word by it self.
         if (splitExpression.length == 3) {
-            addToMap(splitExpression[0] + "-" + splitExpression[1] + "-" + splitExpression[3]);
+            addToMap(splitExpression[0] + "-" + splitExpression[1] + "-" + splitExpression[2]);
             for (int i = 0; i < 3; i++) {
                 if (!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[i].charAt(0))) {
