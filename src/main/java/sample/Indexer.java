@@ -155,7 +155,7 @@ public class Indexer {
                 } else {
                     dictionary.put(lastTerm, pointer);
                     pointer++;
-                    if (counter == 35) {
+                    if (counter == 15) {
                         writeToPosting(toWrite, WriteFileBuffer);
                         toWrite = new StringBuilder();
                         toWrite.append("\n" + currentTerm + terms.firstKey().substring(index));
