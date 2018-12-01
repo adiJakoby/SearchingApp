@@ -16,11 +16,12 @@ public class Parse {
     Stemmer stemmer = new Stemmer();
     static CitiesIndexer myCitiesIndexer = new CitiesIndexer();
     String docName;
-    String workingDir = System.getProperty("user.dir");
     DocsInformation docsInformation = new DocsInformation();
+    int maxTf = 0;
+    String maxTerm = "";
 
 
-    public Parse() {
+    public Parse(String stopWordPath) {
         monthMap.put("january", "01");
         monthMap.put("jan", "01");
         monthMap.put("february", "02");
@@ -45,7 +46,7 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = workingDir + "\\src\\main\\java\\stop_words.txt";
+        String filePath = stopWordPath + "\\stop_words.txt";
         String line;
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -68,7 +69,9 @@ public class Parse {
         myCitiesIndexer.api_Connection();
     }
 
-    public void parser(String doc, String docNo, boolean doneFile,String city) {
+    public void parser(String doc, String docNo, boolean doneFile,String city, boolean toStemmer) {
+        maxTf = 0;
+        maxTerm = "";
         //TODO replace ( ) { } [ ] to space
         if(!city.equals("")&&!city.contains("<F P=")) {
             myCitiesIndexer.addCityToCorpusMap(city, docNo);
@@ -99,7 +102,7 @@ public class Parse {
             }
         }
         docsInformation.addDocLength(docNo, docLength);
-        stemmer.stemming(tokens, docNo, doneFile);
+        stemmer.stemming(tokens, docNo, doneFile, toStemmer, maxTf, maxTerm);
     }
 
     private void numberTests(String word) {
@@ -453,6 +456,10 @@ public class Parse {
         } else {
             tokens.put(newToken, 1);
         }
+        if(tokens.get(newToken) > maxTf){
+            maxTerm = newToken;
+            maxTf = tokens.get(newToken);
+        }
     }
 
     /**
@@ -614,6 +621,10 @@ public class Parse {
             counter++;
             tokens.remove(word.toUpperCase());
             tokens.put(word, counter);
+            if(tokens.get(word) > maxTf){
+                maxTerm = word;
+                maxTf = tokens.get(word);
+            }
 
         } else {
             addToMap(word);

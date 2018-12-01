@@ -13,7 +13,13 @@ public class Indexer {
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     private static int doneCounter = 0;
-    String workingDir = System.getProperty("user.dir");
+    String workingDir;
+
+    public Indexer(String path){
+        workingDir = path;
+    }
+
+    public Indexer(){}
 
     /**
      * get a sorted map of tokens of doc, add the tokens to the generic dictionary of the corpus, and every few calls to
@@ -65,7 +71,7 @@ public class Indexer {
      */
     private void executePosting() {
         try {
-            PrintWriter writer = new PrintWriter(workingDir + "\\src\\main\\java\\" + postingIndex + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter(workingDir + "\\" + postingIndex + ".txt", "UTF-8");
             StringBuilder toWrite = new StringBuilder();
             while (mergedTerms.size() > 0) {
                 toWrite.append(mergedTerms.firstKey() + ": " + mergedTerms.pollFirstEntry().getValue() + '\n');
@@ -96,7 +102,7 @@ public class Indexer {
         try {
             int pointer = 0;
             // open a buffer writer to the final posting file
-            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\Posting.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\Posting.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
@@ -107,7 +113,7 @@ public class Indexer {
 
             //initial the tree map terms with the X first lines.
             for (int i = 0; i < postingIndex; i++) {
-                File file = new File(workingDir + "\\src\\main\\java\\" + i + ".txt");
+                File file = new File(workingDir + "\\" + i + ".txt");
                 FileReader fileReader = new FileReader(file);
                 bufferReaders[i] = new BufferedReader(fileReader);
                 String line;
@@ -175,7 +181,7 @@ public class Indexer {
                 bufferReaders[i].close();
                 try
                 {
-                    Files.deleteIfExists(Paths.get(workingDir + "\\src\\main\\java\\" + i + ".txt")); 
+                    Files.deleteIfExists(Paths.get(workingDir + "\\" + i + ".txt"));
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -185,7 +191,7 @@ public class Indexer {
             System.out.println(Ex.getMessage());
         }
         try {
-            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\Dictionary.txt");
+            FileWriter fw = new FileWriter(workingDir + "\\Dictionary.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             for (Map.Entry<String, Integer> e : dictionary.entrySet()
                     ) {

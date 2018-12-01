@@ -13,34 +13,37 @@ public class Stemmer {
     Indexer indexer = new Indexer();
     DocsInformation docsInformation = new DocsInformation();
 
-    public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile) {
-        int max = 0;
-        String maxTerm = "";
+    public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile, boolean stemmer, int max_tf, String maxTerm) {
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());
-        for (String key : tokens.keySet()) {
-            if(tokens.get(key) > max){
-                maxTerm = key;
-                max = tokens.get(key);
-            }
-            snowballStemmer.setCurrent(key);
-            snowballStemmer.stem();
-            String newStem = snowballStemmer.getCurrent();
-            if(Character.isLowerCase(key.charAt(0))) {
-                newStem = newStem.toLowerCase();
-            }
-            else{
-                newStem = newStem.toUpperCase();
-            }
-            if (stems.containsKey(newStem)) {
-                int counter = stems.get(newStem);
-                stems.put(newStem, counter + tokens.get(key));
-            }
-            else{
-                stems.put(newStem,tokens.get(key));
+        if (stemmer) {
+            max_tf = 0;
+            maxTerm = "";
+            for (String key : tokens.keySet()) {
+                snowballStemmer.setCurrent(key);
+                snowballStemmer.stem();
+                String newStem = snowballStemmer.getCurrent();
+                if (Character.isLowerCase(key.charAt(0))) {
+                    newStem = newStem.toLowerCase();
+                } else {
+                    newStem = newStem.toUpperCase();
+                }
+                if (stems.containsKey(newStem)) {
+                    int counter = stems.get(newStem);
+                    stems.put(newStem, counter + tokens.get(key));
+                } else {
+                    stems.put(newStem, tokens.get(key));
+                }
+                if (stems.get(newStem) > max_tf) {
+                    maxTerm = newStem;
+                    max_tf = stems.get(newStem);
+                }
             }
         }
+        else{
+            stems.putAll(tokens);
+        }
 
-        docsInformation.addMaxTf(max, docNo);
+        docsInformation.addMaxTf(max_tf, docNo);
         docsInformation.addUniqueTermsAmount(docNo, stems.size());
         indexer.indexing(stems, docNo, doneFile);
     }
@@ -50,7 +53,7 @@ public class Stemmer {
         public int compare(String s1, String s2) {
             String s1l = s1.toLowerCase();
             String s2l = s2.toLowerCase();
-            if(s1l.equals(s2l)){
+            if (s1l.equals(s2l)) {
                 return s1.compareTo(s2);
             }
             return s1l.compareTo(s2l);

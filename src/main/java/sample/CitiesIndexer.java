@@ -243,7 +243,7 @@ public class CitiesIndexer {
     //write each city population, coin and country
     public void writeCitiesPosting(String path){
         try {
-            FileWriter fw = new FileWriter(path + "Cities Information.txt");
+            FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             StringBuilder toWrite = new StringBuilder();
             for (City key: allCitiesInCorpus) {

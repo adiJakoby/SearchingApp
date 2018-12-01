@@ -19,12 +19,12 @@ public class ReadFile {
 
     DocsInformation docsInformation = new DocsInformation();
 
-    public void ReadFile(String path) throws IOException {
+    public void ReadFile(String path, boolean stemmer) throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
-        File file = new File(path);
+        File file = new File(path + "\\corpus");
         Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
             if (file2.isDirectory()) {
@@ -37,7 +37,7 @@ public class ReadFile {
                         //System.out.println();
                         for (Element e : docs) {
                             boolean done = e.siblingIndex() == docs.last().siblingIndex();
-                            Parse p = new Parse();
+                            Parse p = new Parse(path);
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
                                 int index = city.indexOf("<F P=\"104\">");
@@ -52,7 +52,7 @@ public class ReadFile {
                                     }
                                 }
                             }
-                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city);
+                            p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
                             docsInformation.addDateOfWrite( e.getElementsByTag("DOCNO").text(),  e.getElementsByTag("Date1").text());
                             Date date1 = new Date();
                             i++;

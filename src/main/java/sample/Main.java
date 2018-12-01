@@ -59,20 +59,6 @@ public class Main extends Application {
 
     public static void main(String[] args) throws IOException {
         launch(args);
-        /*
-        DocsInformation docsInformation = new DocsInformation();
-        String workingDir = System.getProperty("user.dir");
-        System.out.println(workingDir);
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
-        ReadFile Myreader = new ReadFile();
-        Myreader.ReadFile(workingDir + "\\src\\main\\java\\corpus");
-        Indexer indexer = new Indexer();
-        indexer.mergePostingFile();
-        docsInformation.saveTheInformation(workingDir + "\\src\\main\\java\\");
-        Date date1 = new Date();
-        System.out.println(dateFormat.format(date1));*/
     }
 
 }
