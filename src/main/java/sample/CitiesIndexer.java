@@ -91,7 +91,7 @@ public class CitiesIndexer {
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
                 } else {
-                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
+                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
                 }
             } else if (allCapitalParts.length == 2) {
                 cityName = (allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase();
@@ -100,7 +100,7 @@ public class CitiesIndexer {
                     docsInformation.addOriginCity(doc, cityName);
                     cities.put(doc, citiesDetails.get(cityName));
                 } else {
-                    getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
+                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
@@ -109,7 +109,7 @@ public class CitiesIndexer {
             docsInformation.addOriginCity(doc, cityName);
             cities.put(doc, citiesDetails.get(cityName));
         } else {
-            getCityDetails(allCapitalParts[0].toUpperCase(), doc);
+            //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
         }
     }
 

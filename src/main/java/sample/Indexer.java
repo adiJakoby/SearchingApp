@@ -1,6 +1,9 @@
 package sample;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Indexer {
@@ -170,12 +173,28 @@ public class Indexer {
             WriteFileBuffer.close();
             for (int i = 0; i < postingIndex; i++) {
                 bufferReaders[i].close();
+                try
+                {
+                    Files.deleteIfExists(Paths.get(workingDir + "\\src\\main\\java\\" + i + ".txt")); 
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         } catch (IOException Ex) {
             System.out.println(Ex.getMessage());
         }
-       //
-        // System.out.println(dictionary.entrySet());
+        try {
+            FileWriter fw = new FileWriter(workingDir + "\\src\\main\\java\\Dictionary.txt");
+            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            for (Map.Entry<String, Integer> e : dictionary.entrySet()
+                    ) {
+                WriteFileBuffer.write(e.getKey().toString() + " " + Integer.toString(e.getValue()) + '\n');
+            }
+            WriteFileBuffer.close();
+        }catch(IOException Ex) {
+            System.out.println(Ex.getMessage());
+        }
     }
 
     /**
