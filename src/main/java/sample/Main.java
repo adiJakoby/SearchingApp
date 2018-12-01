@@ -33,7 +33,7 @@ public class Main extends Application {
         //SetStageCloseEvent(primaryStage);
         primaryStage.setResizable(false);
         primaryStage.show();
-    }
+    }//
 
     /*
     private void SetStageCloseEvent(Stage primaryStage) {
