@@ -2,7 +2,11 @@ package sample;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.awt.event.ActionEvent;
@@ -38,6 +42,7 @@ public class Controller {
     public javafx.scene.control.TextField txt_LanguageLabel;
     @FXML
     public javafx.scene.control.CheckBox checkBox_stemming;
+
 
 
     @FXML
@@ -95,9 +100,22 @@ public class Controller {
         System.out.println(dateFormat.format(date1));
     }
 
-
     public void handleDisplayDictionary() {
+        try {
+            Stage stage = new Stage();
+            stage.setTitle("Display Dictionary");
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(getClass().getResource("/dictionary.fxml"));
+            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(root, 400, 400);
+            //scene.getStylesheets().add(getClass().getResource("ViewStyle.css").toExternalForm());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL); //Lock the window until it closes
+            stage.show();
+        } catch (Exception e) {
 
+        }
     }
 
     public void initialMemory() {

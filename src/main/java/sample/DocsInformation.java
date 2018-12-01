@@ -75,7 +75,7 @@ public class DocsInformation {
 
      public void saveTheInformation(String path){
          try {
-             FileWriter fw = new FileWriter(path + "Docs Information.txt");
+             FileWriter fw = new FileWriter(path + "\\Docs Information.txt");
              BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {

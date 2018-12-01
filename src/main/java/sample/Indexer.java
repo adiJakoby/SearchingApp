@@ -9,7 +9,7 @@ import java.util.*;
 public class Indexer {
     static int postingIndex = 0;
     private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
-    private static HashMap<String, Integer> dictionary = new HashMap<>();
+    public static HashMap<String, Integer> dictionary = new HashMap<>();
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     private static int doneCounter = 0;
