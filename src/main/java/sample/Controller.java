@@ -7,12 +7,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,13 +57,25 @@ public class Controller {
     public javafx.scene.control.ChoiceBox choiceBox_Language;
 
 
-
     @FXML
     private void initialize() {
         txt_corpusPathLabel.setEditable(false);
         txt_LanguageLabel.setEditable(false);
         txt_savePathLabel.setEditable(false);
+        btn_initialMemory.setDisable(true);
+        btn_loadDictionary.setDisable(true);
+        btn_play.setDisable(true);
         btn_displayDictionary.setDisable(true);
+    }
+
+    @FXML
+    private void editPath() {
+        if (txt_savePath.getText() != null && txt_corpusPath.getText() != null) {
+            btn_displayDictionary.setDisable(false);
+            btn_initialMemory.setDisable(false);
+            btn_loadDictionary.setDisable(false);
+            btn_play.setDisable(false);
+        }
     }
 
     @FXML
@@ -86,68 +100,85 @@ public class Controller {
     }
 
     public void handlePlay() {
-        btn_initialMemory.setDisable(true);
-        btn_loadDictionary.setDisable(true);
-        btn_play.setDisable(true);
-        btn_searchCorpusPath.setDisable(true);
-        btn_searchSavePath.setDisable(true);
-        DocsInformation docsInformation = new DocsInformation();
-        ReadFile myReader = new ReadFile();
-        Indexer indexer = new Indexer(txt_savePath.getText());
-        CitiesIndexer citiesIndexer = new CitiesIndexer();
-        boolean stemmer = checkBox_stemming.isSelected();
+        File corpus = new File(txt_corpusPath.getText() + "//corpus");
+        File save = new File(txt_savePath.getText());
+        if (!corpus.exists() || !save.exists()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wrong Input");
+            alert.setHeaderText("One of your paths is wrong! please enter another one");
+            alert.show();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Good news, it's loading");
+            alert.setHeaderText("The engine is working hard for you :-)");
+            alert.show();
+            btn_initialMemory.setDisable(true);
+            btn_loadDictionary.setDisable(true);
+            btn_play.setDisable(true);
+            btn_searchCorpusPath.setDisable(true);
+            btn_searchSavePath.setDisable(true);
+            DocsInformation docsInformation = new DocsInformation();
+            ReadFile myReader = new ReadFile();
+            Indexer indexer = new Indexer(txt_savePath.getText());
+            CitiesIndexer citiesIndexer = new CitiesIndexer();
+            boolean stemmer = checkBox_stemming.isSelected();
 
-        String workingDir = txt_corpusPath.getText();
+            String workingDir = txt_corpusPath.getText();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
 
-        try {
-            myReader.ReadFile(workingDir, stemmer);
-        } catch (IOException e) {
-            e.getStackTrace();
+            try {
+                myReader.ReadFile(workingDir, stemmer);
+            } catch (IOException e) {
+                e.getStackTrace();
+            }
+
+            indexer.mergePostingFile(stemmer);
+            docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
+            citiesIndexer.writeCitiesPosting(txt_savePath.getText());
+
+            alert.close();
+            btn_displayDictionary.setDisable(false);
+            Date date1 = new Date();
+            System.out.println(dateFormat.format(date1));
+            btn_initialMemory.setDisable(false);
+            btn_loadDictionary.setDisable(false);
+            btn_play.setDisable(false);
+            btn_searchCorpusPath.setDisable(false);
+            btn_searchSavePath.setDisable(false);
         }
-
-        indexer.mergePostingFile(stemmer);
-        docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
-        citiesIndexer.writeCitiesPosting(txt_savePath.getText());
-
-        btn_displayDictionary.setDisable(false);
-        Date date1 = new Date();
-        System.out.println(dateFormat.format(date1));
-        btn_initialMemory.setDisable(false);
-        btn_loadDictionary.setDisable(false);
-        btn_play.setDisable(false);
-        btn_searchCorpusPath.setDisable(false);
-        btn_searchSavePath.setDisable(false);
     }
 
     public void handleDisplayDictionary(ActionEvent actionEvent) {
+        File save1 = new File(txt_savePath.getText() + "//Dictionary with stemmer.txt");
+        File save2 = new File(txt_savePath.getText() + "//Dictionary without stemmer.txt");
+        if (!save1.exists() && !save2.exists()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wrong Input");
+            alert.setHeaderText("There is no saved dictionary in your save path!");
+            alert.show();
+        } else {
             Parent root = null;
-        DictionaryController dictionaryController=null;
             try {
                 FXMLLoader myLoader = new FXMLLoader();
                 myLoader.setLocation(getClass().getResource("/dictionary.fxml"));
-                //myLoader.setController(new DictionaryController());
-                dictionaryController=new DictionaryController();
                 root = myLoader.load();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             Scene scene = new Scene(root, 600, 480);
-            //scene.getStylesheets().add(getClass().getResource("/TravelApp.css").toExternalForm());
             Stage stage = new Stage();
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
-            //dictionarycontroller.printdictionary(stage);
         }
+    }
 
 
     public void initialMemory() {
-        try
-        {
+        try {
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Cities Information.txt"));
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Dictionary without stemmer.txt"));
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Dictionary with stemmer.txt"));
@@ -156,8 +187,7 @@ public class Controller {
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information without stemmer.txt"));
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information with stemmer.txt"));
             btn_displayDictionary.setDisable(true);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
