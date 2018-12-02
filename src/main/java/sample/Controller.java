@@ -195,7 +195,24 @@ public class Controller {
     }
 
     public void loadDictionary() {
-        btn_displayDictionary.setDisable(false);
+        File dic1 = new File(txt_corpusPath.getText() + "\\Dictionary with stemmer.txt");
+        File dic2 = new File(txt_corpusPath.getText() + "\\Dictionary without stemmer.txt");
+        if (!dic1.exists() || !dic2.exists()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wrong Input");
+            alert.setHeaderText("There is no saved dictionary");
+            alert.show();
+        }
+        else {
+            btn_displayDictionary.setDisable(false);
+            boolean stemmer = checkBox_stemming.isSelected();
+            Indexer indexer = new Indexer(txt_savePath.getText());
+            indexer.setDictionary(stemmer);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Good News");
+            alert.setHeaderText("Your dictionary is loaded, you can take a look");
+            alert.show();
+        }
     }
 
 }

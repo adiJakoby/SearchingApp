@@ -8,11 +8,11 @@ import java.util.*;
 
 public class Indexer {
     static int postingIndex = 0;
-    private static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
+    public static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
     public static HashMap<String, Integer> dictionary = new HashMap<>();
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
-    private static int doneCounter = 0;
+    public static int doneCounter = 0;
     static String workingDir;
 
     public Indexer(String path){
@@ -34,8 +34,8 @@ public class Indexer {
         //dictionary.addAll(tokens.keySet());
         if (doneFile) {
             doneCounter++;
-        }//doneCounter == 15
-        if (doneFile) {
+        }
+        if (doneCounter == 15) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
                 executePosting();
@@ -60,7 +60,7 @@ public class Indexer {
                 StringBuilder temp = new StringBuilder();
                 temp.append(mergedTerms.get(token));
                 temp.append(" " + docName + " " + counter);
-                mergedTerms.put(token, temp.toString());
+                mergedTerms.replace(token, temp.toString());
             } else {
                 mergedTerms.put(token, docName + " " + counter);
             }
@@ -193,15 +193,38 @@ public class Indexer {
         try {
             FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
-            Object[] keys = dictionary.keySet().toArray();
-            for(int i = 0; i < keys.length; i++){
-                WriteFileBuffer.write(keys[i] + " " + dictionary.get(keys[i]) + '\n');
-            }
-            /*for (Map.Entry<String, Integer> e : dictionary.entrySet()
+            for (HashMap.Entry<String, Integer> e : dictionary.entrySet()
                     ) {
-                WriteFileBuffer.write(e.getKey().toString() + " " + Integer.toString(e.getValue()) + '\n');
-            }*/
+                WriteFileBuffer.write(e.getKey() + " " + Integer.toString(e.getValue()) + '\n');
+            }
             WriteFileBuffer.close();
+            BufferedWriter bw = new BufferedWriter(new FileWriter(workingDir + "\\Dictionary" + fileName));
+            for(String p:dictionary.keySet())
+            {
+                bw.write(p + "," + dictionary.get(p));
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+            /*
+            File file = new File(workingDir + "\\Dictionary" + fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(dictionary);
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            fileOutputStream.close();
+
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(byteOut);
+            out.writeObject(dictionary.toString());
+            try(OutputStream outputStream = new FileOutputStream("workingDir + \"\\\\Dictionary\" + fileName")) {
+                byteOut.writeTo(outputStream);
+                outputStream.flush();
+                outputStream.close();
+
+            }
+            */
         }catch(IOException Ex) {
             System.out.println(Ex.getMessage());
         }
@@ -286,6 +309,41 @@ public class Indexer {
                 return s1.compareTo(s2);
             }
             return s1l.compareTo(s2l);
+        }
+    }
+
+    public void setDictionary(boolean stemmer){
+        String fileName = "";
+        if(stemmer){
+            fileName = " with stemmer.txt";
+        }
+        else{
+            fileName = " without stemmer.txt";
+        }
+        try{
+            String line;
+            BufferedReader reader = new BufferedReader(new FileReader(workingDir + "\\Dictionary" + fileName));
+            while ((line = reader.readLine()) != null)
+            {
+                String[] parts = line.split(",", 2);
+                if (parts.length >= 2)
+                {
+                    String key = parts[0];
+                    Integer value = Integer.parseInt(parts[1]);
+                    dictionary.put(key, value);
+                }
+            }
+            reader.close();
+            /*
+            File file = new File(workingDir + "\\Dictionary" + fileName);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            dictionary = (HashMap<String, Integer>) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+            */
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

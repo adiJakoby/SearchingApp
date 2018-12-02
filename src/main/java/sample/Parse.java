@@ -317,7 +317,7 @@ public class Parse {
 
         //word-word-word case add to the map as an expression and each word by it self.
         if (splitExpression.length == 3) {
-            addToMap(splitExpression[0] + "-" + splitExpression[1] + "-" + splitExpression[2]);
+            addToMap(splitExpression[0].toLowerCase() + "-" + splitExpression[1].toLowerCase() + "-" + splitExpression[2].toLowerCase());
             for (int i = 0; i < 3; i++) {
                 if (!stopWordsSet.contains(splitExpression[i].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[i].charAt(0))) {
@@ -354,7 +354,7 @@ public class Parse {
                     termToAdd = termToAdd + oneBeforeWord + "000" + "B";
                 }else{
                     splitExpression[0] = OurReplace(splitExpression[0],",", "");
-                    termToAdd = termToAdd + splitExpression[0];
+                    termToAdd = termToAdd + splitExpression[0].toLowerCase();
                     if (!stopWordsSet.contains(splitExpression[0].toLowerCase())) {
                         if (Character.isLowerCase(splitExpression[0].charAt(0))) {
                             String temp = OurReplace(splitExpression[0].toLowerCase(), charsToRemove, "");
@@ -383,7 +383,7 @@ public class Parse {
                         }
                     }
                 }
-                termToAdd = termToAdd + splitExpression[0];
+                termToAdd = termToAdd + splitExpression[0].toLowerCase();
             }
             termToAdd = termToAdd + '-';
             if (isNumeric(splitExpression[1])) {
@@ -408,7 +408,7 @@ public class Parse {
                     termToAdd = termToAdd + splitExpression[1];
                 }
             } else {
-                termToAdd = termToAdd + splitExpression[1];
+                termToAdd = termToAdd + splitExpression[1].toLowerCase();
                 if (!stopWordsSet.contains(splitExpression[1].toLowerCase())) {
                     if (Character.isLowerCase(splitExpression[1].charAt(0))) {
                         String temp = OurReplace(splitExpression[1].toLowerCase(), charsToRemove, "");
@@ -613,6 +613,7 @@ public class Parse {
      * @param word the 1st char is low char
      */
     private void addToMapLowCase(String word) {
+        word = word.toLowerCase();
         if (tokens.containsKey(word.toUpperCase())) {
             if(myCitiesIndexer.citiesDetails.containsKey(word.toUpperCase())){
                 myCitiesIndexer.citiesDetails.get(word.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
