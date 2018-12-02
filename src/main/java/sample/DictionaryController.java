@@ -31,6 +31,5 @@ public class DictionaryController {
         }
         listView.itemsProperty().bind(listProperty);
         listProperty.set(FXCollections.observableArrayList(myTerms));
-        listProperty.set(FXCollections.observableArrayList(myTerms));
     }
 }

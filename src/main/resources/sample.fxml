@@ -16,7 +16,7 @@
       <Button fx:id="btn_searchSavePath" layoutX="136.0" layoutY="94.0" mnemonicParsing="false" onAction="#handleSearchSavePath" prefHeight="25.0" prefWidth="68.0" text="חפש נתיב" />
       <Button fx:id="btn_play" layoutX="475.0" layoutY="216.0" mnemonicParsing="false" onAction="#handlePlay" text="הפעלה" />
       <CheckBox fx:id="checkBox_stemming" layoutX="136.0" layoutY="133.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="108.0" text="With stemming" textAlignment="RIGHT" />
-      <ChoiceBox layoutX="427.0" layoutY="175.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="choiceBox_Language" layoutX="427.0" layoutY="175.0" prefWidth="150.0" />
       <TextField fx:id="txt_LanguageLabel" alignment="CENTER" layoutX="427.0" layoutY="138.0" prefHeight="25.0" prefWidth="149.0" text="בחר שפה" />
       <Button fx:id="btn_initialMemory" layoutX="28.0" layoutY="325.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="130.0" text="איפוס" />
       <Button fx:id="btn_loadDictionary" layoutX="28.0" layoutY="288.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="130.0" text="טען את המילון לזיכרון" />

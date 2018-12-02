@@ -34,8 +34,8 @@ public class Indexer {
         //dictionary.addAll(tokens.keySet());
         if (doneFile) {
             doneCounter++;
-        }//
-        if (doneCounter == 15) {
+        }//doneCounter == 15
+        if (doneFile) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
                 executePosting();

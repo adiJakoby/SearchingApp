@@ -1,10 +1,14 @@
 package sample;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -15,7 +19,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 
 
 public class Controller {
@@ -44,6 +51,8 @@ public class Controller {
     public javafx.scene.control.TextField txt_LanguageLabel;
     @FXML
     public javafx.scene.control.CheckBox checkBox_stemming;
+    @FXML
+    public javafx.scene.control.ChoiceBox choiceBox_Language;
 
 
 
@@ -53,7 +62,6 @@ public class Controller {
         txt_LanguageLabel.setEditable(false);
         txt_savePathLabel.setEditable(false);
         btn_displayDictionary.setDisable(true);
-
     }
 
     @FXML
@@ -78,6 +86,11 @@ public class Controller {
     }
 
     public void handlePlay() {
+        btn_initialMemory.setDisable(true);
+        btn_loadDictionary.setDisable(true);
+        btn_play.setDisable(true);
+        btn_searchCorpusPath.setDisable(true);
+        btn_searchSavePath.setDisable(true);
         DocsInformation docsInformation = new DocsInformation();
         ReadFile myReader = new ReadFile();
         Indexer indexer = new Indexer(txt_savePath.getText());
@@ -103,6 +116,11 @@ public class Controller {
         btn_displayDictionary.setDisable(false);
         Date date1 = new Date();
         System.out.println(dateFormat.format(date1));
+        btn_initialMemory.setDisable(false);
+        btn_loadDictionary.setDisable(false);
+        btn_play.setDisable(false);
+        btn_searchCorpusPath.setDisable(false);
+        btn_searchSavePath.setDisable(false);
     }
 
     public void handleDisplayDictionary(ActionEvent actionEvent) {
@@ -124,7 +142,6 @@ public class Controller {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
             //dictionarycontroller.printdictionary(stage);
-
         }
 
 
@@ -144,11 +161,11 @@ public class Controller {
             e.printStackTrace();
         }
 
+
     }
 
     public void loadDictionary() {
         btn_displayDictionary.setDisable(false);
-
     }
 
 }

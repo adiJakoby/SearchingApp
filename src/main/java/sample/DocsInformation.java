@@ -3,6 +3,7 @@ package sample;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class DocsInformation {
