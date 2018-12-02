@@ -35,6 +35,9 @@ public class DocsInformation {
     }
 
     public void addOriginCity(String docName, String city){
+        if(city==null){
+            city="No City";
+        }
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
             temp[2] = city;

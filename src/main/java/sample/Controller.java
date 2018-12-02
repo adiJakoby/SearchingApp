@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,6 +52,8 @@ public class Controller {
         txt_corpusPathLabel.setEditable(false);
         txt_LanguageLabel.setEditable(false);
         txt_savePathLabel.setEditable(false);
+        btn_displayDictionary.setDisable(true);
+
     }
 
     @FXML
@@ -96,6 +100,7 @@ public class Controller {
         docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
         citiesIndexer.writeCitiesPosting(txt_savePath.getText());
 
+        btn_displayDictionary.setDisable(false);
         Date date1 = new Date();
         System.out.println(dateFormat.format(date1));
     }
@@ -118,16 +123,31 @@ public class Controller {
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
-            //dictionaryController.printDictionary(stage);
+            //dictionarycontroller.printdictionary(stage);
 
         }
 
 
     public void initialMemory() {
+        try
+        {
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Cities Information.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Dictionary without stemmer.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Dictionary with stemmer.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Posting with stemmer.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Posting without stemmer.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information without stemmer.txt"));
+            Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information with stemmer.txt"));
+            btn_displayDictionary.setDisable(true);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
 
     }
 
     public void loadDictionary() {
+        btn_displayDictionary.setDisable(false);
 
     }
 

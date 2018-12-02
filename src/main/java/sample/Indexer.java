@@ -34,8 +34,8 @@ public class Indexer {
         //dictionary.addAll(tokens.keySet());
         if (doneFile) {
             doneCounter++;
-        }//doneCounter == 15
-        if (doneFile) {
+        }//
+        if (doneCounter == 15) {
             addToMap(tokens, docName);
             if (mergedTerms.size() > 0) {
                 executePosting();
@@ -193,10 +193,14 @@ public class Indexer {
         try {
             FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
-            for (Map.Entry<String, Integer> e : dictionary.entrySet()
+            Object[] keys = dictionary.keySet().toArray();
+            for(int i = 0; i < keys.length; i++){
+                WriteFileBuffer.write(keys[i] + " " + dictionary.get(keys[i]) + '\n');
+            }
+            /*for (Map.Entry<String, Integer> e : dictionary.entrySet()
                     ) {
                 WriteFileBuffer.write(e.getKey().toString() + " " + Integer.toString(e.getValue()) + '\n');
-            }
+            }*/
             WriteFileBuffer.close();
         }catch(IOException Ex) {
             System.out.println(Ex.getMessage());

@@ -25,19 +25,12 @@ public class DictionaryController {
     private void initialize() {
         TreeMap<String, Integer> dictionary = new TreeMap<>();
         dictionary.putAll(Indexer.dictionary);
-        //List<String> l = new LinkedList<>();
         while (dictionary.size()>0)
         {
             myTerms.add(dictionary.firstKey() + " " + dictionary.pollFirstEntry().getValue());
         }
         listView.itemsProperty().bind(listProperty);
         listProperty.set(FXCollections.observableArrayList(myTerms));
-        printDictionary();
-
-    }
-
-    public void printDictionary()
-    {
         listProperty.set(FXCollections.observableArrayList(myTerms));
     }
 }
