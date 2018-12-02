@@ -91,6 +91,8 @@ public class CitiesIndexer {
                     cities.put(doc, citiesDetails.get(cityName));
                     allCitiesInCorpus.add(citiesDetails.get(cityName));
                 } else {
+                    cities.put(doc,new City(cityName,"","",""));
+                    allCitiesInCorpus.add(cities.get(doc));
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
                 }
             } else if (allCapitalParts.length == 2) {
@@ -101,6 +103,8 @@ public class CitiesIndexer {
                     cities.put(doc, citiesDetails.get(cityName));
                     allCitiesInCorpus.add(citiesDetails.get(cityName));
                 } else {
+                    cities.put(doc,new City(cityName,"","",""));
+                    allCitiesInCorpus.add(cities.get(doc));
                     //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
                 }
             }
@@ -111,6 +115,8 @@ public class CitiesIndexer {
             cities.put(doc, citiesDetails.get(cityName));
             allCitiesInCorpus.add(citiesDetails.get(cityName));
         } else {
+            cities.put(doc,new City(allCapitalParts[0].toUpperCase(),"","",""));
+            allCitiesInCorpus.add(cities.get(doc));
             //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
         }
     }
@@ -245,12 +251,14 @@ public class CitiesIndexer {
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             StringBuilder toWrite = new StringBuilder();
             for (City key: allCitiesInCorpus) {
-                WriteFileBuffer.write("City:"+key.getName() + " " + "Country:" + key.getCountry() + " "
-                + "Coin:" + key.getCoin() + "\n" + "Documents:");
-                for (Map.Entry<String, String> entry: key.getDocsList().entrySet()) {
-                    WriteFileBuffer.write( entry.getKey() + ": " + entry.getValue()+";" );
+                if(!key.getCountry().equals("")) {
+                    WriteFileBuffer.write("City:" + key.getName() + " " + "Country:" + key.getCountry() + " "
+                            + "Coin:" + key.getCoin() + "\n" + "Documents:");
+                    for (Map.Entry<String, String> entry : key.getDocsList().entrySet()) {
+                        WriteFileBuffer.write(entry.getKey() + ": " + entry.getValue() + ";");
+                    }
+                    WriteFileBuffer.write("\n");
                 }
-                WriteFileBuffer.write( "\n");
             }
             WriteFileBuffer.write(toWrite.toString());
             WriteFileBuffer.close();
