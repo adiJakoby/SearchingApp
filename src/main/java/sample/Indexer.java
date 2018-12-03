@@ -9,7 +9,7 @@ import java.util.*;
 public class Indexer {
     static int postingIndex = 0;
     public static TreeMap<String, String> mergedTerms = new TreeMap<>(new Indexer.MyComp2());
-    public static HashMap<String, Integer> dictionary = new HashMap<>();
+    public static HashMap<String, Integer[]> dictionary = new HashMap<>();
     private TreeMap<String, Integer> terms;
     private int[] howMuchTerms;
     public static int doneCounter = 0;
@@ -30,7 +30,8 @@ public class Indexer {
      * @param doneFile - if a specific file is done.
      */
     public void indexing(TreeMap<String, Integer> tokens, String docName, boolean doneFile) {
-        dictionary.putAll(tokens);
+        //dictionary.putAll(tokens);
+        addToDictionary(tokens);
         //dictionary.addAll(tokens.keySet());
         if (doneFile) {
             doneCounter++;
@@ -44,6 +45,22 @@ public class Indexer {
             doneCounter = 0;
         }
         addToMap(tokens, docName);
+    }
+
+    private void addToDictionary(TreeMap<String, Integer> tokens){
+        for (Map.Entry<String, Integer> e : tokens.entrySet()
+                ) {
+            String key = e.getKey();
+            Integer count = e.getValue();
+            if(dictionary.containsKey(key)){
+                Integer[] value = {dictionary.get(key)[0], dictionary.get(key)[1] + count};
+                dictionary.replace(key, value);
+            }
+            else{
+                Integer[] value = {count, count};
+                dictionary.put(key, value);
+            }
+        }
     }
 
     /**
@@ -159,7 +176,8 @@ public class Indexer {
                 if (currentTerm.equals(lastTerm)) {
                     toWrite.append(terms.firstKey().substring(index+1));
                 } else {
-                    dictionary.put(lastTerm, pointer);
+                    Integer[] newValue = {pointer, dictionary.get(lastTerm)[1]};
+                    dictionary.put(lastTerm, newValue);
                     pointer++;
                     if (counter == 1000 || terms.size() == 1) {
                         writeToPosting(toWrite, WriteFileBuffer);
@@ -193,19 +211,19 @@ public class Indexer {
         try {
             FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
-            for (HashMap.Entry<String, Integer> e : dictionary.entrySet()
+            for (HashMap.Entry<String, Integer[]> e : dictionary.entrySet()
                     ) {
-                WriteFileBuffer.write(e.getKey() + " " + Integer.toString(e.getValue()) + '\n');
+                WriteFileBuffer.write(e.getKey() + ";" + Integer.toString(e.getValue()[0]) + ";" + Integer.toString(e.getValue()[1]) + '\n');
             }
             WriteFileBuffer.close();
-            BufferedWriter bw = new BufferedWriter(new FileWriter(workingDir + "\\Dictionary" + fileName));
+            /*BufferedWriter bw = new BufferedWriter(new FileWriter(workingDir + "\\Dictionary" + fileName));
             for(String p:dictionary.keySet())
             {
                 bw.write(p + "," + dictionary.get(p));
                 bw.newLine();
             }
             bw.flush();
-            bw.close();
+            bw.close();*/
             /*
             File file = new File(workingDir + "\\Dictionary" + fileName);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -325,11 +343,11 @@ public class Indexer {
             BufferedReader reader = new BufferedReader(new FileReader(workingDir + "\\Dictionary" + fileName));
             while ((line = reader.readLine()) != null)
             {
-                String[] parts = line.split(",", 2);
-                if (parts.length >= 2)
+                String[] parts = line.split(";");
+                if (parts.length >= 3)
                 {
                     String key = parts[0];
-                    Integer value = Integer.parseInt(parts[1]);
+                    Integer[] value = {Integer.parseInt(parts[1]), Integer.parseInt((parts[2]))};
                     dictionary.put(key, value);
                 }
             }
