@@ -197,15 +197,24 @@ public class Controller {
     public void loadDictionary() {
         File dic1 = new File(txt_corpusPath.getText() + "\\Dictionary with stemmer.txt");
         File dic2 = new File(txt_corpusPath.getText() + "\\Dictionary without stemmer.txt");
-        if (!dic1.exists() || !dic2.exists()) {
+        boolean stemmer = checkBox_stemming.isSelected();
+        boolean load = true;
+        if (!dic1.exists() && stemmer) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Wrong Input");
-            alert.setHeaderText("There is no saved dictionary");
+            alert.setHeaderText("There is no saved dictionary with stemmer");
             alert.show();
+            load = false;
         }
-        else {
+        if (!dic2.exists() && !stemmer) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Wrong Input");
+            alert.setHeaderText("There is no saved dictionary without stemmer");
+            alert.show();
+            load = false;
+        }
+        if(load){
             btn_displayDictionary.setDisable(false);
-            boolean stemmer = checkBox_stemming.isSelected();
             Indexer indexer = new Indexer(txt_savePath.getText());
             indexer.setDictionary(stemmer);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

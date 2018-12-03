@@ -27,7 +27,9 @@ public class DictionaryController {
         dictionary.putAll(Indexer.dictionary);
         while (dictionary.size()>0)
         {
-            myTerms.add(dictionary.firstKey() + " " + dictionary.pollFirstEntry().getValue()[0] + " " + dictionary.pollFirstEntry().getValue()[1]);
+            String key = dictionary.firstKey();
+            Integer[] value = dictionary.pollFirstEntry().getValue();
+            myTerms.add(key + " " + value[0] + " " + value[1]);
         }
         listView.itemsProperty().bind(listProperty);
         listProperty.set(FXCollections.observableArrayList(myTerms));
