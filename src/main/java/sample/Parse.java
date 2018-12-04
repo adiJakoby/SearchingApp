@@ -265,7 +265,13 @@ public class Parse {
                 addToMap(secondWord + "-" + forthWord);
             } else if (word.toLowerCase().equals("mr") || word.toLowerCase().equals("mrs")
                     || word.toLowerCase().equals("ms") || word.toLowerCase().equals("dr")){
-                addToMap(word.toUpperCase() + "." + " " + secondWord + " " + thirdWord);
+                if(secondWord.length() > 0 && Character.isUpperCase(secondWord.charAt(0))){
+                    String temp = word.toLowerCase() + "." + " " + secondWord.toLowerCase();
+                    if(thirdWord.length() > 0 && Character.isUpperCase(thirdWord.charAt(0))){
+                        temp = temp + " " + thirdWord.toLowerCase();
+                    }
+                    addToMap(temp);
+                }
                 if (Character.isLowerCase(word.charAt(0))) {
                     addToMapLowCase(word);
                 } else {

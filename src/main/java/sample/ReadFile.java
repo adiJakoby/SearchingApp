@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -42,7 +43,6 @@ public class ReadFile {
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
                                 int cityIndex = city.indexOf("<F P=\"104\">");
-                                /*
                                 int langIndex = city.indexOf("<F P=\"105\">");
                                 if (city.charAt(langIndex + 1) != ('<')) {
                                     language = city.substring(city.indexOf("<F P=\"105\">", city.indexOf("</F>")));
@@ -50,9 +50,10 @@ public class ReadFile {
                                         language = language.substring(language.indexOf("\n "), language.indexOf(" \n"));
                                         language = language.replaceAll("\n", "");
                                         //String languageLine[] = language.split(" ");
-                                        language = language.replace(" ", "").toUpperCase();
+                                        language = language.replaceAll(" ", "").toUpperCase();
+                                        language = language.replaceAll(",", "").toUpperCase();
                                     }
-                                }*/
+                                }
                                 if (city.charAt(cityIndex + 1) != ('<')) {
                                     city = city.substring(city.indexOf("<F P=\"104\">", city.indexOf("</F>")));
                                     if (city.length() > 15) {
@@ -67,9 +68,11 @@ public class ReadFile {
                             }
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
                             docsInformation.addDateOfWrite(e.getElementsByTag("DOCNO").text(), e.getElementsByTag("Date1").text());
-                            /*if (!language.equals("")) {
-                                DocsInformation.allLanguages.add(language);
-                            }*/
+                            if (!language.equals("")) {
+                                if(!Pattern.compile( "[0-9]" ).matcher( language ).find()) {
+                                    DocsInformation.allLanguages.add(language);
+                                }
+                            }
                             Date date1 = new Date();
                             i++;
                         }

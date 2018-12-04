@@ -50,8 +50,8 @@ public class Controller {
     public javafx.scene.control.TextField txt_LanguageLabel;
     @FXML
     public javafx.scene.control.CheckBox checkBox_stemming;
-    //@FXML
-    //public javafx.scene.control.ChoiceBox choiceBox_Language;
+    @FXML
+    public javafx.scene.control.ChoiceBox choiceBox_Language;
 
 
     @FXML
@@ -147,7 +147,7 @@ public class Controller {
             btn_play.setDisable(false);
             btn_searchCorpusPath.setDisable(false);
             btn_searchSavePath.setDisable(false);
-            //choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
+            choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
         }
     }
 

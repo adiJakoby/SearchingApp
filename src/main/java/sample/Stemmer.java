@@ -42,7 +42,6 @@ public class Stemmer {
         else{
             stems.putAll(tokens);
         }
-
         docsInformation.addMaxTf(max_tf, docNo);
         docsInformation.addUniqueTermsAmount(docNo, stems.size());
         indexer.indexing(stems, docNo, doneFile);

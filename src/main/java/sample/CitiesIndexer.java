@@ -89,9 +89,6 @@ public class CitiesIndexer {
                 if (citiesDetails.containsKey(cityName)) {
                     city = citiesDetails.get(cityName);
                     allCitiesInCorpus.put(cityName, city);
-                    citiesDetails.remove(cityName);
-                } else if (allCitiesInCorpus.containsKey(cityName)) {
-                    city = allCitiesInCorpus.get(cityName);
                 } else {
                     city = new City(cityName, "", "", "");
                     allCitiesInCorpus.put(cityName, city);
@@ -101,9 +98,6 @@ public class CitiesIndexer {
                 if (citiesDetails.containsKey(cityName)) {
                     city = citiesDetails.get(cityName);
                     allCitiesInCorpus.put(cityName, city);
-                    citiesDetails.remove(cityName);
-                } else if (allCitiesInCorpus.containsKey(cityName)) {
-                    city = allCitiesInCorpus.get(cityName);
                 } else {
                     city = new City(cityName, "", "", "");
                     allCitiesInCorpus.put(cityName, city);
@@ -113,12 +107,9 @@ public class CitiesIndexer {
             cityName = allCapitalParts[0].toUpperCase();
             city = citiesDetails.get(cityName);
             allCitiesInCorpus.put(cityName, city);
-            citiesDetails.remove(cityName);
-        } else if (allCitiesInCorpus.containsKey(cityName)) {
-            city = allCitiesInCorpus.get(cityName);
         } else {
             cityName = allCapitalParts[0].toUpperCase();
-            city = new City(allCapitalParts[0].toUpperCase(), "", "", "");
+            city = new City(cityName, "", "", "");
             allCitiesInCorpus.put(cityName, city);
         }
         docsInformation.addOriginCity(doc, cityName);
@@ -262,6 +253,7 @@ public class CitiesIndexer {
                     WriteFileBuffer.write("\n");
                 }
             }
+
             WriteFileBuffer.write(toWrite.toString());
             WriteFileBuffer.close();
         } catch (Exception e) {

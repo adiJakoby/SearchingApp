@@ -29,7 +29,7 @@ public class DictionaryController {
         {
             String key = dictionary.firstKey();
             Integer[] value = dictionary.pollFirstEntry().getValue();
-            myTerms.add(key + " " + value[0] + " " + value[1]);
+            myTerms.add(key + " " + value[1]);
         }
         listView.itemsProperty().bind(listProperty);
         listProperty.set(FXCollections.observableArrayList(myTerms));

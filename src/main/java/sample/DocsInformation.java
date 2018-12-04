@@ -1,14 +1,19 @@
 package sample;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
-    //static HashSet<String> allLanguages = new HashSet<>();
+    static HashSet<String> allLanguages = new HashSet<>();
 
     public void addMaxTf(int max_tf, String docName){
         if(allDocsInformation.containsKey(docName)){
@@ -103,5 +108,27 @@ public class DocsInformation {
          } catch (Exception e) {
              e.printStackTrace();
          }
+         TreeMap<String, Integer> t2 = new TreeMap<>();
+         for (Map.Entry<String, Integer[]> e:Indexer.dictionary.entrySet()
+                 ) {
+             t2.put(e.getKey(), e.getValue()[1]);
+         }
+         try {
+             FileWriter out = new FileWriter("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\book2.csv");
+             String[] HEADERS = {"term", "df"};
+             try(CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
+                     .withHeader(HEADERS))){
+                 t2.forEach((author, title) -> {
+                     try{
+                         printer.printRecord(author, title);
+                     }catch(IOException e){
+                         e.printStackTrace();
+                     }
+                 });
+             }
+         }catch(IOException e){
+             e.printStackTrace();
+         }
      }
+
 }
