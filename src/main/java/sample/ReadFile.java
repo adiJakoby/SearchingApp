@@ -24,6 +24,7 @@ public class ReadFile {
         Date date = new Date();
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
+        String language = "";
         File file = new File(path + "\\corpus");
         Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
@@ -41,7 +42,17 @@ public class ReadFile {
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
                                 int cityIndex = city.indexOf("<F P=\"104\">");
-                                if (city.charAt(cityIndex + 1)!=('<')) {
+                                int langIndex = city.indexOf("<F P=\"105\">");
+                                if (city.charAt(langIndex + 1) != ('<')) {
+                                    language = city.substring(city.indexOf("<F P=\"105\">", city.indexOf("</F>")));
+                                    if (language.length() > 15) {
+                                        language = language.substring(language.indexOf("\n "), language.indexOf(" \n"));
+                                        language = language.replaceAll("\n", "");
+                                        //String languageLine[] = language.split(" ");
+                                        language = language.replace(" ", "").toUpperCase();
+                                    }
+                                }
+                                if (city.charAt(cityIndex + 1) != ('<')) {
                                     city = city.substring(city.indexOf("<F P=\"104\">", city.indexOf("</F>")));
                                     if (city.length() > 15) {
                                         city = city.substring(city.indexOf("\n "), city.indexOf(" \n"));
@@ -51,9 +62,13 @@ public class ReadFile {
 
                                     }
                                 }
+
                             }
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
-                            docsInformation.addDateOfWrite( e.getElementsByTag("DOCNO").text(),  e.getElementsByTag("Date1").text());
+                            docsInformation.addDateOfWrite(e.getElementsByTag("DOCNO").text(), e.getElementsByTag("Date1").text());
+                            if (!language.equals("")) {
+                                DocsInformation.allLanguages.add(language);
+                            }
                             Date date1 = new Date();
                             i++;
                         }
