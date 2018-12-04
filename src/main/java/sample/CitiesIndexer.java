@@ -24,11 +24,11 @@ public class CitiesIndexer {
 
     static Map<String, City> citiesDetails = new HashMap<>();
     //contain for each doc where it was write
-    static Map<String, City> cities = new HashMap<>();
+    //static Map<String, City> cities = new HashMap<>();
     private org.json.simple.parser.JSONParser myParser;
     static String workingDir = System.getProperty("user.dir");
     DocsInformation docsInformation = new DocsInformation();
-    static HashSet <City> allCitiesInCorpus = new HashSet<>();
+    static HashMap<String, City> allCitiesInCorpus = new HashMap();
 
 
     //connecting to the cities API and get all cities details into cities hashmap
@@ -65,7 +65,7 @@ public class CitiesIndexer {
                 for (Object obj : theArray) {
                     coin = (String) ((JSONObject) obj).get("code");
                 }
-                population =((JSONObject) O).get("population").toString();
+                population = ((JSONObject) O).get("population").toString();
                 String pop = divideNumbers(Double.parseDouble(population));
                 citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, coin, pop));
 
@@ -76,51 +76,53 @@ public class CitiesIndexer {
     //check if the city name is one word or to and add to the city dictionary the doc that contain the city and it location
     public void addCityToCorpusMap(String capital, String doc) {
         //TODO take care in cases that our all cities dictionary does not contain the city
+        String cityName = "";
         char[] mychars = {'(', ')'};
         if (capital.contains("(")) {
             capital = OurReplace(capital, mychars, "");
         }
         String[] allCapitalParts = mySplit(capital, " ");
-        String cityName;
+        City city = null;
         if (allCapitalParts.length > 1) {
             if (allCapitalParts.length == 3) {
                 cityName = (allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase();
                 if (citiesDetails.containsKey(cityName)) {
-                    citiesDetails.get(cityName).addDocToCity(doc);
-                    docsInformation.addOriginCity(doc, cityName);
-                    cities.put(doc, citiesDetails.get(cityName));
-                    allCitiesInCorpus.add(citiesDetails.get(cityName));
+                    city = citiesDetails.get(cityName);
+                    allCitiesInCorpus.put(cityName, city);
+                    citiesDetails.remove(cityName);
+                } else if (allCitiesInCorpus.containsKey(cityName)) {
+                    city = allCitiesInCorpus.get(cityName);
                 } else {
-                    cities.put(doc,new City(cityName,"","",""));
-                    allCitiesInCorpus.add(cities.get(doc));
-                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1] + " " + allCapitalParts[2]).toUpperCase(), doc);
+                    city = new City(cityName, "", "", "");
+                    allCitiesInCorpus.put(cityName, city);
                 }
             } else if (allCapitalParts.length == 2) {
                 cityName = (allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase();
                 if (citiesDetails.containsKey(cityName)) {
-                    citiesDetails.get(cityName).addDocToCity(doc);
-                    docsInformation.addOriginCity(doc, cityName);
-                    cities.put(doc, citiesDetails.get(cityName));
-                    allCitiesInCorpus.add(citiesDetails.get(cityName));
+                    city = citiesDetails.get(cityName);
+                    allCitiesInCorpus.put(cityName, city);
+                    citiesDetails.remove(cityName);
+                } else if (allCitiesInCorpus.containsKey(cityName)) {
+                    city = allCitiesInCorpus.get(cityName);
                 } else {
-                    cities.put(doc,new City(cityName,"","",""));
-                    allCitiesInCorpus.add(cities.get(doc));
-                    //getCityDetails((allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase(), doc);
+                    city = new City(cityName, "", "", "");
+                    allCitiesInCorpus.put(cityName, city);
                 }
             }
         } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
             cityName = allCapitalParts[0].toUpperCase();
-            citiesDetails.get(cityName).addDocToCity(doc);
-            docsInformation.addOriginCity(doc, cityName);
-            cities.put(doc, citiesDetails.get(cityName));
-            allCitiesInCorpus.add(citiesDetails.get(cityName));
+            city = citiesDetails.get(cityName);
+            allCitiesInCorpus.put(cityName, city);
+            citiesDetails.remove(cityName);
+        } else if (allCitiesInCorpus.containsKey(cityName)) {
+            city = allCitiesInCorpus.get(cityName);
         } else {
             cityName = allCapitalParts[0].toUpperCase();
-            cities.put(doc,new City(allCapitalParts[0].toUpperCase(),"","",""));
-            allCitiesInCorpus.add(cities.get(doc));
-            docsInformation.addOriginCity(doc, cityName);
-            //getCityDetails(allCapitalParts[0].toUpperCase(), doc);
+            city = new City(allCapitalParts[0].toUpperCase(), "", "", "");
+            allCitiesInCorpus.put(cityName, city);
         }
+        docsInformation.addOriginCity(doc, cityName);
+        city.addDocToCity(doc);
     }
 
     //in case that the city it not a capital
@@ -163,11 +165,9 @@ public class CitiesIndexer {
 
                 //population = divideNumbers(population);
                 citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, currency, Integer.toString(population)));
-                cities.put(doc, citiesDetails.get(city));
-                allCitiesInCorpus.add(citiesDetails.get(city));
+                allCitiesInCorpus.put(capital, citiesDetails.get(city));
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.out.println(city);
         }
     }
@@ -179,17 +179,17 @@ public class CitiesIndexer {
     private String divideNumbers(Double pop) {
         if (pop >= 1000000000) {
             pop = pop / 1000000000;
-            pop = (double)Math.round(pop*100);
+            pop = (double) Math.round(pop * 100);
             pop = pop / 100;
             return Double.toString(pop) + "B";
         } else if (pop >= 1000000) {
             pop = pop / 1000000;
-            pop = (double)Math.round(pop*100);
+            pop = (double) Math.round(pop * 100);
             pop = pop / 100;
             return Double.toString(pop) + "M";
         } else if (pop >= 1000) {
             pop = pop / 1000;
-            pop = (double)Math.round(pop*100);
+            pop = (double) Math.round(pop * 100);
             pop = pop / 100;
             return Double.toString(pop) + "K";
         } else {
@@ -247,16 +247,16 @@ public class CitiesIndexer {
     }
 
     //write each city population, coin and country
-    public void writeCitiesPosting(String path){
+    public void writeCitiesPosting(String path) {
         try {
             FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
             StringBuilder toWrite = new StringBuilder();
-            for (City key: allCitiesInCorpus) {
-                if(!key.getCountry().equals("")) {
-                    WriteFileBuffer.write("City:" + key.getName() + " " + "Country:" + key.getCountry() + " "
-                            + "Coin:" + key.getCoin() + "\n" + "Documents:");
-                    for (Map.Entry<String, String> entry : key.getDocsList().entrySet()) {
+            for (City val : allCitiesInCorpus.values()) {
+                if (!val.getCountry().equals("")) {
+                    WriteFileBuffer.write("City:" + val.getName() + " " + "Country:" + val.getCountry() + " "
+                            + "Coin:" + val.getCoin() + "\n" + "Documents:");
+                    for (Map.Entry<String, String> entry : val.getDocsList().entrySet()) {
                         WriteFileBuffer.write(entry.getKey() + ": " + entry.getValue() + ";");
                     }
                     WriteFileBuffer.write("\n");
