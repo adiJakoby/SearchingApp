@@ -352,14 +352,6 @@ public class Indexer {
                 }
             }
             reader.close();
-            /*
-            File file = new File(workingDir + "\\Dictionary" + fileName);
-            FileInputStream fileInputStream = new FileInputStream(file);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            dictionary = (HashMap<String, Integer>) objectInputStream.readObject();
-            objectInputStream.close();
-            fileInputStream.close();
-            */
         }catch (Exception e){
             e.printStackTrace();
         }

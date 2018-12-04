@@ -21,10 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 public class Controller {
@@ -117,6 +114,8 @@ public class Controller {
             btn_play.setDisable(true);
             btn_searchCorpusPath.setDisable(true);
             btn_searchSavePath.setDisable(true);
+            Indexer.dictionary=new HashMap<>();
+            Indexer.postingIndex=0;
             DocsInformation docsInformation = new DocsInformation();
             ReadFile myReader = new ReadFile();
             Indexer indexer = new Indexer(txt_savePath.getText());

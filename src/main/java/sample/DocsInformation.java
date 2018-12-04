@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
-    static HashSet<String> allLanguages = new HashSet<>();
+    //static HashSet<String> allLanguages = new HashSet<>();
 
     public void addMaxTf(int max_tf, String docName){
         if(allDocsInformation.containsKey(docName)){

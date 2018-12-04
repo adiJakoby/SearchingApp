@@ -42,6 +42,7 @@ public class ReadFile {
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
                                 int cityIndex = city.indexOf("<F P=\"104\">");
+                                /*
                                 int langIndex = city.indexOf("<F P=\"105\">");
                                 if (city.charAt(langIndex + 1) != ('<')) {
                                     language = city.substring(city.indexOf("<F P=\"105\">", city.indexOf("</F>")));
@@ -51,7 +52,7 @@ public class ReadFile {
                                         //String languageLine[] = language.split(" ");
                                         language = language.replace(" ", "").toUpperCase();
                                     }
-                                }
+                                }*/
                                 if (city.charAt(cityIndex + 1) != ('<')) {
                                     city = city.substring(city.indexOf("<F P=\"104\">", city.indexOf("</F>")));
                                     if (city.length() > 15) {
@@ -66,9 +67,9 @@ public class ReadFile {
                             }
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
                             docsInformation.addDateOfWrite(e.getElementsByTag("DOCNO").text(), e.getElementsByTag("Date1").text());
-                            if (!language.equals("")) {
+                            /*if (!language.equals("")) {
                                 DocsInformation.allLanguages.add(language);
-                            }
+                            }*/
                             Date date1 = new Date();
                             i++;
                         }

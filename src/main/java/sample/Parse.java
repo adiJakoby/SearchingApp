@@ -647,34 +647,6 @@ public class Parse {
     }
 
     /**
-     * Check if the word is a special case (for examples: 55m or 55bn)
-     *
-     * @param word
-     * @return true if it is a special case od number and false if its a kind of word
-     */
-    private String isContainSpecialChar(String word) {
-        if (word.charAt(word.length() - 1) == 'm' || word.charAt(word.length() - 1) == 'M') {
-            String prefix = word.substring(0, word.length() - 1);
-            if (prefix.matches(".*[a-z].*")) {
-                return "*";
-            } else {
-                return "M";
-            }
-        } else if (word.charAt(word.length() - 1) == 'n' || word.charAt(word.length() - 1) == 'N') {
-            if (word.charAt(word.length() - 2) == 'b' || word.charAt(word.length() - 2) == 'B') {
-                String prefix = word.substring(0, word.length() - 2);
-                if (prefix.matches(".*[a-z].*")) {
-                    return "*";
-                } else {
-                    return "B";
-                }
-            }
-        }
-        return "Number";
-    }
-
-
-    /**
      * parse string to double
      *
      * @param toParse
@@ -758,17 +730,5 @@ public class Parse {
             }
         }
         return sb.toString();
-    }
-
-
-    private int getSmallestIndexOf(String s, char[] targets, int start){
-        int min = s.indexOf(targets[0], start);;
-        for(int i = 1; i < targets.length; i++){
-            int index = s.indexOf(targets[i], start);
-            if(min > index){
-                min = index;
-            }
-        }
-        return min;
     }
 }
