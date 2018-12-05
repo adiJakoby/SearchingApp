@@ -1,9 +1,6 @@
 package sample;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -46,23 +43,30 @@ public class Parse {
         monthMap.put("december", "12");
         monthMap.put("dec", "12");
 
-        String filePath = stopWordPath + "\\stop_words.txt";
+        String filePath = stopWordPath;
         String line;
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        boolean check;
+        if(check = new File(filePath, "\\corpus\\stop_words.txt").exists()) {
+            filePath+="\\corpus\\stop_words.txt";
+        }
+        else{
+            filePath += "\\stop_words.txt";
+        }
             try {
-                line = reader.readLine();
-                while (line != null) {
-                    stopWordsSet.add(line);
+                BufferedReader reader = new BufferedReader(new FileReader(filePath));
+                try {
                     line = reader.readLine();
+                    while (line != null) {
+                        stopWordsSet.add(line);
+                        line = reader.readLine();
+                    }
+                    reader.close();
+                } catch (IOException ioe) {
+                    System.out.println("Problem with the stop word file");
                 }
-                reader.close();
-            } catch (IOException ioe) {
+            } catch (FileNotFoundException fnfe) {
                 System.out.println("Problem with the stop word file");
             }
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("Problem with the stop word file");
-        }
     }
 
     static void apiGetStart(){
