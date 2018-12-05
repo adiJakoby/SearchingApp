@@ -252,9 +252,11 @@ public class CitiesIndexer {
                     }
                     WriteFileBuffer.write("\n");
                 }
+                System.out.println(val.getName());
             }
 
             WriteFileBuffer.write(toWrite.toString());
+            WriteFileBuffer.flush();
             WriteFileBuffer.close();
         } catch (Exception e) {
             e.printStackTrace();

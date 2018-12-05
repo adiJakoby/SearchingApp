@@ -69,7 +69,7 @@ public class ReadFile {
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
                             docsInformation.addDateOfWrite(e.getElementsByTag("DOCNO").text(), e.getElementsByTag("Date1").text());
                             if (!language.equals("")) {
-                                if(!Pattern.compile( "[0-9]" ).matcher( language ).find()) {
+                                if(!Pattern.compile( "[0-9]" ).matcher( language ).find() || !language.equals("THE")) {
                                     DocsInformation.allLanguages.add(language);
                                 }
                             }

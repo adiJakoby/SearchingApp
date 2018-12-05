@@ -104,6 +104,7 @@ public class DocsInformation {
                  "date of write: " + value[4] + "\n");
              }
              WriteFileBuffer.write(toWrite.toString());
+             WriteFileBuffer.flush();
              WriteFileBuffer.close();
          } catch (Exception e) {
              e.printStackTrace();

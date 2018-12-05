@@ -278,11 +278,11 @@ public class Parse {
                     addToMapUpCase(word);
                 }
             } else if (word.length() > 2 && word.charAt(word.length()-2) == '\'' && (word.charAt(word.length()-1) == 's')){
-                if (Character.isLowerCase(word.charAt(0))) {
+                /*if (Character.isLowerCase(word.charAt(0))) {
                     addToMapLowCase(word);
                 } else {
                     addToMapUpCase(word);
-                }
+                }*/
                 word = word.substring(0,word.length()-2);
                 if (Character.isLowerCase(word.charAt(0))) {
                     addToMapLowCase(word);
@@ -692,10 +692,10 @@ public class Parse {
             while (word.length() >= 1 && (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
                     word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
                     || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
-                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|' || word.charAt(word.length() - 1) == '*')) {
+                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|' || word.charAt(word.length() - 1) == '*' || word.charAt(word.length() - 1) == '\'')) {
                 word = word.substring(0, word.length() - 1);
             }
-            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '*' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
+            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '*' || word.charAt(0) == '\'' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
                 word = word.substring(1, word.length());
             }
         }

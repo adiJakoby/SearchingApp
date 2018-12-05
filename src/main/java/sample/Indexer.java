@@ -215,34 +215,8 @@ public class Indexer {
                     ) {
                 WriteFileBuffer.write(e.getKey() + ";" + Integer.toString(e.getValue()[0]) + ";" + Integer.toString(e.getValue()[1]) + '\n');
             }
+            WriteFileBuffer.flush();
             WriteFileBuffer.close();
-            /*BufferedWriter bw = new BufferedWriter(new FileWriter(workingDir + "\\Dictionary" + fileName));
-            for(String p:dictionary.keySet())
-            {
-                bw.write(p + "," + dictionary.get(p));
-                bw.newLine();
-            }
-            bw.flush();
-            bw.close();*/
-            /*
-            File file = new File(workingDir + "\\Dictionary" + fileName);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(dictionary);
-            objectOutputStream.flush();
-            objectOutputStream.close();
-            fileOutputStream.close();
-
-            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(byteOut);
-            out.writeObject(dictionary.toString());
-            try(OutputStream outputStream = new FileOutputStream("workingDir + \"\\\\Dictionary\" + fileName")) {
-                byteOut.writeTo(outputStream);
-                outputStream.flush();
-                outputStream.close();
-
-            }
-            */
         }catch(IOException Ex) {
             System.out.println(Ex.getMessage());
         }
