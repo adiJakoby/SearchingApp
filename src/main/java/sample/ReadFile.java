@@ -26,7 +26,7 @@ public class ReadFile {
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
         String language = "";
-        File file = new File(path + "\\testCorpus");
+        File file = new File(path + "\\corpus");
         Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
             if (file2.isDirectory()) {

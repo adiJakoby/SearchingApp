@@ -77,13 +77,13 @@ public class CitiesIndexer {
     public void addCityToCorpusMap(String capital, String doc) {
         //TODO take care in cases that our all cities dictionary does not contain the city
         String cityName = "";
-        char[] mychars = {'(' , ')' , '[' , ']' , '.' , '"', '\'' ,'2'};
+        char[] mychars = {'(', ')', '[', ']', '.', '"', '\'', '2'};
         if (capital.contains("(")
-                ||capital.contains("[") || capital.contains("]") || capital.contains("-") || capital.contains(".") ) {
+                || capital.contains("[") || capital.contains("]") || capital.contains("-") || capital.contains(".")) {
             capital = OurReplace(capital, mychars, "");
         }
         String[] allCapitalParts = mySplit(capital, " ");
-        allCapitalParts = mySplit(capital,"-");
+        allCapitalParts = mySplit(capital, "-");
         City city = null;
         if (allCapitalParts.length > 1) {
             if (allCapitalParts.length == 3) {
@@ -104,15 +104,17 @@ public class CitiesIndexer {
                     city = new City(cityName, "", "", "");
                     allCitiesInCorpus.put(cityName, city);
                 }
+            } else if (allCapitalParts.length == 1) {
+                if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
+                    cityName = allCapitalParts[0].toUpperCase();
+                    city = citiesDetails.get(cityName);
+                    allCitiesInCorpus.put(cityName, city);
+                } else {
+                    cityName = allCapitalParts[0].toUpperCase();
+                    city = new City(cityName, "", "", "");
+                    allCitiesInCorpus.put(cityName, city);
+                }
             }
-        } else if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
-            cityName = allCapitalParts[0].toUpperCase();
-            city = citiesDetails.get(cityName);
-            allCitiesInCorpus.put(cityName, city);
-        } else {
-            cityName = allCapitalParts[0].toUpperCase();
-            city = new City(cityName, "", "", "");
-            allCitiesInCorpus.put(cityName, city);
         }
         docsInformation.addOriginCity(doc, cityName);
         city.addDocToCity(doc);
@@ -254,9 +256,8 @@ public class CitiesIndexer {
                     }
                     WriteFileBuffer.write("\n");
                 }
-                System.out.println(val.getName());
             }
-
+            System.out.println(allCitiesInCorpus.size());
             WriteFileBuffer.write(toWrite.toString());
             WriteFileBuffer.flush();
             WriteFileBuffer.close();

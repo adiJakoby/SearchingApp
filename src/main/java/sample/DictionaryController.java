@@ -22,65 +22,12 @@ import java.net.URL;
 import java.util.*;
 
 public class DictionaryController {
-    //@FXML
-    //public ListView<String> listView=new ListView<>();
+
     private List<String> myTerms = new ArrayList<>();
     private ListProperty<String> listProperty = new SimpleListProperty<>();
     @FXML
     public TableView table = new TableView();
 
-    /*
-    @FXML
-    private void initialize() {
-        TreeMap<String, Integer[]> dictionary = new TreeMap<>(new MyComp());
-        dictionary.putAll(Indexer.dictionary);
-        while (dictionary.size()>0)
-        {
-            String key = dictionary.firstKey();
-            Integer[] value = dictionary.pollFirstEntry().getValue();
-            myTerms.add(key + " " + value[1]);
-        }
-        listView.itemsProperty().bind(listProperty);
-        listProperty.set(FXCollections.observableArrayList(myTerms));
-    }
-
-    @FXML
-    private void initialize(){
-        try{
-            Stage stage = new Stage();
-            Scene scene = new Scene(new Group());
-            stage.setTitle("Dictionary");
-            stage.setWidth(440);
-            stage.setHeight(940);
-            final Label lable = new Label("Dictionary");
-            lable.setFont(new Font("Ariel" , 22));
-            table.setEditable(false);
-
-            TableColumn term = new TableColumn("Term");
-            term.setMinWidth(200);
-            term.setCellValueFactory(new PropertyValueFactory<TermsDisplayer,String>("term"));
-
-            TableColumn value = new TableColumn("Number of Occurrence");
-            term.setMinWidth(200);
-            term.setCellValueFactory(new PropertyValueFactory<TermsDisplayer,String>("value"));
-
-            table.setItems(getData());
-            table.getColumns().addAll(term,value);
-            table.setMinHeight(800);
-
-            final VBox vbox = new VBox();
-            vbox.setSpacing(20);
-            vbox.setPadding(new Insets(20,0,0,10));
-            vbox.getChildren().addAll(lable,table);
-
-            ((Group)scene.getRoot()).getChildren().addAll(vbox);
-            stage.setScene(scene);
-            stage.show();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-*/
     class MyComp implements Comparator<String> {
         @Override
         public int compare(String s1, String s2) {
