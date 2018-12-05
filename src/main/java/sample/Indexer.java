@@ -216,7 +216,7 @@ public class Indexer {
                 bufferReaders[i].close();
                 try
                 {
-                    //Files.deleteIfExists(Paths.get(workingDir + "\\" + i + ".txt"));
+                    Files.deleteIfExists(Paths.get(workingDir + "\\" + i + ".txt"));
                 }
                 catch(Exception e){
                     e.printStackTrace();
