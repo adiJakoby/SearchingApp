@@ -3,8 +3,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
@@ -23,7 +21,5 @@
       <Button fx:id="btn_initialMemory" layoutX="28.0" layoutY="325.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="130.0" text="איפוס" />
       <Button fx:id="btn_loadDictionary" layoutX="28.0" layoutY="288.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="130.0" text="טען את המילון לזיכרון" />
       <Button fx:id="btn_displayDictionary" layoutX="30.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleDisplayDictionary" prefHeight="25.0" prefWidth="130.0" text="הצג את המילון" />
-      <ProgressBar layoutX="387.0" layoutY="174.0" prefHeight="18.0" prefWidth="199.0" progress="0.0" />
-      <ProgressIndicator layoutX="472.0" layoutY="200.0" progress="0.0" />
    </children>
 </Pane>

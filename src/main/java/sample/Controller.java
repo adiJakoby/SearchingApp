@@ -160,23 +160,12 @@ public class Controller {
             alert.setHeaderText("There is no saved dictionary in your save path!");
             alert.show();
         } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Good news");
+            alert.setHeaderText("loading your dictionary, please wait and don't touch");
+            alert.show();
             DictionaryController dictController = new DictionaryController();
             dictController.displayDictionary();
-            /*
-            Parent root = null;
-            try {
-                FXMLLoader myLoader = new FXMLLoader();
-                myLoader.setLocation(getClass().getResource("/dictionary.fxml"));
-                root = myLoader.load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Scene scene = new Scene(root, 600, 480);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();
-            */
         }
     }
 
