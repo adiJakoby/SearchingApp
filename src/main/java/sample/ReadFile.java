@@ -27,13 +27,13 @@ public class ReadFile {
         System.out.println("Start time:" + dateFormat.format(date));
         int i = 0;
         String language = "";
-        File file = new File(path + "\\testCorpus");
+        File file = new File(path + "\\corpus");
         Parse.apiGetStart();
         for (File file2 : file.listFiles()) {
             if (file2.isDirectory()) {
                 for (File file3 : file2.listFiles()) {
                     if (file3.isFile()) {
-                        Document doc = Jsoup.parse(new String(Files.readAllBytes(file3.toPath())), "UTF-8", Parser.xmlParser());
+                        Document doc = Jsoup.parse(new String(Files.readAllBytes(file3.toPath())), "", Parser.xmlParser());
                         Elements docs = doc.getElementsByTag("DOC");
                         //System.out.println("File name: " + file3.getName());
                         //System.out.println(docs.size());
