@@ -6,6 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -44,6 +46,17 @@ public class DictionaryController {
                 return s1.compareTo(s2);
             }
             return s1l.compareTo(s2l);
+        }
+    }
+    
+    public void displayDictionary(){
+        try{
+            Stage stage = new Stage();
+            Scene scene = new Scene(new Group());
+            stage.setTitle("Dictionary");
+            stage.setWidth(440);
+            stage.setHeight(940);
+            final Lable lable = new Lable("Dictionary");
         }
     }
 }
