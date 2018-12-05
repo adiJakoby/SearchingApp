@@ -89,7 +89,7 @@ public class Indexer {
     public void executePosting() {
         try {
             //PrintWriter writer = new PrintWriter(workingDir + "\\" + postingIndex + ".txt", "UTF-8");
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\" + postingIndex + ".txt"),StandardCharsets.UTF_8));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\" + postingIndex + ".txt"),"UTF-8"));
             StringBuilder toWrite = new StringBuilder();
             while (mergedTerms.size() > 0) {
                 toWrite.append(mergedTerms.firstKey() + ": " + mergedTerms.pollFirstEntry().getValue() + '\n');
@@ -118,7 +118,7 @@ public class Indexer {
             int pointer = 0;
             // open a buffer writer to the final posting file
             //FileWriter fw = new FileWriter(workingDir + "\\Posting" + fileName);
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Posting" + fileName), StandardCharsets.UTF_8));
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Posting" + fileName),"UTF-8"));
             // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
             //tree map that keeps 3 terms from the each temp posting files
@@ -130,7 +130,7 @@ public class Indexer {
             for (int i = 0; i < postingIndex; i++) {
                 //File file = new File(workingDir + "\\" + i + ".txt");
                 //FileReader fileReader = new FileReader(file);
-                bufferReaders[i] = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\" + i + ".txt"), StandardCharsets.UTF_8));
+                bufferReaders[i] = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\" + i + ".txt"), "UTF-8"));
                 String line;
                 int counter = 1;
                 line = bufferReaders[i].readLine();
@@ -216,7 +216,7 @@ public class Indexer {
                 bufferReaders[i].close();
                 try
                 {
-                    Files.deleteIfExists(Paths.get(workingDir + "\\" + i + ".txt"));
+                    //Files.deleteIfExists(Paths.get(workingDir + "\\" + i + ".txt"));
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -227,7 +227,7 @@ public class Indexer {
         }
         try {
             //FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Dictionary" + fileName), StandardCharsets.UTF_8));
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Dictionary" + fileName), "UTF-8"));
             for (HashMap.Entry<String, Integer[]> e : dictionary.entrySet()
                     ) {
                 WriteFileBuffer.write(e.getKey() + ";" + Integer.toString(e.getValue()[0]) + ";" + Integer.toString(e.getValue()[1]) + '\n');
@@ -331,7 +331,7 @@ public class Indexer {
         }
         try{
             String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\Dictionary" + fileName), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\Dictionary" + fileName), "UTF-8"));
             while ((line = reader.readLine()) != null)
             {
                 String[] parts = line.split(";");

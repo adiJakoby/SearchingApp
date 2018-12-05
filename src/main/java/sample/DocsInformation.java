@@ -92,7 +92,7 @@ public class DocsInformation {
         }
          try {
              //FileWriter fw = new FileWriter(path + "\\Docs Information" + fileName);
-             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), StandardCharsets.UTF_8));
+             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), "UTF-8"));
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
                  String key = entry.getKey();

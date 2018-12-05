@@ -54,7 +54,7 @@ public class Parse {
             filePath += "\\stop_words.txt";
         }
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
                 try {
                     line = reader.readLine();
                     while (line != null) {

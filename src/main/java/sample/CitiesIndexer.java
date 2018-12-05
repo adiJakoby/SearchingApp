@@ -247,7 +247,7 @@ public class CitiesIndexer {
     public void writeCitiesPosting(String path) {
         try {
             //FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Cities Information.txt"), StandardCharsets.UTF_8));
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Cities Information.txt"), "UTF-8"));
             StringBuilder toWrite = new StringBuilder();
             for (City val : allCitiesInCorpus.values()) {
                 if (!val.getCountry().equals("")) {
