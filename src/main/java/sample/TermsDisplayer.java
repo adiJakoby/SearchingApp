@@ -9,7 +9,7 @@ public class TermsDisplayer {
 
     public TermsDisplayer(String termName, int val){
         this.term = new SimpleStringProperty(termName);
-        this.value = new SimpleStringProperty(Integer.toString(val) + "");
+        this.value = new SimpleStringProperty(val + "");
     }
 
 

@@ -115,7 +115,7 @@ public class DocsInformation {
              t2.put(e.getKey(), e.getValue()[1]);
          }
          try {
-             FileWriter out = new FileWriter("C:\\Users\\tzalach\\IdeaProjects\\SearchingApp\\src\\main\\java\\book2.csv");
+             FileWriter out = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\book2.csv");
              String[] HEADERS = {"term", "df"};
              try(CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
                      .withHeader(HEADERS))){

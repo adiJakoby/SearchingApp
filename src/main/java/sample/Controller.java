@@ -160,6 +160,9 @@ public class Controller {
             alert.setHeaderText("There is no saved dictionary in your save path!");
             alert.show();
         } else {
+            DictionaryController dictController = new DictionaryController();
+            dictController.displayDictionary();
+            /*
             Parent root = null;
             try {
                 FXMLLoader myLoader = new FXMLLoader();
@@ -173,6 +176,7 @@ public class Controller {
             stage.setScene(scene);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
+            */
         }
     }
 

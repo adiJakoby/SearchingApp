@@ -77,11 +77,13 @@ public class CitiesIndexer {
     public void addCityToCorpusMap(String capital, String doc) {
         //TODO take care in cases that our all cities dictionary does not contain the city
         String cityName = "";
-        char[] mychars = {'(', ')'};
-        if (capital.contains("(")) {
+        char[] mychars = {'(' , ')' , '[' , ']' , '.' , '"', '\'' ,'2'};
+        if (capital.contains("(")
+                ||capital.contains("[") || capital.contains("]") || capital.contains("-") || capital.contains(".") ) {
             capital = OurReplace(capital, mychars, "");
         }
         String[] allCapitalParts = mySplit(capital, " ");
+        allCapitalParts = mySplit(capital,"-");
         City city = null;
         if (allCapitalParts.length > 1) {
             if (allCapitalParts.length == 3) {
