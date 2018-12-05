@@ -14,9 +14,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -247,8 +246,8 @@ public class CitiesIndexer {
     //write each city population, coin and country
     public void writeCitiesPosting(String path) {
         try {
-            FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
-            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            //FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Cities Information.txt"), StandardCharsets.UTF_8));
             StringBuilder toWrite = new StringBuilder();
             for (City val : allCitiesInCorpus.values()) {
                 if (!val.getCountry().equals("")) {

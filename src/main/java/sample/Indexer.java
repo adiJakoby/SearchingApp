@@ -1,8 +1,8 @@
 package sample;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -88,12 +88,14 @@ public class Indexer {
      */
     public void executePosting() {
         try {
-            PrintWriter writer = new PrintWriter(workingDir + "\\" + postingIndex + ".txt", "UTF-8");
+            //PrintWriter writer = new PrintWriter(workingDir + "\\" + postingIndex + ".txt", "UTF-8");
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\" + postingIndex + ".txt"),StandardCharsets.UTF_8));
             StringBuilder toWrite = new StringBuilder();
             while (mergedTerms.size() > 0) {
                 toWrite.append(mergedTerms.firstKey() + ": " + mergedTerms.pollFirstEntry().getValue() + '\n');
             }
-            writer.print(toWrite);
+            writer.write(toWrite.toString());
+            writer.flush();
             writer.close();
             postingIndex++;
         } catch (IOException ioe) {
@@ -115,8 +117,8 @@ public class Indexer {
         try {
             int pointer = 0;
             // open a buffer writer to the final posting file
-            FileWriter fw = new FileWriter(workingDir + "\\Posting" + fileName);
-            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            //FileWriter fw = new FileWriter(workingDir + "\\Posting" + fileName);
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Posting" + fileName), StandardCharsets.UTF_8));
             // open a buffer reader to each temp posting file
             BufferedReader[] bufferReaders = new BufferedReader[postingIndex];
             //tree map that keeps 3 terms from the each temp posting files
@@ -126,9 +128,9 @@ public class Indexer {
 
             //initial the tree map terms with the X first lines.
             for (int i = 0; i < postingIndex; i++) {
-                File file = new File(workingDir + "\\" + i + ".txt");
-                FileReader fileReader = new FileReader(file);
-                bufferReaders[i] = new BufferedReader(fileReader);
+                //File file = new File(workingDir + "\\" + i + ".txt");
+                //FileReader fileReader = new FileReader(file);
+                bufferReaders[i] = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\" + i + ".txt"), StandardCharsets.UTF_8));
                 String line;
                 int counter = 1;
                 line = bufferReaders[i].readLine();
@@ -188,7 +190,10 @@ public class Indexer {
                 if (currentTerm.equals(lastTerm)) {
                     toWrite.append(terms.firstKey().substring(index+1));
                 } else {
-                    Integer[] newValue = {pointer, dictionary.get(lastTerm)[1]};
+                    Integer[] newValue = new Integer[2];
+                            newValue[0] = pointer;
+                            newValue[1] = (dictionary.get(lastTerm))[1];
+
                     dictionary.put(lastTerm, newValue);
                     pointer++;
                     if (counter == 1000 || terms.size() == 1) {
@@ -221,8 +226,8 @@ public class Indexer {
             System.out.println(Ex.getMessage());
         }
         try {
-            FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
-            BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+            //FileWriter fw = new FileWriter(workingDir + "\\Dictionary" + fileName);
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(workingDir + "\\Dictionary" + fileName), StandardCharsets.UTF_8));
             for (HashMap.Entry<String, Integer[]> e : dictionary.entrySet()
                     ) {
                 WriteFileBuffer.write(e.getKey() + ";" + Integer.toString(e.getValue()[0]) + ";" + Integer.toString(e.getValue()[1]) + '\n');
@@ -326,7 +331,7 @@ public class Indexer {
         }
         try{
             String line;
-            BufferedReader reader = new BufferedReader(new FileReader(workingDir + "\\Dictionary" + fileName));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\Dictionary" + fileName), StandardCharsets.UTF_8));
             while ((line = reader.readLine()) != null)
             {
                 String[] parts = line.split(";");

@@ -1,6 +1,7 @@
 package sample;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,7 @@ public class Parse {
             filePath += "\\stop_words.txt";
         }
             try {
-                BufferedReader reader = new BufferedReader(new FileReader(filePath));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8));
                 try {
                     line = reader.readLine();
                     while (line != null) {
@@ -64,7 +65,7 @@ public class Parse {
                 } catch (IOException ioe) {
                     System.out.println("Problem with the stop word file");
                 }
-            } catch (FileNotFoundException fnfe) {
+            } catch (Exception e) {
                 System.out.println("Problem with the stop word file");
             }
     }

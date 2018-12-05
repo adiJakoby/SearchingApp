@@ -3,9 +3,8 @@ package sample;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -92,8 +91,8 @@ public class DocsInformation {
             fileName = " without stemmer.txt";
         }
          try {
-             FileWriter fw = new FileWriter(path + "\\Docs Information" + fileName);
-             BufferedWriter WriteFileBuffer = new BufferedWriter(fw);
+             //FileWriter fw = new FileWriter(path + "\\Docs Information" + fileName);
+             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), StandardCharsets.UTF_8));
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
                  String key = entry.getKey();
@@ -113,7 +112,7 @@ public class DocsInformation {
          for (Map.Entry<String, Integer[]> e:Indexer.dictionary.entrySet()
                  ) {
              t2.put(e.getKey(), e.getValue()[1]);
-         }
+         }/*
          try {
              FileWriter out = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\book2.csv");
              String[] HEADERS = {"term", "df"};
@@ -129,7 +128,7 @@ public class DocsInformation {
              }
          }catch(IOException e){
              e.printStackTrace();
-         }
+         }*/
      }
 
 }
