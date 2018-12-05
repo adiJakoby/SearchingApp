@@ -152,7 +152,13 @@ public class Indexer {
             if (Character.isUpperCase(currentTerm.charAt(0))){
                 //dictionary.contains(currentTerm.toLowerCase())
                 if(dictionary.containsKey(currentTerm.toLowerCase())){
-                    dictionary.remove(currentTerm);
+                    if(dictionary.containsKey(currentTerm)) {
+                        Integer upCount = dictionary.get(currentTerm)[1];
+                        dictionary.remove(currentTerm);
+                        Integer[] updateVal = dictionary.get(currentTerm.toLowerCase());
+                        updateVal[1] = updateVal[1] + upCount;
+                        dictionary.replace(currentTerm.toLowerCase(), updateVal);
+                    }
                     currentTerm = currentTerm.toLowerCase();
                 }
             }
@@ -168,7 +174,13 @@ public class Indexer {
                 if (Character.isUpperCase(currentTerm.charAt(0))){
                     //dictionary.contains(currentTerm.toLowerCase()
                     if(dictionary.containsKey(currentTerm.toLowerCase())){
-                        dictionary.remove(currentTerm);
+                        if(dictionary.containsKey(currentTerm)) {
+                            Integer upCount = dictionary.get(currentTerm)[1];
+                            dictionary.remove(currentTerm);
+                            Integer[] updateVal = dictionary.get(currentTerm.toLowerCase());
+                            updateVal[1] = updateVal[1] + upCount;
+                            dictionary.replace(currentTerm.toLowerCase(), updateVal);
+                        }
                         currentTerm = currentTerm.toLowerCase();
                     }
                 }

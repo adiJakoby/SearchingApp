@@ -696,10 +696,11 @@ public class Parse {
             while (word.length() >= 1 && (word.charAt(word.length() - 1) == '.' || word.charAt(word.length() - 1) == ',' || word.charAt(word.length() - 1) == '?' ||
                     word.charAt(word.length() - 1) == ':' || word.charAt(word.length() - 1) == '!' || word.charAt(word.length() - 1) == ')'
                     || word.charAt(word.length() - 1) == '}' || word.charAt(word.length() - 1) == ']' || word.charAt(word.length() - 1) == ';'
-                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|' || word.charAt(word.length() - 1) == '*' || word.charAt(word.length() - 1) == '\'')) {
+                    || word.charAt(word.length() - 1) == '"' || word.charAt(word.length() - 1) == '|' || word.charAt(word.length() - 1) == '*'
+                    || word.charAt(word.length() - 1) == '\'' || word.charAt(word.length() - 1) == '`')) {
                 word = word.substring(0, word.length() - 1);
             }
-            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '*' || word.charAt(0) == '\'' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
+            while (word.length() >= 1 && (word.charAt(0) == '|' || word.charAt(0) == '(' || word.charAt(0) == '*' || word.charAt(0) == '\'' ||  word.charAt(0) == '`' || word.charAt(0) == '{' || word.charAt(0) == '[' || word.charAt(0) == '"')) {
                 word = word.substring(1, word.length());
             }
         }
