@@ -91,7 +91,6 @@ public class DocsInformation {
             fileName = " without stemmer.txt";
         }
          try {
-             //FileWriter fw = new FileWriter(path + "\\Docs Information" + fileName);
              BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), "UTF-8"));
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
@@ -112,23 +111,7 @@ public class DocsInformation {
          for (Map.Entry<String, Integer[]> e:Indexer.dictionary.entrySet()
                  ) {
              t2.put(e.getKey(), e.getValue()[1]);
-         }/*
-         try {
-             FileWriter out = new FileWriter("C:\\Users\\adijak\\IdeaProjects\\SearchingApp\\src\\main\\java\\book2.csv");
-             String[] HEADERS = {"term", "df"};
-             try(CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
-                     .withHeader(HEADERS))){
-                 t2.forEach((author, title) -> {
-                     try{
-                         printer.printRecord(author, title);
-                     }catch(IOException e){
-                         e.printStackTrace();
-                     }
-                 });
-             }
-         }catch(IOException e){
-             e.printStackTrace();
-         }*/
+         }
      }
 
 }

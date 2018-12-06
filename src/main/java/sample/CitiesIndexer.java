@@ -150,11 +150,6 @@ public class CitiesIndexer {
                                 .build()
                 );
 
-        /*System.out.println(citiesResponse.getData());
-        System.out.println();
-        System.out.println();
-        System.out.println(cityResponse.getData());*/
-
                 String capital = c.getCity();
                 String country = c.getCountry();
                 String currency = currenciesResponse.toString();

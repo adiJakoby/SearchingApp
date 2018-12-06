@@ -41,10 +41,10 @@ public class ReadFile {
                             Parse p = new Parse(path);
                             String city = e.getElementsByTag("F").toString();
                             if (!city.equals("")) {
-                                int cityIndex = city.indexOf("<F P=\"104\">");
-                                int langIndex = city.indexOf("<F P=\"105\">");
+                                int cityIndex = city.indexOf("<f p=\"104\">");
+                                int langIndex = city.indexOf("<f p=\"105\">");
                                 if (city.charAt(langIndex + 1) != ('<')) {
-                                    language = city.substring(city.indexOf("<F P=\"105\">", city.indexOf("</F>")));
+                                    language = city.substring(city.indexOf("<f p=\"105\">", city.indexOf("</f>")));
                                     if (language.length() > 15) {
                                         language = language.substring(language.indexOf("\n "), language.indexOf(" \n"));
                                         language = language.replaceAll("\n", "");
@@ -53,7 +53,7 @@ public class ReadFile {
                                     }
                                 }
                                 if (city.charAt(cityIndex + 1) != ('<')) {
-                                    city = city.substring(city.indexOf("<F P=\"104\">", city.indexOf("</F>")));
+                                    city = city.substring(city.indexOf("<f p=\"104\">", city.indexOf("</f>")));
                                     if (city.length() > 15) {
                                         city = city.substring(city.indexOf("\n "), city.indexOf(" \n"));
                                         city = city.replaceAll("\n", "");
