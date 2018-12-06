@@ -33,11 +33,9 @@ public class ReadFile {
             if (file2.isDirectory()) {
                 for (File file3 : file2.listFiles()) {
                     if (file3.isFile()) {
-                        Document doc = Jsoup.parse(new String(Files.readAllBytes(file3.toPath())), "", Parser.xmlParser());
-                        Elements docs = doc.getElementsByTag("DOC");
-                        //System.out.println("File name: " + file3.getName());
-                        //System.out.println(docs.size());
-                        //System.out.println();
+                        Document doc;
+                        doc = Jsoup.parse(file3, "UTF-8");
+                        Elements docs = doc.select("DOC");
                         for (Element e : docs) {
                             boolean done = e.siblingIndex() == docs.last().siblingIndex();
                             Parse p = new Parse(path);
@@ -50,7 +48,6 @@ public class ReadFile {
                                     if (language.length() > 15) {
                                         language = language.substring(language.indexOf("\n "), language.indexOf(" \n"));
                                         language = language.replaceAll("\n", "");
-                                        //String languageLine[] = language.split(" ");
                                         language = language.replaceAll(" ", "").toUpperCase();
                                         language = language.replaceAll(",", "").toUpperCase();
                                     }
@@ -70,7 +67,7 @@ public class ReadFile {
                             p.parser(e.getElementsByTag("TEXT").text(), e.getElementsByTag("DOCNO").text(), done, city, stemmer);
                             docsInformation.addDateOfWrite(e.getElementsByTag("DOCNO").text(), e.getElementsByTag("Date1").text());
                             if (!language.equals("")) {
-                                if(!Pattern.compile( "[0-9]" ).matcher( language ).find() || !language.equals("THE")) {
+                                if(!Pattern.compile( "[0-9]" ).matcher( language ).find() && !language.equals("THE")) {
                                     DocsInformation.allLanguages.add(language);
                                 }
                             }
@@ -83,7 +80,6 @@ public class ReadFile {
         }
         Indexer indexer = new Indexer();
         indexer.executePosting();
-        //System.out.println("Finish time: " + dateFormat.format(date1));
     }
 }
 
