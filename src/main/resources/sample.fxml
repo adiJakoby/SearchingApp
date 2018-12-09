@@ -6,20 +6,20 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
-      <TextField fx:id="txt_corpusPath" layoutX="215.0" layoutY="58.0" onAction="#editPath" onKeyPressed="#editPath" />
-      <TextField fx:id="txt_savePath" layoutX="215.0" layoutY="94.0" onKeyPressed="#editPath" />
-      <TextField fx:id="txt_corpusPathLabel" alignment="CENTER" layoutX="387.0" layoutY="58.0" prefHeight="25.0" prefWidth="199.0" text="הכנס נתיב תיקיית מאגר המסמכים" />
-      <TextField fx:id="txt_savePathLabel" alignment="CENTER" layoutX="387.0" layoutY="94.0" prefHeight="25.0" prefWidth="199.0" text="הכנס נתיב לשמירת קבצי הנתונים" />
-      <Button fx:id="btn_searchCorpusPath" layoutX="136.0" layoutY="58.0" mnemonicParsing="false" onAction="#handleSearchCorpusPath" text="חפש נתיב" />
-      <Button fx:id="btn_searchSavePath" layoutX="136.0" layoutY="94.0" mnemonicParsing="false" onAction="#handleSearchSavePath" prefHeight="25.0" prefWidth="68.0" text="חפש נתיב" />
-      <Button fx:id="btn_play" layoutX="460.0" layoutY="136.0" mnemonicParsing="false" onAction="#handlePlay" text="הפעלה" />
-      <CheckBox fx:id="checkBox_stemming" layoutX="136.0" layoutY="131.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="108.0" text="With stemming" textAlignment="RIGHT" />
-      <ChoiceBox fx:id="choiceBox_Language" layoutX="177.0" layoutY="288.0" prefWidth="150.0" />
-      <TextField fx:id="txt_LanguageLabel" alignment="CENTER" layoutX="178.0" layoutY="253.0" prefHeight="25.0" prefWidth="149.0" text="בחר שפה" />
-      <Button fx:id="btn_initialMemory" layoutX="28.0" layoutY="325.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="130.0" text="איפוס" />
-      <Button fx:id="btn_loadDictionary" layoutX="28.0" layoutY="288.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="130.0" text="טען את המילון לזיכרון" />
-      <Button fx:id="btn_displayDictionary" layoutX="30.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleDisplayDictionary" prefHeight="25.0" prefWidth="130.0" text="הצג את המילון" />
+      <TextField fx:id="txt_corpusPath" layoutX="253.0" layoutY="58.0" onAction="#editPath" onKeyPressed="#editPath" />
+      <TextField fx:id="txt_savePath" layoutX="253.0" layoutY="94.0" onKeyPressed="#editPath" />
+      <TextField fx:id="txt_corpusPathLabel" alignment="CENTER" layoutX="45.0" layoutY="58.0" prefHeight="25.0" prefWidth="199.0" text="Enter the corpus path" />
+      <TextField fx:id="txt_savePathLabel" alignment="CENTER" layoutX="45.0" layoutY="94.0" prefHeight="25.0" prefWidth="199.0" text="Enter the saved files directory path" />
+      <Button fx:id="btn_searchCorpusPath" layoutX="419.0" layoutY="58.0" mnemonicParsing="false" onAction="#handleSearchCorpusPath" text="Browse.." />
+      <Button fx:id="btn_searchSavePath" layoutX="419.0" layoutY="94.0" mnemonicParsing="false" onAction="#handleSearchSavePath" prefHeight="25.0" prefWidth="59.0" text="Browse.." />
+      <Button fx:id="btn_play" layoutX="45.0" layoutY="159.0" mnemonicParsing="false" onAction="#handlePlay" text="Play" />
+      <CheckBox fx:id="checkBox_stemming" layoutX="45.0" layoutY="128.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="108.0" text="With stemming" textAlignment="RIGHT" />
+      <ChoiceBox fx:id="choiceBox_Language" layoutX="226.0" layoutY="288.0" prefWidth="150.0" />
+      <TextField fx:id="txt_LanguageLabel" alignment="CENTER" layoutX="226.0" layoutY="252.0" prefHeight="25.0" prefWidth="149.0" text="Select Language" />
+      <Button fx:id="btn_initialMemory" layoutX="28.0" layoutY="325.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="161.0" text="Reset" />
+      <Button fx:id="btn_loadDictionary" layoutX="28.0" layoutY="288.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="161.0" text="Load dictionary to memory" />
+      <Button fx:id="btn_displayDictionary" layoutX="30.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleDisplayDictionary" prefHeight="25.0" prefWidth="161.0" text="Show dictionary" />
    </children>
 </Pane>
