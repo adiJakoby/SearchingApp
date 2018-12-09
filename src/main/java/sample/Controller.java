@@ -149,7 +149,7 @@ public class Controller {
             alert.setTitle("Information");
             alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
                                 "Number of unique terms: " + indexer.dictionary.size() + "\n" +
-                                "Time in seconds: " + (endTime-startTime/1000));
+                                "Time in seconds: " + ((endTime-startTime)/1000));
             alert.show();
             btn_initialMemory.setDisable(false);
             btn_loadDictionary.setDisable(false);
