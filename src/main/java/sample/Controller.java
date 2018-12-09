@@ -127,6 +127,7 @@ public class Controller {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
+            Long startTime = System.currentTimeMillis();
 
             try {
                 myReader.ReadFile(workingDir, stemmer);
@@ -139,9 +140,17 @@ public class Controller {
             citiesIndexer.writeCitiesPosting(txt_savePath.getText());
 
             alert.close();
-            btn_displayDictionary.setDisable(false);
             Date date1 = new Date();
             System.out.println(dateFormat.format(date1));
+            Long endTime = System.currentTimeMillis();
+
+            btn_displayDictionary.setDisable(false);
+            Alert detailsAlert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information");
+            alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
+                                "Number of unique terms: " + indexer.dictionary.size() + "\n" +
+                                "Time in seconds: " + (endTime-startTime/1000));
+            alert.show();
             btn_initialMemory.setDisable(false);
             btn_loadDictionary.setDisable(false);
             btn_play.setDisable(false);
