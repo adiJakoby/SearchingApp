@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <TextField fx:id="txt_corpusPath" layoutX="253.0" layoutY="58.0" onAction="#editPath" onKeyPressed="#editPath" />
       <TextField fx:id="txt_savePath" layoutX="253.0" layoutY="94.0" onKeyPressed="#editPath" />
@@ -21,5 +21,6 @@
       <Button fx:id="btn_initialMemory" layoutX="28.0" layoutY="325.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="161.0" text="Reset" />
       <Button fx:id="btn_loadDictionary" layoutX="28.0" layoutY="288.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="161.0" text="Load dictionary to memory" />
       <Button fx:id="btn_displayDictionary" layoutX="30.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleDisplayDictionary" prefHeight="25.0" prefWidth="161.0" text="Show dictionary" />
+      <Button layoutX="423.0" layoutY="207.0" mnemonicParsing="false" onAction="#handleSearch" text="SearchTest" />
    </children>
 </Pane>

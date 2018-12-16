@@ -128,8 +128,6 @@ public class Indexer {
 
             //initial the tree map terms with the X first lines.
             for (int i = 0; i < postingIndex; i++) {
-                //File file = new File(workingDir + "\\" + i + ".txt");
-                //FileReader fileReader = new FileReader(file);
                 bufferReaders[i] = new BufferedReader(new InputStreamReader(new FileInputStream(workingDir + "\\" + i + ".txt"), "UTF-8"));
                 String line;
                 int counter = 1;

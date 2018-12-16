@@ -74,14 +74,7 @@ public class Parse {
         myCitiesIndexer.api_Connection();
     }
 
-    public void parser(String doc, String docNo, boolean doneFile,String city, boolean toStemmer) {
-        maxTf = 0;
-        maxTerm = "";
-        //TODO replace ( ) { } [ ] to space
-        if(!city.equals("")&&!city.contains("<F P=")) {
-            myCitiesIndexer.addCityToCorpusMap(city, docNo);
-        }
-        this.docName=docNo;
+    private int startParse(String doc){
         char[] toReplace = {'_', ',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
         doc = OurReplace(doc,"\n", " ");
         doc = OurReplace(doc, toReplace, " ");
@@ -106,6 +99,46 @@ public class Parse {
                 splitDocIndex++;
             }
         }
+        return docLength;
+    }
+
+    public Map<String, Integer> queryParser(String doc){
+        startParse(doc);
+        return tokens;
+    }
+
+    public void parser(String doc, String docNo, boolean doneFile, String city, boolean toStemmer) {
+        maxTf = 0;
+        maxTerm = "";
+        if(!city.equals("")&&!city.contains("<F P=")) {
+            myCitiesIndexer.addCityToCorpusMap(city, docNo);
+        }
+        this.docName=docNo;
+//        char[] toReplace = {'_', ',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
+//        doc = OurReplace(doc,"\n", " ");
+//        doc = OurReplace(doc, toReplace, " ");
+//        splitDoc = mySplit(doc, " ");
+//        for (int i = 0; i < splitDoc.length; i++) {
+//            splitDoc[i] = removeFromTheEdges(splitDoc[i]);
+//        }
+//
+//        int docLength = 0;
+//        while (splitDocIndex < splitDoc.length) {
+//            String word = splitDoc[splitDocIndex];
+//            if (!stopWordsSet.contains(word.toLowerCase())) {
+//                docLength++;
+//                if (word.contains("-")) {
+//                    hyphenTests(word);
+//                } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
+//                    numberTests(word);
+//                } else {
+//                    wordTests(word);
+//                }
+//            } else {
+//                splitDocIndex++;
+//            }
+//        }
+        int docLength = startParse(doc);
         docsInformation.addDocLength(docNo, docLength);
         stemmer.stemming(tokens, docNo, doneFile, toStemmer, maxTf, maxTerm);
     }

@@ -4,6 +4,7 @@ import org.tartarus.snowball.SnowballStemmer;
 import org.tartarus.snowball.ext.englishStemmer;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,6 +13,27 @@ public class Stemmer {
     SnowballStemmer snowballStemmer = new englishStemmer();
     Indexer indexer = new Indexer();
     DocsInformation docsInformation = new DocsInformation();
+
+    public Map<String, Integer> queryStemmer(Map<String, Integer> tokens){
+        Map<String, Integer> stems = new HashMap<>();
+        for (String key : tokens.keySet()) {
+            snowballStemmer.setCurrent(key);
+            snowballStemmer.stem();
+            String newStem = snowballStemmer.getCurrent();
+            if (Character.isLowerCase(key.charAt(0))) {
+                newStem = newStem.toLowerCase();
+            } else {
+                newStem = newStem.toUpperCase();
+            }
+            if (stems.containsKey(newStem)) {
+                int counter = stems.get(newStem);
+                stems.put(newStem, counter + tokens.get(key));
+            } else {
+                stems.put(newStem, tokens.get(key));
+            }
+        }
+        return stems;
+    }
 
     public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile, boolean stemmer, int max_tf, String maxTerm) {
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());

@@ -234,4 +234,9 @@ public class Controller {
         }
     }
 
+    public void handleSearch(){
+        Searcher searcher = new Searcher("C:\\Users\\adijak\\IdeaProjects\\with stemmer");
+        searcher.getRelevantDocuments("pezzi", true);
+    }
+
 }
