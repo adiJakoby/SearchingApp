@@ -316,11 +316,6 @@ public class Parse {
                     addToMapUpCase(word);
                 }
             } else if (word.length() > 2 && word.charAt(word.length()-2) == '\'' && (word.charAt(word.length()-1) == 's')){
-                /*if (Character.isLowerCase(word.charAt(0))) {
-                    addToMapLowCase(word);
-                } else {
-                    addToMapUpCase(word);
-                }*/
                 word = word.substring(0,word.length()-2);
                 if (Character.isLowerCase(word.charAt(0))) {
                     addToMapLowCase(word);
@@ -756,7 +751,6 @@ public class Parse {
         return sb.toString();
     }
 
-    //TODO to check if it works and use it
     private String OurReplace(String s, char[] targets, String replacement) {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < s.length(); i++){

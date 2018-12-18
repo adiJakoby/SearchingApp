@@ -242,6 +242,11 @@ public class CitiesIndexer {
     //write each city population, coin and country
     public void writeCitiesPosting(String path) {
         try {
+            FileOutputStream fos = new FileOutputStream(path + "\\Cities Information.txt");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(allCitiesInCorpus);
+            oos.close();
+            /*
             //FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Cities Information.txt"), "UTF-8"));
             StringBuilder toWrite = new StringBuilder();
@@ -257,12 +262,21 @@ public class CitiesIndexer {
             }
             WriteFileBuffer.write(toWrite.toString());
             WriteFileBuffer.flush();
-            WriteFileBuffer.close();
+            WriteFileBuffer.close();*/
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-
+    public void setAllCitiesInCorpus(String path){
+        try {
+            FileInputStream fis = new FileInputStream(path + "\\Cities Information.txt");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            allCitiesInCorpus = (HashMap<String, City>) ois.readObject();
+            ois.close();
+        }catch(Exception e){
+            System.out.println(e);
+        }
     }
 }
 

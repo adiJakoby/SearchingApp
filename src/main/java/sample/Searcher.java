@@ -12,10 +12,13 @@ public class Searcher {
     private static HashMap<String, Integer[]> dictionary;
     String postingPath;
     String fullPostingPath;
+    Ranker ranker;
+
 
     public Searcher(String postingPath){
         dictionary = Indexer.dictionary;
         this.postingPath = postingPath;
+        ranker = new Ranker();
 
     }
 
@@ -37,7 +40,9 @@ public class Searcher {
             fullPostingPath = postingPath + "\\Posting without stemmer.txt";
         }
 
-        Map<String, ArrayList<String>> allDocumentBeforeRank = getAllDocuments(tokens);
+        Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens);
+        HashMap<String, Double> ranksOfDocuments = ranker.rank(allDocumentBeforeRank, tokens);
+        System.out.println(ranksOfDocuments);
         List<String> relevantDocuments = new LinkedList<>();
 
         return relevantDocuments;
@@ -46,10 +51,10 @@ public class Searcher {
     /**
      *
      * @param tokens
-     * @return a map for each word in the query a list of documents that the word appears in.
+     * @return a map for each relevant document to the query's words, a list of the words from the query that appears in, and the amount of appearance.
      */
-    private Map<String, ArrayList<String>> getAllDocuments(Map<String, Integer> tokens){
-        Map<String, ArrayList<String>> result = new HashMap<>();
+    private Map<String, ArrayList<String[]>> getAllDocuments(Map<String, Integer> tokens){
+        Map<String, ArrayList<String[]>> result = new HashMap<>();
         TreeMap<Integer, String> tokensToFind = new TreeMap<>();
         for (String token: tokens.keySet()
              ) {
@@ -65,18 +70,31 @@ public class Searcher {
                     line = reader.readLine();
                     pointer++;
                 }
-                ArrayList<String> docList = new ArrayList<>();
+                //ArrayList<String> docList = new ArrayList<>();
 
                 String[] splitByColon = mySplit(line, ":");
                 String[] splitBySpace = mySplit(splitByColon[1], " ");
                 for(int i = 0; i < splitBySpace.length-1; i = i + 2){
-                    docList.add(splitBySpace[i] + " " + splitBySpace[i+1]);
+                    if(result.containsKey(splitBySpace[i])){
+                        ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
+                        String[] newArr = {splitByColon[0], splitBySpace[i+1], Integer.toString(splitBySpace.length/2)};
+                        currentValue.add(newArr);
+                        result.put(splitBySpace[i], currentValue);
+                    }
+                    else{
+                        ArrayList<String[]> currentValue = new ArrayList<>();
+                        //0: the term from the query, 1: number of appearance of this word in the document, 2: number of appearance of the word in the corpus (without duplicate)
+                        String[] newArr = {splitByColon[0], splitBySpace[i+1], Integer.toString(splitBySpace.length/2)};
+                        currentValue.add(newArr);
+                        result.put(splitBySpace[i], currentValue);
+                    }
+                    //docList.add(splitBySpace[i] + " " + splitBySpace[i+1]);
                 }
-                result.put(splitByColon[0], docList);
+                //result.put(splitByColon[0], docList);
             }
         }
         catch(IOException e){
-            System.out.println(e.getCause());
+            e.printStackTrace();
         }
         return result;
     }

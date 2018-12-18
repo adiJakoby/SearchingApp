@@ -1,10 +1,11 @@
 package sample;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class City {
+public class City implements Serializable{
 
     private String name;
     private String country;

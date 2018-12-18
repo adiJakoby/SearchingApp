@@ -13,6 +13,7 @@ import java.util.TreeMap;
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
     static HashSet<String> allLanguages = new HashSet<>();
+    static double avdl = 0;
 
     public void addMaxTf(int max_tf, String docName){
         if(allDocsInformation.containsKey(docName)){
@@ -67,6 +68,7 @@ public class DocsInformation {
             temp[3] = Integer.toString(length);
             allDocsInformation.put(docName, temp);
         }
+        avdl = ((avdl*(allDocsInformation.size()-1))+length)/allDocsInformation.size();
     }
 
     public void addDateOfWrite(String docName, String date){
@@ -91,7 +93,12 @@ public class DocsInformation {
             fileName = " without stemmer.txt";
         }
          try {
-             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), "UTF-8"));
+             FileOutputStream fos = new FileOutputStream(path + "\\Docs Information" + fileName);
+             ObjectOutputStream oos = new ObjectOutputStream(fos);
+             oos.writeObject(allDocsInformation);
+             oos.close();
+
+            /*(BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), "UTF-8"));
              StringBuilder toWrite = new StringBuilder();
              for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
                  String key = entry.getKey();
@@ -103,7 +110,7 @@ public class DocsInformation {
              }
              WriteFileBuffer.write(toWrite.toString());
              WriteFileBuffer.flush();
-             WriteFileBuffer.close();
+             WriteFileBuffer.close();*/
          } catch (Exception e) {
              e.printStackTrace();
          }
@@ -114,4 +121,21 @@ public class DocsInformation {
          }
      }
 
+     public void setAllDocsInformation(String path, boolean stemmer){
+         String fileName = "";
+         if(stemmer){
+             fileName = " with stemmer.txt";
+         }
+         else{
+             fileName = " without stemmer.txt";
+         }
+         try {
+             FileInputStream fis = new FileInputStream(path + "\\Docs Information" + fileName);
+             ObjectInputStream ois = new ObjectInputStream(fis);
+             allDocsInformation = (HashMap<String, String[]>) ois.readObject();
+             ois.close();
+         }catch(Exception e){
+             System.out.println(e);
+         }
+     }
 }

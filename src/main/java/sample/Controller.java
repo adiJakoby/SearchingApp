@@ -225,7 +225,12 @@ public class Controller {
             if (load) {
                 btn_displayDictionary.setDisable(false);
                 Indexer indexer = new Indexer(txt_savePath.getText());
+                DocsInformation docsInformation = new DocsInformation();
+                CitiesIndexer citiesIndexer = new CitiesIndexer();
                 indexer.setDictionary(stemmer);
+                docsInformation.setAllDocsInformation(txt_savePath.getText(), stemmer);
+                citiesIndexer.setAllCitiesInCorpus(txt_savePath.getText());
+
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good News");
                 alert.setHeaderText("Your dictionary is loaded, you can take a look");
@@ -235,8 +240,8 @@ public class Controller {
     }
 
     public void handleSearch(){
-        Searcher searcher = new Searcher("C:\\Users\\adijak\\IdeaProjects\\with stemmer");
-        searcher.getRelevantDocuments("pezzi", true);
+        Searcher searcher = new Searcher("D:\\documents\\users\\adijak\\Downloads");
+        searcher.getRelevantDocuments("pezzi", false);
     }
 
 }
