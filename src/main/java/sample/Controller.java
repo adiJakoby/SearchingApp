@@ -156,7 +156,7 @@ public class Controller {
             btn_play.setDisable(false);
             btn_searchCorpusPath.setDisable(false);
             btn_searchSavePath.setDisable(false);
-            choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
+            choiceBox_Language.setItems(FXCollections.observableArrayList(CitiesIndexer.allCitiesInCorpus));
         }
     }
 

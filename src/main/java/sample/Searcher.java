@@ -74,7 +74,6 @@ public class Searcher {
                 }
                 result.put(splitByColon[0], docList);
             }
-        
         }
         catch(IOException e){
             System.out.println(e.getCause());
@@ -100,5 +99,22 @@ public class Searcher {
         }
         String[] array = result.toArray(new String[0]);
         return array;
+    }
+
+    /**
+     *
+     * @param city
+     * @return array list of all the docs that contain this city
+     *///
+    private Map<String,String> getAllDocsByCity(String city){
+        City currentCity = CitiesIndexer.allCitiesInCorpus.get(city);
+        Map<String, String>  allDocsByCity = currentCity.getDocsList();
+        Map <String,String> allDocsContainsCity = new HashMap<>();
+        for (String doc: allDocsByCity.keySet()) {
+            String[] allLocationsOfCity = mySplit(allDocsByCity.get(doc),",");
+            String numOfAppearsInDoc = Integer.toString(allLocationsOfCity.length);
+            allDocsContainsCity.put(doc,numOfAppearsInDoc);
+        }
+        return allDocsContainsCity;
     }
 }

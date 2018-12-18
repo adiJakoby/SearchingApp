@@ -1,12 +1,14 @@
 
 package sample;
 
+/*
 import com.wirefreethought.geodb.client.GeoDbApi;
 import com.wirefreethought.geodb.client.model.*;
 import com.wirefreethought.geodb.client.net.GeoDbApiClient;
 import com.wirefreethought.geodb.client.request.FindCitiesRequest;
 import com.wirefreethought.geodb.client.request.FindCityRequest;
 import com.wirefreethought.geodb.client.request.FindCurrenciesRequest;
+*/
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -122,8 +124,7 @@ public class CitiesIndexer {
         }
     }
 
-    //in case that the city it not a capital
-    private void getCityDetails(String city, String doc) {
+/*    private void getCityDetails(String city, String doc) {
         GeoDbApiClient apiClient = new GeoDbApiClient(GeoDbInstanceType.FREE);
         GeoDbApi geoDbApi = new GeoDbApi(apiClient);
 
@@ -163,7 +164,7 @@ public class CitiesIndexer {
             System.out.println(city);
         }
     }
-
+*/
     /**
      * @param pop
      * @return the population divide by 1000000,or more..
