@@ -22,7 +22,7 @@ public class Searcher {
     private org.json.simple.parser.JSONParser myParser;
 
 
-    public Searcher(String postingPath){
+    public Searcher(String postingPath) {
         dictionary = Indexer.dictionary;
         this.postingPath = postingPath;
         ranker = new Ranker();
@@ -30,21 +30,22 @@ public class Searcher {
     }
 
     /**
-     *
      * @param query
      * @param toStem - if the corpus has been stemmed or not
      * @return a list of the most 50 relevant documents (if exist) to the given query.
      */
-    public List<String> getRelevantDocuments(String query, boolean toStem){
-        Map<String, Integer> tokens = new HashMap<>();
+    public List<String> getRelevantDocuments(String query, boolean toStem) {
+        Map<String, Integer> tokens;
+        Map<String, Integer> semanticTokens;
         parser = new Parse(System.getProperty("user.dir") + "\\src\\main\\java");
         stemmer = new Stemmer();
-        List <String> allSemanticWords = getSemanticWords(query);
         tokens = parser.queryParser(query);
-        if(toStem){
+        semanticTokens = getSemanticWords(tokens);
+        if (toStem) {
             tokens = stemmer.queryStemmer(tokens);
+            semanticTokens = stemmer.queryStemmer(semanticTokens);
             fullPostingPath = postingPath + "\\Posting with stemmer.txt";
-        }else{
+        } else {
             fullPostingPath = postingPath + "\\Posting without stemmer.txt";
         }
 
@@ -53,16 +54,16 @@ public class Searcher {
         TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(ranksOfDocuments);
         try {
             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
-            for (double rank: sortedRanksOfDocuments.descendingKeySet()
-                 ) {
+            for (double rank : sortedRanksOfDocuments.descendingKeySet()
+                    ) {
                 LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
-                while(!documentsOfRank.isEmpty()){
-                    WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " +rank + '\n');
+                while (!documentsOfRank.isEmpty()) {
+                    WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " + rank + '\n');
                 }
             }
             WriteFileBuffer.flush();
             WriteFileBuffer.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         List<String> relevantDocuments = new LinkedList<>();
@@ -71,19 +72,18 @@ public class Searcher {
     }
 
     /**
-     *
      * @param beforeSort
      * @return a tree map of documents sorted by the ranks
      */
-    private TreeMap<Double, LinkedList> getRankDocumentsSortedByRank(HashMap<String, Double> beforeSort){
+    private TreeMap<Double, LinkedList> getRankDocumentsSortedByRank(HashMap<String, Double> beforeSort) {
         TreeMap<Double, LinkedList> afterSort = new TreeMap<>();
-        for (String document: beforeSort.keySet()
-             ) {
-            if(afterSort.containsKey(beforeSort.get(document))){
+        for (String document : beforeSort.keySet()
+                ) {
+            if (afterSort.containsKey(beforeSort.get(document))) {
                 LinkedList<String> listOfDocs = afterSort.get(beforeSort.get(document));
                 listOfDocs.add(document);
                 afterSort.put(beforeSort.get(document), listOfDocs);
-            }else{
+            } else {
                 LinkedList<String> listOfDocs = new LinkedList<>();
                 listOfDocs.add(document);
                 afterSort.put(beforeSort.get(document), listOfDocs);
@@ -94,18 +94,17 @@ public class Searcher {
     }
 
     /**
-     *
      * @param tokens
      * @return a map for each relevant document to the query's words, a list of the words from the query that appears in, and the amount of appearance.
      */
-    private Map<String, ArrayList<String[]>> getAllDocuments(Map<String, Integer> tokens){
+    private Map<String, ArrayList<String[]>> getAllDocuments(Map<String, Integer> tokens) {
         Map<String, ArrayList<String[]>> result = new HashMap<>();
         TreeMap<Integer, String> tokensToFind = new TreeMap<>();
-        for (String token: tokens.keySet()
-             ) {
-            if(dictionary.containsKey(token)) {
+        for (String token : tokens.keySet()
+                ) {
+            if (dictionary.containsKey(token)) {
                 tokensToFind.put(dictionary.get(token)[0], token);
-            }else{
+            } else {
                 System.out.println("the word: " + token + " is not exist in dictionary");
             }
         }
@@ -113,14 +112,14 @@ public class Searcher {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fullPostingPath), "UTF-8"));
             int pointer = 0;
             int nextLine = tokensToFind.firstKey();
-            while(!tokensToFind.isEmpty()){
+            while (!tokensToFind.isEmpty()) {
                 String line = reader.readLine();
-                while(pointer != nextLine){
+                while (pointer != nextLine) {
                     line = reader.readLine();
                     pointer++;
                 }
                 String[] splitByColon = mySplit(line, ":");
-                if(splitByColon[0].equals(tokensToFind.firstEntry().getValue())) {
+                if (splitByColon[0].equals(tokensToFind.firstEntry().getValue())) {
                     String[] splitBySpace = mySplit(splitByColon[1], " ");
                     for (int i = 0; i < splitBySpace.length - 1; i = i + 2) {
                         if (result.containsKey(splitBySpace[i])) {
@@ -136,19 +135,18 @@ public class Searcher {
                             result.put(splitBySpace[i], currentValue);
                         }
                     }
-                }else{
+                } else {
                     System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
                     System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
 
                 }
                 tokensToFind.pollFirstEntry();
                 pointer++;
-                if(!tokensToFind.isEmpty()){
+                if (!tokensToFind.isEmpty()) {
                     nextLine = tokensToFind.firstKey();
                 }
             }
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
@@ -175,30 +173,29 @@ public class Searcher {
     }
 
     /**
-     *
      * @param city
      * @return array list of all the docs that contain this city
      *///
-    private Map<String,String> getAllDocsByCity(String city){
+    private Map<String, String> getAllDocsByCity(String city) {
         City currentCity = CitiesIndexer.allCitiesInCorpus.get(city);
-        Map<String, String>  allDocsByCity = currentCity.getDocsList();
-        Map <String,String> allDocsContainsCity = new HashMap<>();
-        for (String doc: allDocsByCity.keySet()) {
-            String[] allLocationsOfCity = mySplit(allDocsByCity.get(doc),",");
+        Map<String, String> allDocsByCity = currentCity.getDocsList();
+        Map<String, String> allDocsContainsCity = new HashMap<>();
+        for (String doc : allDocsByCity.keySet()) {
+            String[] allLocationsOfCity = mySplit(allDocsByCity.get(doc), ",");
             String numOfAppearsInDoc = Integer.toString(allLocationsOfCity.length);
-            allDocsContainsCity.put(doc,numOfAppearsInDoc);
+            allDocsContainsCity.put(doc, numOfAppearsInDoc);
         }
         return allDocsContainsCity;
     }
 
-    private List<String> getSemanticWords(String query){
-        List <String> semanticWord = new LinkedList<>();
+    private Map<String, Integer> getSemanticWords(Map<String, Integer> tokens) {
+        Map<String, Integer> semanticWords = new HashMap<>();
         OkHttpClient myClient = new OkHttpClient();
-        query = query.replace("?" , "");
-        query = query.replace("!" , "");
-        String[] queryAfterSplit = mySplit(query, " ");
-        for(int i=0;i<queryAfterSplit.length;i++) {
-            String url = "https://api.datamuse.com/words?ml="+ queryAfterSplit[i];
+        //String[] queryAfterSplit = mySplit(query, " ");
+        //for(int i=0;i<queryAfterSplit.length;i++) {
+        for (String key : tokens.keySet()
+                ) {
+            String url = "https://api.datamuse.com/words?ml=" + key;
             Request req = new Request.Builder().url(url).build();
             Response res = null;
             try {
@@ -221,18 +218,19 @@ public class Searcher {
             if (object != null) {
                 Object[] parsed_json = ((JSONArray) object).toArray();
                 String word = "";
-                int counter=0;
+                int counter = 0;
                 for (Object O : parsed_json) {
                     word = (String) ((JSONObject) O).get("word");
-                    semanticWord.add(word);
+                    semanticWords.put(word, tokens.get(key));
                     counter++;
-                    if(counter==10){
+                    if (counter == 10) {
                         break;
                     }
                 }
             }
         }
-
-        return semanticWord;
+        return semanticWords;
     }
+
 }
+
