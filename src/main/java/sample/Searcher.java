@@ -1,9 +1,6 @@
 package sample;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class Searcher {
@@ -42,10 +39,47 @@ public class Searcher {
 
         Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens);
         HashMap<String, Double> ranksOfDocuments = ranker.rank(allDocumentBeforeRank, tokens);
-        System.out.println(ranksOfDocuments);
+        TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(ranksOfDocuments);
+        try {
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
+            for (double rank: sortedRanksOfDocuments.descendingKeySet()
+                 ) {
+                LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
+                while(!documentsOfRank.isEmpty()){
+                    WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " +rank + '\n');
+                }
+            }
+            WriteFileBuffer.flush();
+            WriteFileBuffer.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         List<String> relevantDocuments = new LinkedList<>();
 
         return relevantDocuments;
+    }
+
+    /**
+     *
+     * @param beforeSort
+     * @return a tree map of documents sorted by the ranks
+     */
+    private TreeMap<Double, LinkedList> getRankDocumentsSortedByRank(HashMap<String, Double> beforeSort){
+        TreeMap<Double, LinkedList> afterSort = new TreeMap<>();
+        for (String document: beforeSort.keySet()
+             ) {
+            if(afterSort.containsKey(beforeSort.get(document))){
+                LinkedList<String> listOfDocs = afterSort.get(beforeSort.get(document));
+                listOfDocs.add(document);
+                afterSort.put(beforeSort.get(document), listOfDocs);
+            }else{
+                LinkedList<String> listOfDocs = new LinkedList<>();
+                listOfDocs.add(document);
+                afterSort.put(beforeSort.get(document), listOfDocs);
+            }
+        }
+
+        return afterSort;
     }
 
     /**
@@ -58,39 +92,49 @@ public class Searcher {
         TreeMap<Integer, String> tokensToFind = new TreeMap<>();
         for (String token: tokens.keySet()
              ) {
-            tokensToFind.put(dictionary.get(token)[0], token);
+            if(dictionary.containsKey(token)) {
+                tokensToFind.put(dictionary.get(token)[0], token);
+            }else{
+                System.out.println("the word: " + token + " is not exist in dictionary");
+            }
         }
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fullPostingPath), "UTF-8"));
             int pointer = 0;
+            int nextLine = tokensToFind.firstKey();
             while(!tokensToFind.isEmpty()){
-                int nextLine = tokensToFind.pollFirstEntry().getKey();
                 String line = reader.readLine();
                 while(pointer != nextLine){
                     line = reader.readLine();
                     pointer++;
                 }
-                //ArrayList<String> docList = new ArrayList<>();
-
                 String[] splitByColon = mySplit(line, ":");
-                String[] splitBySpace = mySplit(splitByColon[1], " ");
-                for(int i = 0; i < splitBySpace.length-1; i = i + 2){
-                    if(result.containsKey(splitBySpace[i])){
-                        ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
-                        String[] newArr = {splitByColon[0], splitBySpace[i+1], Integer.toString(splitBySpace.length/2)};
-                        currentValue.add(newArr);
-                        result.put(splitBySpace[i], currentValue);
+                if(splitByColon[0].equals(tokensToFind.firstEntry().getValue())) {
+                    String[] splitBySpace = mySplit(splitByColon[1], " ");
+                    for (int i = 0; i < splitBySpace.length - 1; i = i + 2) {
+                        if (result.containsKey(splitBySpace[i])) {
+                            ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
+                            String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
+                            currentValue.add(newArr);
+                            result.put(splitBySpace[i], currentValue);
+                        } else {
+                            ArrayList<String[]> currentValue = new ArrayList<>();
+                            //0: the term from the query, 1: number of appearance of this word in the document, 2: number of appearance of the word in the corpus (without duplicate)
+                            String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
+                            currentValue.add(newArr);
+                            result.put(splitBySpace[i], currentValue);
+                        }
                     }
-                    else{
-                        ArrayList<String[]> currentValue = new ArrayList<>();
-                        //0: the term from the query, 1: number of appearance of this word in the document, 2: number of appearance of the word in the corpus (without duplicate)
-                        String[] newArr = {splitByColon[0], splitBySpace[i+1], Integer.toString(splitBySpace.length/2)};
-                        currentValue.add(newArr);
-                        result.put(splitBySpace[i], currentValue);
-                    }
-                    //docList.add(splitBySpace[i] + " " + splitBySpace[i+1]);
+                }else{
+                    System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
+                    System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
+
                 }
-                //result.put(splitByColon[0], docList);
+                tokensToFind.pollFirstEntry();
+                pointer++;
+                if(!tokensToFind.isEmpty()){
+                    nextLine = tokensToFind.firstKey();
+                }
             }
         }
         catch(IOException e){
@@ -135,4 +179,6 @@ public class Searcher {
         }
         return allDocsContainsCity;
     }
+
+    //private List<>
 }

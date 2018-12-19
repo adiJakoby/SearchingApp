@@ -85,6 +85,8 @@ public class DocsInformation {
      }
 
      public void saveTheInformation(String path, boolean stemmer){
+        String[] avdlVal = {Double.toString(avdl)};
+        allDocsInformation.put("avdl", avdlVal);
         String fileName = "";
         if(stemmer){
             fileName = " with stemmer.txt";
@@ -134,6 +136,7 @@ public class DocsInformation {
              ObjectInputStream ois = new ObjectInputStream(fis);
              allDocsInformation = (HashMap<String, String[]>) ois.readObject();
              ois.close();
+             avdl = Double.parseDouble(allDocsInformation.get("avdl")[0]);
          }catch(Exception e){
              System.out.println(e);
          }

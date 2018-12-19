@@ -241,7 +241,8 @@ public class Controller {
 
     public void handleSearch(){
         Searcher searcher = new Searcher("D:\\documents\\users\\adijak\\Downloads");
-        searcher.getRelevantDocuments("pezzi", false);
+        searcher.getRelevantDocuments("What information is available on petroleum exploration in \n" +
+                "the South Atlantic near the Falkland Islands?", false);
     }
 
 }
