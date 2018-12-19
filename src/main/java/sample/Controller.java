@@ -240,7 +240,7 @@ public class Controller {
     }
 
     public void handleSearch(){
-        Searcher searcher = new Searcher("D:\\documents\\users\\adijak\\Downloads");
+        Searcher searcher = new Searcher("d:\\documents\\users\\tzalach\\Downloads");
         searcher.getRelevantDocuments("What information is available on petroleum exploration in \n" +
                 "the South Atlantic near the Falkland Islands?", false);
     }

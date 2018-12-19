@@ -61,6 +61,14 @@
             <version>1.6</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.deeplearning4j/deeplearning4j-scaleout-akka-word2vec -->
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-scaleout-akka-word2vec</artifactId>
+            <version>0.0.3.1</version>
+        </dependency>
+
+
 
     </dependencies>
 

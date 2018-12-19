@@ -1,5 +1,14 @@
 package sample;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+import scala.util.parsing.combinator.testing.Str;
+import sun.plugin.javascript.navig.Link;
+
 import java.io.*;
 import java.util.*;
 
@@ -10,6 +19,7 @@ public class Searcher {
     String postingPath;
     String fullPostingPath;
     Ranker ranker;
+    private org.json.simple.parser.JSONParser myParser;
 
 
     public Searcher(String postingPath){
@@ -29,6 +39,7 @@ public class Searcher {
         Map<String, Integer> tokens = new HashMap<>();
         parser = new Parse(System.getProperty("user.dir") + "\\src\\main\\java");
         stemmer = new Stemmer();
+        List <String> allSemanticWords = getSemanticWords(query);
         tokens = parser.queryParser(query);
         if(toStem){
             tokens = stemmer.queryStemmer(tokens);
@@ -180,5 +191,48 @@ public class Searcher {
         return allDocsContainsCity;
     }
 
-    //private List<>
+    private List<String> getSemanticWords(String query){
+        List <String> semanticWord = new LinkedList<>();
+        OkHttpClient myClient = new OkHttpClient();
+        query = query.replace("?" , "");
+        query = query.replace("!" , "");
+        String[] queryAfterSplit = mySplit(query, " ");
+        for(int i=0;i<queryAfterSplit.length;i++) {
+            String url = "https://api.datamuse.com/words?ml="+ queryAfterSplit[i];
+            Request req = new Request.Builder().url(url).build();
+            Response res = null;
+            try {
+                res = myClient.newCall(req).execute();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Object object = null;
+            myParser = new org.json.simple.parser.JSONParser();
+            try {
+                try {
+                    object = myParser.parse(res.body().string());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (object != null) {
+                Object[] parsed_json = ((JSONArray) object).toArray();
+                String word = "";
+                int counter=0;
+                for (Object O : parsed_json) {
+                    word = (String) ((JSONObject) O).get("word");
+                    semanticWord.add(word);
+                    counter++;
+                    if(counter==10){
+                        break;
+                    }
+                }
+            }
+        }
+
+        return semanticWord;
+    }
 }
