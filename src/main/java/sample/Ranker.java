@@ -8,12 +8,12 @@ import java.util.Map;
 public class Ranker {
 
     /**
-     * The function gets list of relevant documents and rank them by the B25 equation.
+     * The function gets list of relevant documents and rankBM25 them by the B25 equation.
      * @param queryAndAppears
      * @param termsOfQuery
-     * @return map - foreach document it's rank
+     * @return map - foreach document it's rankBM25
      */
-    public HashMap rank(Map<String, ArrayList<String[]>> queryAndAppears, Map<String, Integer> termsOfQuery){
+    public HashMap rankBM25(Map<String, ArrayList<String[]>> queryAndAppears, Map<String, Integer> termsOfQuery){
         HashMap<String, Double> result = new HashMap<>();
 
         for (String key: queryAndAppears.keySet()
@@ -42,6 +42,30 @@ public class Ranker {
             result.put(key, sum);
         }
 
+        return result;
+    }
+
+    public HashMap totalRanks(HashMap<String, Double> rankBM, HashMap<String, Double> semanticRankBM){
+        HashMap<String, Double> result = new HashMap<>();
+        for (String document: rankBM.keySet()
+             ) {
+            double originRank = rankBM.get(document);
+            double semanticRank = 0;
+            if(semanticRankBM.containsKey(document)){
+                semanticRank = semanticRankBM.get(document);
+            }
+            double rank = (0.75*originRank) + (0.25*semanticRank);
+            String date = DocsInformation.allDocsInformation.get(document)[4];
+            String[] splitDate = date.split(" ");
+            rank = rank + (Integer.parseInt(splitDate[2])/2108);
+            result.put(document, rank);
+        }
+        for (String document:semanticRankBM.keySet()
+             ) {
+            if(!result.containsKey(document)){
+                result.put(document, 0.25*semanticRankBM.get(document));
+            }
+        }
         return result;
     }
 }

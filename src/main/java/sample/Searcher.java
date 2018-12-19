@@ -6,8 +6,6 @@ import okhttp3.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import scala.util.parsing.combinator.testing.Str;
-import sun.plugin.javascript.navig.Link;
 
 import java.io.*;
 import java.util.*;
@@ -50,8 +48,14 @@ public class Searcher {
         }
 
         Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens);
-        HashMap<String, Double> ranksOfDocuments = ranker.rank(allDocumentBeforeRank, tokens);
-        TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(ranksOfDocuments);
+        Map<String, ArrayList<String[]>> semanticAllDocumentBeforeRank = getAllDocuments(semanticTokens);
+
+        HashMap<String, Double> ranksOfDocuments = ranker.rankBM25(allDocumentBeforeRank, tokens);
+        HashMap<String, Double> semanticRankOfDocuments = ranker.rankBM25(semanticAllDocumentBeforeRank, semanticTokens);
+
+        HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments);
+
+        TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
         try {
             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
             for (double rank : sortedRanksOfDocuments.descendingKeySet()
