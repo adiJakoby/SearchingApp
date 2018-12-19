@@ -227,7 +227,7 @@ public class Searcher {
                     word = (String) ((JSONObject) O).get("word");
                     semanticWords.put(word, tokens.get(key));
                     counter++;
-                    if (counter == 10) {
+                    if (counter == 5) {
                         break;
                     }
                 }
