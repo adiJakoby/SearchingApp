@@ -240,9 +240,11 @@ public class Controller {
     }
 
     public void handleSearch(){
-        Searcher searcher = new Searcher("d:\\documents\\users\\adijak\\Downloads");
+        Searcher searcher = new Searcher("D:\\documents\\users\\tzalach\\Downloads\\Posting without stemmer");
         searcher.getRelevantDocuments("What information is available on petroleum exploration in \n" +
                 "the South Atlantic near the Falkland Islands?", false);
+        ReadQuery readQuery = new ReadQuery();
+        readQuery.getQueryFromFile("d:\\documents\\users\\tzalach\\Downloads");
     }
 
 }
