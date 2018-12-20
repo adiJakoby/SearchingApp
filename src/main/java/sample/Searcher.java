@@ -40,6 +40,11 @@ public class Searcher {
             allDocsByCity = getAllDocsByCity(cities);
             cityFilter = true;
         }
+        if(toStem){
+            fullPostingPath = postingPath + "\\Posting with stemmer.txt";
+        }else{
+            fullPostingPath = postingPath + "\\Posting without stemmer.txt";
+        }
 
         Map<String, Integer> tokens;
         Map<String, Integer> descriptionTokens;
@@ -72,9 +77,6 @@ public class Searcher {
                     semanticTokens = stemmer.queryStemmer(semanticTokens);
                 }
 
-                fullPostingPath = postingPath + "\\Posting with stemmer.txt";
-            } else {
-                fullPostingPath = postingPath + "\\Posting without stemmer.txt";
             }
 
             Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens, allDocsByCity, cityFilter);
@@ -92,7 +94,7 @@ public class Searcher {
             HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments, semanticCare, descriptionRanksOfDocuments, isDescription);
 
             TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
-            try {
+            /*try {
                 BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
                 for (double rank : sortedRanksOfDocuments.descendingKeySet()
                         ) {
@@ -105,7 +107,7 @@ public class Searcher {
                 WriteFileBuffer.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
             List<String> relevantDocuments = new LinkedList<>();
             int counter  = 0;
             for (double rank : sortedRanksOfDocuments.descendingKeySet()
@@ -119,7 +121,6 @@ public class Searcher {
                     break;
                 }
             }
-            //TODO add the final documents to relevantDocuments
             return relevantDocuments;
         }
         return null;

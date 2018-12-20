@@ -17,8 +17,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.CheckComboBox;
 
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -66,6 +65,7 @@ public class Controller {
     public org.controlsfx.control.CheckComboBox<String> citiesFilter;
 
     boolean dictionaryLoaded;
+    static int queryID;
 
 
     @FXML
@@ -78,6 +78,7 @@ public class Controller {
         btn_play.setDisable(true);
         btn_displayDictionary.setDisable(true);
         dictionaryLoaded = false;
+        queryID = 0;
     }
 
     @FXML
@@ -296,20 +297,47 @@ public class Controller {
             }
             if(!txt_queryLabel.getText().trim().isEmpty()) {
                 List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                if(result == null){
+                if(result != null){
+                    try {
+                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                        for(int i = 0; i < result.size(); i++){
+                            WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
+                        }
+                        WriteFileBuffer.flush();
+                        WriteFileBuffer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    queryID++;
+                }
+                else{
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ho NO!");
                     alert.setHeaderText("There is no relevant documents to your query, Please try again");
                     alert.show();
                 }
             }else if(!txt_queriesPath.getText().isEmpty()){
-                HashMap<String, List<String>> queriesResult = new HashMap<>();
+                LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
                 ReadQuery readQuery = new ReadQuery();
                 ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
                 for(int i = 0; i < queries.size(); i++){
                     List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                     queriesResult.put(queries.get(i)[0], result);
                     //TODO when print the queriesResult check if the value is not null!!!
+                }
+                try {
+                    BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                    for (String query: queriesResult.keySet()
+                         ) {
+                        List<String> result = queriesResult.get(query);
+                        for(int i = 0; i < result.size(); i++){
+                            WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                        }
+                    }
+                    WriteFileBuffer.flush();
+                    WriteFileBuffer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 

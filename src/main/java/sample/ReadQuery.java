@@ -17,7 +17,7 @@ public class ReadQuery {
         ArrayList<String[]> queriesArray = new ArrayList<>();
         int queynum = 1;
         try {
-            File file = new File(path + "\\queries.txt");
+            File file = new File(path);
             Document doc;
             doc = Jsoup.parse(file, "UTF-8");
             StringBuilder writer = new StringBuilder();
@@ -37,7 +37,7 @@ public class ReadQuery {
                     }
                 }
                 for (int i = index; i < bodyAfterSplit.length; i++) {
-                    if (bodyAfterSplit[i].equals("<title>")) {
+                    if (bodyAfterSplit[i].contains("<title>")) {
                         i++;
                         while (!bodyAfterSplit[i].contains("<desc>") && !bodyAfterSplit[i].contains("</title>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
