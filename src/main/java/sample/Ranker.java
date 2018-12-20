@@ -45,29 +45,85 @@ public class Ranker {
         return result;
     }
 
-    public HashMap totalRanks(HashMap<String, Double> rankBM, HashMap<String, Double> semanticRankBM){
+    public HashMap totalRanks(HashMap<String, Double> rankBM, HashMap<String, Double> semanticRankBM, boolean semanticCare, HashMap<String, Double> descriptionRankBM, boolean isDescription){
         HashMap<String, Double> result = new HashMap<>();
-        for (String document: rankBM.keySet()
-             ) {
-            double originRank = rankBM.get(document);
-            double semanticRank = 0;
-            if(semanticRankBM.containsKey(document)){
-                semanticRank = semanticRankBM.get(document);
-            }
-            double rank = (0.75*originRank) + (0.25*semanticRank);
-            String date = DocsInformation.allDocsInformation.get(document)[4];
-            if(!date.equals("")) {
-                String[] splitDate = date.split(" ");
-                rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
-            }
-            result.put(document, rank);
+        double gradeForDescription = 0;
+        double gradeForPure = 1;
+        double gradeForSemantic = 0;
+        if(isDescription && semanticCare){
+            gradeForPure = 0.7;
+            gradeForSemantic = 0.1;
+            gradeForDescription = 0.2;
         }
-        for (String document:semanticRankBM.keySet()
-             ) {
-            if(!result.containsKey(document)){
-                result.put(document, 0.25*semanticRankBM.get(document));
-            }
+        else if(isDescription && !semanticCare){
+            gradeForPure = 0.8;
+            gradeForDescription = 0.2;
+        }else if(!isDescription && semanticCare){
+            gradeForPure = 0.85;
+            gradeForSemantic = 0.15;
         }
-        return result;
+
+        if(!isDescription && semanticCare) {
+            for (String document : rankBM.keySet()
+                    ) {
+                double originRank = rankBM.get(document);
+                double semanticRank = 0;
+                if (semanticRankBM.containsKey(document)) {
+                    semanticRank = semanticRankBM.get(document);
+                }
+                double rank = (gradeForPure * originRank) + (gradeForSemantic * semanticRank);
+                String date = DocsInformation.allDocsInformation.get(document)[4];
+                if (!date.equals("")) {
+                    String[] splitDate = date.split(" ");
+                    rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                }
+                result.put(document, rank);
+            }
+            for (String document : semanticRankBM.keySet()
+                    ) {
+                if (!result.containsKey(document)) {
+                    result.put(document, gradeForSemantic * semanticRankBM.get(document));
+                }
+            }
+            return result;
+        }
+        else if(isDescription && !semanticCare){
+            for (String document : rankBM.keySet()
+                    ) {
+                double originRank = rankBM.get(document);
+                double semanticRank = 0;
+                double descriptionRank = 0;
+                if (semanticRankBM.containsKey(document)) {
+                    semanticRank = semanticRankBM.get(document);
+                }if(descriptionRankBM.containsKey(document)){
+                    descriptionRank = descriptionRankBM.get(document);
+                }
+                double rank = (gradeForPure * originRank) + (gradeForSemantic * semanticRank) + (gradeForDescription * descriptionRank);
+                String date = DocsInformation.allDocsInformation.get(document)[4];
+                if (!date.equals("")) {
+                    String[] splitDate = date.split(" ");
+                    rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                }
+                result.put(document, rank);
+            }
+            for (String document : semanticRankBM.keySet()
+                    ) {
+                double descriptionRank = 0;
+                if(descriptionRankBM.containsKey(document)){
+                    descriptionRank = gradeForDescription * descriptionRankBM.get(document);
+                }
+                if (!result.containsKey(document)) {
+                    result.put(document, (gradeForSemantic * semanticRankBM.get(document)) + descriptionRank);
+                }
+            }
+            for (String document : descriptionRankBM.keySet()
+                    ) {
+                if (!result.containsKey(document)) {
+                    result.put(document, gradeForDescription * descriptionRankBM.get(document));
+                }
+            }
+            return result;
+        }
+       return rankBM;
     }
 }
