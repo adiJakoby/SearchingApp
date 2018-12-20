@@ -15,15 +15,19 @@ public class ReadQuery {
 
     public ArrayList<String[]> getQueryFromFile(String path) {
         ArrayList<String[]> queriesArray = new ArrayList<>();
+        int queynum = 1;
         try {
             File file = new File(path + "\\queries.txt");
             Document doc;
             doc = Jsoup.parse(file, "UTF-8");
+            StringBuilder writer = new StringBuilder();
             Elements queries = doc.select("top");
             for (Element e : queries) {
                 String[] allQueryParts = new String[3];
                 String query = e.getElementsByTag("num").toString();
-                String[] bodyAfterSplit = query.split(" ");
+                String[] bodyAfterSplit = CitiesIndexer.mySplit(query," ");
+                allQueryParts[1] = "";
+                allQueryParts[2] = "";
                 int index = 0;
                 for (int i = 0; i < bodyAfterSplit.length; i++) {
                     if (bodyAfterSplit[i].equals("Number:")) {
@@ -37,26 +41,35 @@ public class ReadQuery {
                         i++;
                         while (!bodyAfterSplit[i].contains("<desc>") && !bodyAfterSplit[i].contains("</title>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
-                                allQueryParts[1] += " " + bodyAfterSplit[i];
+                                writer.append(" " + bodyAfterSplit[i]);
                                 i++;
                             }
                         }
                         index = i;
+                        allQueryParts[1]=writer.toString();
+                        writer = new StringBuilder();
                         break;
                     }
                 }
                 for (int i = index; i < bodyAfterSplit.length; i++) {
                     if (bodyAfterSplit[i].contains("<desc>")) {
                         i++;
-                        while (!bodyAfterSplit[i].equals("<narr>")) {
+                        while (!bodyAfterSplit[i].contains("<narr>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
-                                allQueryParts[2] += " " + bodyAfterSplit[i];
+                                if(bodyAfterSplit[i].contains("Description:")){
+                                    i++;
+                                }
+                                writer.append(" " + bodyAfterSplit[i]);
                                 i++;
                             }
                         }
+                        allQueryParts[2] = writer.toString();
+                        writer = new StringBuilder();
                         break;
                     }
                 }
+                System.out.println("Done : query num " + queynum + " Contains the title:" +allQueryParts[1]);
+                queynum++;
                 queriesArray.add(allQueryParts);
             }
         } catch (IOException e) {

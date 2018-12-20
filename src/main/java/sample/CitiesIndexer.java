@@ -220,7 +220,7 @@ public class CitiesIndexer {
         return sb.toString();
     }
 
-    private static String[] mySplit(String str, String regex) {
+    public static String[] mySplit(String str, String regex) {
         Vector<String> result = new Vector<String>();
         int start = 0;
         int pos = str.indexOf(regex);
