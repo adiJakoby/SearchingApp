@@ -14,8 +14,8 @@ public class DocumentsDisplayer {
     private Button getEntities;
 
 
-    public DocumentsDisplayer(int queyNmber, String document) {
-        this.queyNmber = new SimpleStringProperty(queyNmber+"");
+    public DocumentsDisplayer(String queyNmber, String document) {
+        this.queyNmber = new SimpleStringProperty(queyNmber);
         Documents = new SimpleStringProperty(document);
         getEntities = new Button("Get entities");
         getEntities.setOnAction(event -> {

@@ -25,7 +25,7 @@ public class DisplayerController {
     public TableView table = new TableView();
 
 
-    public void displayrelevantDocs (Map <Integer,List<String>> allDocs){
+    public void displayrelevantDocs (LinkedHashMap <String,List<String>> allDocs){
         try{
             Stage stage = new Stage();
             Scene scene = new Scene(new Group());
@@ -65,9 +65,9 @@ public class DisplayerController {
         }
     }
 
-    private ObservableList<DocumentsDisplayer> getData(Map <Integer,List<String>> allDocs) {
+    private ObservableList<DocumentsDisplayer> getData(LinkedHashMap <String,List<String>>  allDocs) {
         ObservableList<DocumentsDisplayer> dict = FXCollections.observableArrayList();
-        for (Integer querynum:allDocs.keySet()
+        for (String querynum:allDocs.keySet()
              ) {
             List<String> Docs = allDocs.get(querynum);
             for (String doc:Docs
