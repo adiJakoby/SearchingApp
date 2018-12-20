@@ -14,6 +14,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckComboBox;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -61,6 +62,8 @@ public class Controller {
     public javafx.scene.control.CheckBox checkBox_stemming;
     @FXML
     public javafx.scene.control.ChoiceBox choiceBox_Language;
+    @FXML
+    public org.controlsfx.control.CheckComboBox<String> citiesFilter;
 
     boolean dictionaryLoaded;
 
@@ -170,7 +173,17 @@ public class Controller {
             btn_searchCorpusPath.setDisable(false);
             btn_searchSavePath.setDisable(false);
             choiceBox_Language.setItems(FXCollections.observableArrayList(CitiesIndexer.allCitiesInCorpus));
+            handleCitiesFilter();
         }
+    }
+
+    //the function set up the choice combo box for cities filter
+    private void handleCitiesFilter() {
+        final ObservableList<String> allCities = FXCollections.observableArrayList();
+        for (String city: CitiesIndexer.allCitiesInCorpus.keySet()) {
+            allCities.add(city);
+        }
+        citiesFilter.getItems().setAll(allCities);
     }
 
     public void handleDisplayDictionary(ActionEvent actionEvent) {
@@ -250,6 +263,7 @@ public class Controller {
                 alert.setTitle("Good News");
                 alert.setHeaderText("Your dictionary is loaded, you can take a look");
                 alert.show();
+                handleCitiesFilter();
             }
         }
     }
@@ -276,6 +290,10 @@ public class Controller {
         if(dictionaryLoaded) {
             Searcher searcher = new Searcher(txt_savePath.getText());
             List<String> cities = new LinkedList<>();
+            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
+            for (int cityIdex :allCitiesChoosenIdex) {
+                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
+            }
             if(!txt_queryLabel.getText().trim().isEmpty()) {
                 List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                 if(result == null){
