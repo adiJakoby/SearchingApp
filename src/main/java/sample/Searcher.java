@@ -57,7 +57,7 @@ public class Searcher {
 
         TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
         try {
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
+            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("D:\\documents\\users\\tzalach\\Downloads\\Posting without stemmer\\results.txt"), "UTF-8"));
             for (double rank : sortedRanksOfDocuments.descendingKeySet()
                     ) {
                 LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
