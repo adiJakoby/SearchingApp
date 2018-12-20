@@ -317,21 +317,23 @@ public class Controller {
                     alert.show();
                 }
             }else if(!txt_queriesPath.getText().isEmpty()){
+                DisplayerController displayerController = new DisplayerController();
                 LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
                 ReadQuery readQuery = new ReadQuery();
                 ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
                 for(int i = 0; i < queries.size(); i++){
                     List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                     queriesResult.put(queries.get(i)[0], result);
-                    //TODO when print the queriesResult check if the value is not null!!!
                 }
                 try {
                     BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
                     for (String query: queriesResult.keySet()
                          ) {
                         List<String> result = queriesResult.get(query);
-                        for(int i = 0; i < result.size(); i++){
-                            WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                        if(result != null) {
+                            for (int i = 0; i < result.size(); i++) {
+                                WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                            }
                         }
                     }
                     WriteFileBuffer.flush();
@@ -339,6 +341,7 @@ public class Controller {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                //displayerController.displayrelevantDocs(queriesResult);
             }
 
         }else{
