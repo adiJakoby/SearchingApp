@@ -56,8 +56,10 @@ public class Ranker {
             }
             double rank = (0.75*originRank) + (0.25*semanticRank);
             String date = DocsInformation.allDocsInformation.get(document)[4];
-            String[] splitDate = date.split(" ");
-            rank = rank + (Integer.parseInt(splitDate[2])/2108);
+            if(!date.equals("")) {
+                String[] splitDate = date.split(" ");
+                rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+            }
             result.put(document, rank);
         }
         for (String document:semanticRankBM.keySet()
