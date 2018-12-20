@@ -23,8 +23,7 @@ import java.util.*;
 
 public class DictionaryController {
 
-    private List<String> myTerms = new ArrayList<>();
-    private ListProperty<String> listProperty = new SimpleListProperty<>();
+
     @FXML
     public TableView table = new TableView();
 

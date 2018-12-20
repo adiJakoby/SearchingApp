@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -20,13 +21,11 @@ import java.util.*;
 
 public class DisplayerController {
 
-    private List<String> myTerms = new ArrayList<>();
-    private ListProperty<String> listProperty = new SimpleListProperty<>();
     @FXML
     public TableView table = new TableView();
 
 
-    public void displayrelevantDocs (){
+    public void displayrelevantDocs (Map <Integer,List<String>> allDocs){
         try{
             Stage stage = new Stage();
             Scene scene = new Scene(new Group());
@@ -39,17 +38,17 @@ public class DisplayerController {
 
             TableColumn queyNmber = new TableColumn("Query number");
             queyNmber.setMinWidth(200);
-            queyNmber.setCellValueFactory(new PropertyValueFactory<TermsDisplayer,String>("queyNmber"));
+            queyNmber.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer,String>("queyNmber"));
 
             TableColumn Documents = new TableColumn("Documents");
             Documents.setMinWidth(200);
-            Documents.setCellValueFactory(new PropertyValueFactory<TermsDisplayer,String>("Documents"));
+            Documents.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer,String>("Documents"));
 
             TableColumn entities = new TableColumn("Entities");
-            entities.setMinWidth(200);
-            entities.setCellValueFactory(new PropertyValueFactory<TermsDisplayer,String>("Entities"));
+            entities.setMinWidth(100);
+            entities.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, Button>("Get entities"));
 
-            //table.setItems(getData());
+            table.setItems(getData(allDocs));
             table.getColumns().addAll(queyNmber,Documents,entities);
             table.setMinHeight(800);
 
@@ -66,16 +65,16 @@ public class DisplayerController {
         }
     }
 
-//    private ObservableList<TermsDisplayer> getData() {
-//        ObservableList<TermsDisplayer> dict = FXCollections.observableArrayList();
-//        Map <Integer,List<String>> allDocs = new HashMap<>();
-//        //allDocs.putAll();
-//        for (Map.Entry<String,Integer[]> entry:allDocs.entrySet()) {
-//            String term = entry.getKey();
-//            int value = entry.getValue()[1];
-//            dict.add(new TermsDisplayer(term, value));
-//        }
-// return dict;
-//
-//    }
+    private ObservableList<DocumentsDisplayer> getData(Map <Integer,List<String>> allDocs) {
+        ObservableList<DocumentsDisplayer> dict = FXCollections.observableArrayList();
+        for (Integer querynum:allDocs.keySet()
+             ) {
+            List<String> Docs = allDocs.get(querynum);
+            for (String doc:Docs
+                 ) {
+                dict.add(new DocumentsDisplayer(querynum , doc));
+            }
+        }
+            return dict;
+    }
 }

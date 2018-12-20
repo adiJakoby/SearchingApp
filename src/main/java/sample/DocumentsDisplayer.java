@@ -1,43 +1,28 @@
 package sample;
 
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Button;
+
+import java.util.List;
 
 public class DocumentsDisplayer {
 
 
     private final SimpleStringProperty queyNmber;
     private final SimpleStringProperty Documents;
-    private final SimpleStringProperty entities;
+    private Button getEntities;
 
 
-    public DocumentsDisplayer(SimpleStringProperty queyNmber, SimpleStringProperty documents, SimpleStringProperty entities) {
-        this.queyNmber = queyNmber;
-        Documents = documents;
-        this.entities = entities;
+    public DocumentsDisplayer(int queyNmber, String document) {
+        this.queyNmber = new SimpleStringProperty(queyNmber+"");
+        Documents = new SimpleStringProperty(document);
+        getEntities = new Button("Get entities");
+        getEntities.setOnAction(event -> {
+            ;
+            Entities.getDocEntities(document);
+        });
     }
 
 
-    public String getQueyNmber() {
-        return queyNmber.get();
-    }
-
-    public SimpleStringProperty queyNmberProperty() {
-        return queyNmber;
-    }
-
-    public String getDocuments() {
-        return Documents.get();
-    }
-
-    public SimpleStringProperty documentsProperty() {
-        return Documents;
-    }
-
-    public String getEntities() {
-        return entities.get();
-    }
-
-    public SimpleStringProperty entitiesProperty() {
-        return entities;
-    }
 }
