@@ -19,8 +19,8 @@ public class Main extends Application {
         Scene scene = new Scene(root, 600, 500);
         primaryStage.setTitle("Retrieval Engine");
         primaryStage.setScene(scene);
-        primaryStage.setMinHeight(465);
-        primaryStage.setMinWidth(580);
+        primaryStage.setMinHeight(350);
+        primaryStage.setMinWidth(879);
         primaryStage.setResizable(false);
         primaryStage.show();
     }

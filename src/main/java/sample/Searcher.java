@@ -32,47 +32,50 @@ public class Searcher {
      * @param toStem - if the corpus has been stemmed or not
      * @return a list of the most 50 relevant documents (if exist) to the given query.
      */
-    public List<String> getRelevantDocuments(String query, boolean toStem) {
+    public List<String> getRelevantDocuments(String query, String description, boolean toStem, boolean semanticCare, List<String> cities) {
         Map<String, Integer> tokens;
         Map<String, Integer> semanticTokens;
         parser = new Parse(System.getProperty("user.dir") + "\\src\\main\\java");
         stemmer = new Stemmer();
         tokens = parser.queryParser(query);
-        semanticTokens = getSemanticWords(tokens);
-        if (toStem) {
-            tokens = stemmer.queryStemmer(tokens);
-            semanticTokens = stemmer.queryStemmer(semanticTokens);
-            fullPostingPath = postingPath + "\\Posting with stemmer.txt";
-        } else {
-            fullPostingPath = postingPath + "\\Posting without stemmer.txt";
-        }
-
-        Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens);
-        Map<String, ArrayList<String[]>> semanticAllDocumentBeforeRank = getAllDocuments(semanticTokens);
-
-        HashMap<String, Double> ranksOfDocuments = ranker.rankBM25(allDocumentBeforeRank, tokens);
-        HashMap<String, Double> semanticRankOfDocuments = ranker.rankBM25(semanticAllDocumentBeforeRank, semanticTokens);
-
-        HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments);
-
-        TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
-        try {
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
-            for (double rank : sortedRanksOfDocuments.descendingKeySet()
-                    ) {
-                LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
-                while (!documentsOfRank.isEmpty()) {
-                    WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " + rank + '\n');
-                }
+        if(!tokens.isEmpty()) {
+            semanticTokens = getSemanticWords(tokens);
+            if (toStem) {
+                tokens = stemmer.queryStemmer(tokens);
+                semanticTokens = stemmer.queryStemmer(semanticTokens);
+                fullPostingPath = postingPath + "\\Posting with stemmer.txt";
+            } else {
+                fullPostingPath = postingPath + "\\Posting without stemmer.txt";
             }
-            WriteFileBuffer.flush();
-            WriteFileBuffer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<String> relevantDocuments = new LinkedList<>();
 
-        return relevantDocuments;
+            Map<String, ArrayList<String[]>> allDocumentBeforeRank = getAllDocuments(tokens);
+            Map<String, ArrayList<String[]>> semanticAllDocumentBeforeRank = getAllDocuments(semanticTokens);
+
+            HashMap<String, Double> ranksOfDocuments = ranker.rankBM25(allDocumentBeforeRank, tokens);
+            HashMap<String, Double> semanticRankOfDocuments = ranker.rankBM25(semanticAllDocumentBeforeRank, semanticTokens);
+
+            HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments);
+
+            TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
+            try {
+                BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("d:\\documents\\users\\adijak\\Downloads\\results.txt"), "UTF-8"));
+                for (double rank : sortedRanksOfDocuments.descendingKeySet()
+                        ) {
+                    LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
+                    while (!documentsOfRank.isEmpty()) {
+                        WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " + rank + '\n');
+                    }
+                }
+                WriteFileBuffer.flush();
+                WriteFileBuffer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            List<String> relevantDocuments = new LinkedList<>();
+            //TODO add the final documents to relevantDocuments
+            return relevantDocuments;
+        }
+        return null;
     }
 
     /**
@@ -180,13 +183,13 @@ public class Searcher {
      * @param city
      * @return array list of all the docs that contain this city
      *///
-    private Map<String, String> getAllDocsByCity(String city) {
+    private Map<String, Integer> getAllDocsByCity(String city) {
         City currentCity = CitiesIndexer.allCitiesInCorpus.get(city);
         Map<String, String> allDocsByCity = currentCity.getDocsList();
-        Map<String, String> allDocsContainsCity = new HashMap<>();
+        Map<String, Integer> allDocsContainsCity = new HashMap<>();
         for (String doc : allDocsByCity.keySet()) {
             String[] allLocationsOfCity = mySplit(allDocsByCity.get(doc), ",");
-            String numOfAppearsInDoc = Integer.toString(allLocationsOfCity.length);
+            int numOfAppearsInDoc = allLocationsOfCity.length;
             allDocsContainsCity.put(doc, numOfAppearsInDoc);
         }
         return allDocsContainsCity;

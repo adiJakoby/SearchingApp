@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -39,6 +40,8 @@ public class Controller {
     @FXML
     public javafx.scene.control.Button btn_play;
     @FXML
+    public javafx.scene.control.Button btn_browseQueries;
+    @FXML
     public javafx.scene.control.TextField txt_corpusPath;
     @FXML
     public javafx.scene.control.TextField txt_savePath;
@@ -49,9 +52,17 @@ public class Controller {
     @FXML
     public javafx.scene.control.TextField txt_LanguageLabel;
     @FXML
+    public javafx.scene.control.TextField txt_queriesPath;
+    @FXML
+    public javafx.scene.control.TextField txt_queryLabel;
+    @FXML
+    public javafx.scene.control.CheckBox checkBox_semanticCare;
+    @FXML
     public javafx.scene.control.CheckBox checkBox_stemming;
     @FXML
     public javafx.scene.control.ChoiceBox choiceBox_Language;
+
+    boolean dictionaryLoaded;
 
 
     @FXML
@@ -63,6 +74,7 @@ public class Controller {
         btn_loadDictionary.setDisable(true);
         btn_play.setDisable(true);
         btn_displayDictionary.setDisable(true);
+        dictionaryLoaded = false;
     }
 
     @FXML
@@ -151,6 +163,7 @@ public class Controller {
                                 "Number of unique terms: " + indexer.dictionary.size() + "\n" +
                                 "Time in seconds: " + ((endTime-startTime)/1000));
             alert.show();
+            dictionaryLoaded = true;
             btn_initialMemory.setDisable(false);
             btn_loadDictionary.setDisable(false);
             btn_play.setDisable(false);
@@ -189,6 +202,7 @@ public class Controller {
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information without stemmer.txt"));
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information with stemmer.txt"));
             btn_displayDictionary.setDisable(true);
+            dictionaryLoaded = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -231,6 +245,7 @@ public class Controller {
                 docsInformation.setAllDocsInformation(txt_savePath.getText(), stemmer);
                 citiesIndexer.setAllCitiesInCorpus(txt_savePath.getText());
 
+                dictionaryLoaded = true;
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good News");
                 alert.setHeaderText("Your dictionary is loaded, you can take a look");
@@ -239,12 +254,53 @@ public class Controller {
         }
     }
 
+    public void browseQueriesPath(){
+        if(txt_queryLabel.getText().trim().isEmpty()) {
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(null);
+            if (file != null) {
+                txt_queriesPath.setText(file.getAbsolutePath());
+                txt_queryLabel.setEditable(false);
+            } else {
+                txt_queriesPath.setText(null);
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ooops");
+            alert.setHeaderText("You can't run both file of queries and the query you have inserted");
+            alert.show();
+        }
+    }
+
     public void handleSearch(){
-        Searcher searcher = new Searcher("D:\\documents\\users\\tzalach\\Downloads\\Posting without stemmer");
-        searcher.getRelevantDocuments("What information is available on petroleum exploration in \n" +
-                "the South Atlantic near the Falkland Islands?", false);
-        ReadQuery readQuery = new ReadQuery();
-        readQuery.getQueryFromFile("d:\\documents\\users\\tzalach\\Downloads");
+        if(dictionaryLoaded) {
+            Searcher searcher = new Searcher(txt_savePath.getText());
+            List<String> cities = new LinkedList<>();
+            if(!txt_queryLabel.getText().trim().isEmpty()) {
+                List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                if(result == null){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ho NO!");
+                    alert.setHeaderText("There is no relevant documents to your query, Please try again");
+                    alert.show();
+                }
+            }else if(!txt_queriesPath.getText().isEmpty()){
+                HashMap<String, List<String>> queriesResult = new HashMap<>();
+                ReadQuery readQuery = new ReadQuery();
+                ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
+                for(int i = 0; i < queries.size(); i++){
+                    List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                    queriesResult.put(queries.get(i)[0], result);
+                    //TODO when print the queriesResult check if the value is not null!!!
+                }
+            }
+
+        }else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Oooops!");
+            alert.setHeaderText("Before running some queries you have to load a dictionary!");
+            alert.show();
+        }
     }
 
 }
