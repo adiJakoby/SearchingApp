@@ -322,6 +322,7 @@ public class Controller {
                 ReadQuery readQuery = new ReadQuery();
                 ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
                 for(int i = 0; i < queries.size(); i++){
+                    System.out.println("now search query number: " + queries.get(i)[0] + queries.get(i)[1]);
                     List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                     queriesResult.put(queries.get(i)[0], result);
                 }
@@ -341,7 +342,7 @@ public class Controller {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //displayerController.displayrelevantDocs(queriesResult);
+                displayerController.displayrelevantDocs(queriesResult);
             }
 
         }else{

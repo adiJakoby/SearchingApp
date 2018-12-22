@@ -102,7 +102,11 @@ public class Ranker {
                 String date = DocsInformation.allDocsInformation.get(document)[4];
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
-                    rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                    if(splitDate.length >= 3) {
+                        if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
+                            rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                        }
+                    }
                 }
                 result.put(document, rank);
             }

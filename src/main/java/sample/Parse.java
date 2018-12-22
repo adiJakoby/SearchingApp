@@ -546,7 +546,7 @@ public class Parse {
      * @param toCheck
      * @return true if the string toCheck is a number
      */
-    private boolean isNumeric(String toCheck) {
+    public static boolean isNumeric(String toCheck) {
         try {
             double d = Double.parseDouble(toCheck);
         } catch (NumberFormatException nfe) {
@@ -599,7 +599,7 @@ public class Parse {
         }
     }
 
-    private static String[] mySplit(String str, String regex) {
+    public static String[] mySplit(String str, String regex) {
         Vector<String> result = new Vector<String>();
         int start = 0;
         int pos = str.indexOf(regex);

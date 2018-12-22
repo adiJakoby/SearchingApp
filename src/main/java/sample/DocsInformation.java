@@ -12,6 +12,7 @@ import java.util.TreeMap;
 
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
+    static HashMap<String, TreeMap<Integer, String>> entities = new HashMap<>();
     static HashSet<String> allLanguages = new HashSet<>();
     static double avdl = 0;
 
@@ -83,6 +84,26 @@ public class DocsInformation {
             allDocsInformation.put(docName, temp);
         }
      }
+
+    public static void addDominantEntities(String docName, String newEntity, int numOfAppearances){
+        if(entities.containsKey(docName)){
+            TreeMap<Integer, String> currentDocEntities = entities.get(docName);
+            if(currentDocEntities.size() == 5){
+                if(currentDocEntities.firstKey() < numOfAppearances){
+                    currentDocEntities.pollFirstEntry();
+                    currentDocEntities.put(numOfAppearances, newEntity);
+                    entities.put(docName, currentDocEntities);
+                }
+            }else{
+                currentDocEntities.put(numOfAppearances, newEntity);
+                entities.put(docName, currentDocEntities);
+            }
+        }else{
+            TreeMap<Integer, String> currentDocEntities = new TreeMap<>();
+            currentDocEntities.put(numOfAppearances, newEntity);
+            entities.put(docName, currentDocEntities);
+        }
+    }
 
      public void saveTheInformation(String path, boolean stemmer){
         String[] avdlVal = {Double.toString(avdl)};

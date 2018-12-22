@@ -68,7 +68,7 @@ public class ReadQuery {
                         break;
                     }
                 }
-                System.out.println("Done : query num " + queynum + " Contains the title:" +allQueryParts[1]);
+                //System.out.println("Done : query num " + queynum + " Contains the title:" +allQueryParts[1]);
                 queynum++;
                 queriesArray.add(allQueryParts);
             }

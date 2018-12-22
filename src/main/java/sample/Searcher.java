@@ -160,7 +160,7 @@ public class Searcher {
             if (dictionary.containsKey(token)) {
                 tokensToFind.put(dictionary.get(token)[0], token);
             } else {
-                System.out.println("the word: " + token + " is not exist in dictionary");
+                //System.out.println("the word: " + token + " is not exist in dictionary");
             }
         }
         try {
@@ -210,8 +210,8 @@ public class Searcher {
                         }
                     }
                 } else {
-                    System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
-                    System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
+                    //System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
+                    //System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
 
                 }
                 tokensToFind.pollFirstEntry();

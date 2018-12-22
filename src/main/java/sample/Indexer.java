@@ -160,6 +160,8 @@ public class Indexer {
                         dictionary.replace(currentTerm.toLowerCase(), updateVal);
                     }
                     currentTerm = currentTerm.toLowerCase();
+                }else{
+                    addEntities(terms.firstKey());
                 }
             }
             toWrite.append(terms.firstKey());
@@ -182,9 +184,10 @@ public class Indexer {
                             dictionary.replace(currentTerm.toLowerCase(), updateVal);
                         }
                         currentTerm = currentTerm.toLowerCase();
+                    }else{
+                        addEntities(terms.firstKey());
                     }
                 }
-
                 if (currentTerm.equals(lastTerm)) {
                     toWrite.append(terms.firstKey().substring(index+1));
                 } else {
@@ -343,6 +346,16 @@ public class Indexer {
             reader.close();
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void addEntities(String term){
+        int index = term.indexOf(":");
+        String entity = term.substring(0, index);
+        String docsInfo = term.substring(index+1);
+        String[] splitDocsInfo = Parse.mySplit(docsInfo, " ");
+        for(int i = 0; i < splitDocsInfo.length; i = i + 2){
+            DocsInformation.addDominantEntities(splitDocsInfo[0], entity, Integer.parseInt(splitDocsInfo[1]));
         }
     }
 }
