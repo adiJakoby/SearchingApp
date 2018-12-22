@@ -302,6 +302,13 @@ public class Controller {
                         BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
                         for(int i = 0; i < result.size(); i++){
                             WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
+                            System.out.println("Entities of: " + result.get(i) + ":");
+                            if(DocsInformation.entities.containsKey(result.get(i))) {
+                                for (String s : DocsInformation.entities.get(result.get(i)).keySet()
+                                        ) {
+                                    System.out.println(s);
+                                }
+                            }
                         }
                         WriteFileBuffer.flush();
                         WriteFileBuffer.close();

@@ -5,14 +5,11 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class DocsInformation {
     static HashMap<String, String[]> allDocsInformation = new HashMap<>();
-    static HashMap<String, TreeMap<Integer, String>> entities = new HashMap<>();
+    static HashMap<String, HashMap<String, Integer>> entities = new HashMap<>();
     static HashSet<String> allLanguages = new HashSet<>();
     static double avdl = 0;
 
@@ -87,20 +84,20 @@ public class DocsInformation {
 
     public static void addDominantEntities(String docName, String newEntity, int numOfAppearances){
         if(entities.containsKey(docName)){
-            TreeMap<Integer, String> currentDocEntities = entities.get(docName);
+            HashMap<String, Integer> currentDocEntities = entities.get(docName);
             if(currentDocEntities.size() == 5){
-                if(currentDocEntities.firstKey() < numOfAppearances){
-                    currentDocEntities.pollFirstEntry();
-                    currentDocEntities.put(numOfAppearances, newEntity);
+                if(currentDocEntities.get(getMinEntityString(docName)) < numOfAppearances){
+                    currentDocEntities.remove(getMinEntityString(docName));
+                    currentDocEntities.put(newEntity, numOfAppearances);
                     entities.put(docName, currentDocEntities);
                 }
             }else{
-                currentDocEntities.put(numOfAppearances, newEntity);
+                currentDocEntities.put(newEntity, numOfAppearances);
                 entities.put(docName, currentDocEntities);
             }
         }else{
-            TreeMap<Integer, String> currentDocEntities = new TreeMap<>();
-            currentDocEntities.put(numOfAppearances, newEntity);
+            HashMap<String, Integer> currentDocEntities = new HashMap<>();
+            currentDocEntities.put(newEntity, numOfAppearances);
             entities.put(docName, currentDocEntities);
         }
     }
@@ -120,20 +117,11 @@ public class DocsInformation {
              ObjectOutputStream oos = new ObjectOutputStream(fos);
              oos.writeObject(allDocsInformation);
              oos.close();
+             FileOutputStream fos1 = new FileOutputStream(path + "\\Entities Information" + fileName);
+             ObjectOutputStream oos1 = new ObjectOutputStream(fos1);
+             oos1.writeObject(entities);
+             oos1.close();
 
-            /*(BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Docs Information" + fileName), "UTF-8"));
-             StringBuilder toWrite = new StringBuilder();
-             for (Map.Entry<String, String[]> entry: allDocsInformation.entrySet()) {
-                 String key = entry.getKey();
-                 String[] value = entry.getValue();
-                 WriteFileBuffer.write("Doc number: " + key + ", " +
-                         "max_tf: " + value[0] + " " + "unique terms: " + value[1] + " " +
-                 "Origin city: " + value[2] + " " + "document length: " + value[3] + " " +
-                 "date of write: " + value[4] + "\n");
-             }
-             WriteFileBuffer.write(toWrite.toString());
-             WriteFileBuffer.flush();
-             WriteFileBuffer.close();*/
          } catch (Exception e) {
              e.printStackTrace();
          }
@@ -158,8 +146,24 @@ public class DocsInformation {
              allDocsInformation = (HashMap<String, String[]>) ois.readObject();
              ois.close();
              avdl = Double.parseDouble(allDocsInformation.get("avdl")[0]);
+             FileInputStream fis1 = new FileInputStream(path + "\\Entities Information" + fileName);
+             ObjectInputStream ois1 = new ObjectInputStream(fis1);
+             entities = (HashMap<String, HashMap<String, Integer>>) ois1.readObject();
+             ois1.close();
          }catch(Exception e){
              System.out.println(e);
          }
+     }
+     private static String getMinEntityString(String docNum){
+        int min = Integer.MAX_VALUE;
+        String result = "";
+         for (String entity: entities.get(docNum).keySet()
+              ) {
+             if(entities.get(docNum).get(entity) < min){
+                 min = entities.get(docNum).get(entity);
+                 result = entity;
+             }
+         }
+         return result;
      }
 }
