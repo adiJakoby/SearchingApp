@@ -25,4 +25,19 @@ public class DocumentsDisplayer {
     }
 
 
+    public String getQueyNmber() {
+        return queyNmber.get();
+    }
+
+    public SimpleStringProperty queyNmberProperty() {
+        return queyNmber;
+    }
+
+    public String getDocuments() {
+        return Documents.get();
+    }
+
+    public SimpleStringProperty documentsProperty() {
+        return Documents;
+    }
 }

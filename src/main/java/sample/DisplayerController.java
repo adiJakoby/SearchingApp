@@ -26,38 +26,43 @@ public class DisplayerController {
 
 
     public void displayrelevantDocs (LinkedHashMap <String,List<String>> allDocs){
-        try{
+        try {
             Stage stage = new Stage();
             Scene scene = new Scene(new Group());
             stage.setTitle("Relevant Documents");
-            stage.setWidth(440);
-            stage.setHeight(940);
+            stage.setWidth(800);
+            stage.setHeight(600);
             final Label lable = new Label("Relevant Documents");
-            lable.setFont(new Font("Ariel" , 22));
+            lable.setFont(new Font("Ariel", 22));
             table.setEditable(false);
 
             TableColumn queyNmber = new TableColumn("Query number");
             queyNmber.setMinWidth(200);
-            queyNmber.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer,String>("queyNmber"));
+            queyNmber.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, String>("queyNmber"));
 
             TableColumn Documents = new TableColumn("Documents");
             Documents.setMinWidth(200);
-            Documents.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer,String>("Documents"));
+            Documents.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, String>("Documents"));
 
             TableColumn entities = new TableColumn("Entities");
-            entities.setMinWidth(100);
+            entities.setMinWidth(150);
             entities.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, Button>("Get entities"));
 
             table.setItems(getData(allDocs));
-            table.getColumns().addAll(queyNmber,Documents,entities);
+            table.getColumns().addAll(queyNmber, Documents, entities);
             table.setMinHeight(800);
-
+            ObservableList<DocumentsDisplayer> dict = table.getItems();
+            for (DocumentsDisplayer dis:dict
+                 ) {
+                System.out.println("query numbe :" + dis.getQueyNmber() + "docNum:" + dis.getDocuments());
+            }
             final VBox vbox = new VBox();
             vbox.setSpacing(20);
-            vbox.setPadding(new Insets(20,0,0,10));
-            vbox.getChildren().addAll(lable,table);
+            vbox.setPadding(new Insets(20, 0, 0, 10));
+            vbox.getChildren().addAll(lable, table);
 
-            ((Group)scene.getRoot()).getChildren().addAll(vbox);
+            ((Group) scene.getRoot()).getChildren().addAll(vbox);
+            table.setStyle("-fx-selection-bar: #b3e0ff; -fx-selection-bar-non-focused: #b3e0ff;  -fx-background-color: #1aa3ff;");
             stage.setScene(scene);
             stage.show();
         }catch (Exception e){

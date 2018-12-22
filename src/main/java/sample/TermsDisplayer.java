@@ -11,21 +11,4 @@ public class TermsDisplayer {
         this.term = new SimpleStringProperty(termName);
         this.value = new SimpleStringProperty(val + "");
     }
-
-
-    public String getTerm() {
-        return term.get();
-    }
-
-    public SimpleStringProperty termProperty() {
-        return term;
-    }
-
-    public String getValue() {
-        return value.get();
-    }
-
-    public SimpleStringProperty valueProperty() {
-        return value;
-    }
 }
