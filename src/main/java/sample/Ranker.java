@@ -24,8 +24,8 @@ public class Ranker {
                 int numOfAppearanceInQuery = termsOfQuery.get(termsInDoc[0]);
                 int numOfAppearanceInCorpus = Integer.parseInt(termsInDoc[2]);
                 //constants of the B25 equation.
-                double k = 1.2;
-                double b = 0.75;
+                double k = 1.5;
+                double b = 0.7;
                 int m = DocsInformation.allDocsInformation.size();
                 int numOfAppearanceInDoc = Integer.parseInt(termsInDoc[1]);
                 double avdl = DocsInformation.avdl;
@@ -52,15 +52,15 @@ public class Ranker {
         double gradeForSemantic = 0;
         if(isDescription && semanticCare){
             gradeForPure = 0.7;
-            gradeForSemantic = 0.1;
-            gradeForDescription = 0.2;
+            gradeForSemantic = 0.25;
+            gradeForDescription = 0.05;
         }
         else if(isDescription && !semanticCare){
-            gradeForPure = 0.7;
-            gradeForDescription = 0.3;
+            gradeForPure = 0.9;
+            gradeForDescription = 0.1;
         }else if(!isDescription && semanticCare){
-            gradeForPure = 0.85;
-            gradeForSemantic = 0.15;
+            gradeForPure = 0.8;
+            gradeForSemantic = 0.2;
         }
 
         if(!isDescription && semanticCare) {
