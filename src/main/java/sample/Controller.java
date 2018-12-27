@@ -75,7 +75,7 @@ public class Controller {
         txt_savePathLabel.setEditable(false);
         btn_initialMemory.setDisable(true);
         btn_loadDictionary.setDisable(true);
-        btn_play.setDisable(true);
+        btn_play.setDisable(false);
         btn_displayDictionary.setDisable(true);
         dictionaryLoaded = false;
         queryID = 0;

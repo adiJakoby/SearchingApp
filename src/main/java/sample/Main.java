@@ -16,7 +16,7 @@ public class Main extends Application {
          */
         FXMLLoader fxmlLoader = new FXMLLoader();
         Parent root = fxmlLoader.load(getClass().getResource("/sample.fxml").openStream());
-        Scene scene = new Scene(root, 800, 800);
+        Scene scene = new Scene(root, 800, 500);
         primaryStage.setTitle("Retrieval Engine");
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(350);
