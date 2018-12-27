@@ -52,8 +52,8 @@ public class Ranker {
         double gradeForSemantic = 0;
         if(isDescription && semanticCare){
             gradeForPure = 0.7;
-            gradeForSemantic = 0.1;
-            gradeForDescription = 0.2;
+            gradeForSemantic = 0.15;
+            gradeForDescription = 0.15;
         }
         else if(isDescription && !semanticCare){
             gradeForPure = 0.8;
@@ -75,7 +75,10 @@ public class Ranker {
                 String date = DocsInformation.allDocsInformation.get(document)[4];
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
-                    rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
+                    rank = rank + (Integer.parseInt(splitDate[2]) / 2018);
+                }
+                else{
+                    rank = rank + 0.85;
                 }
                 result.put(document, rank);
             }
@@ -102,9 +105,18 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
+                            rank = rank + (Integer.parseInt(splitDate[2]) / 2018);
+                        }
+                        else{
+                            rank = rank + 0.85;
                         }
                     }
+                    else{
+                        rank = rank + 0.85;
+                    }
+                }
+                else{
+                    rank = rank + 0.85;
                 }
                 result.put(document, rank);
             }
@@ -134,9 +146,18 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
+                            rank = rank + (Integer.parseInt(splitDate[2]) / 2018);
+                        }
+                        else{
+                            rank = rank + 0.85;
                         }
                     }
+                    else{
+                        rank = rank + 0.85;
+                    }
+                }
+                else{
+                    rank = rank + 0.85;
                 }
                 result.put(document, rank);
             }
