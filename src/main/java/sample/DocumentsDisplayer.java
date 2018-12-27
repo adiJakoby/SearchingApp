@@ -1,10 +1,13 @@
 package sample;
 
-import javafx.beans.property.SimpleListProperty;
+
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 public class DocumentsDisplayer {
 
@@ -18,10 +21,40 @@ public class DocumentsDisplayer {
         this.queyNmber = new SimpleStringProperty(queyNmber);
         Documents = new SimpleStringProperty(document);
         getEntities = new Button("Get entities");
+        getEntities.setVisible(true);
+        getEntities.setDisable(false);
         getEntities.setOnAction(event -> {
-            ;
-            Entities.getDocEntities(document);
+            //getting all docs entities
+            HashMap<String,Integer> docEntities = DocsInformation.entities.get(document);
+            TreeMap<Integer,String> sortedEntities = new TreeMap<>();
+            for (String key :docEntities.keySet()) {
+                sortedEntities.put(docEntities.get(key),key);
+            }
+            String allDetails = "";
+            for (Integer counter:sortedEntities.keySet()
+                    ) {
+                allDetails += sortedEntities.get(counter) + " with the rate " + counter/Integer.parseInt((DocsInformation.allDocsInformation.get(document))[3]) + "\n";
+            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Entities Details");
+            alert.setHeaderText(allDetails);
         });
+        HashMap<String,Integer> docEntities = DocsInformation.entities.get(document);
+        TreeMap<Integer,String> sortedEntities = new TreeMap<>();
+        if(docEntities!= null) {
+            for (String key : docEntities.keySet()) {
+                sortedEntities.put(docEntities.get(key), key);
+            }
+            String allDetails = "";
+            for (Integer counter : sortedEntities.keySet()
+                    ) {
+                allDetails += sortedEntities.get(counter) + " with the rate " + counter / Integer.parseInt((DocsInformation.allDocsInformation.get(document))[3]) + "\n";
+            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Entities Details");
+            alert.setHeaderText(allDetails);
+            System.out.println(allDetails);
+        }
     }
 
 
@@ -29,7 +62,7 @@ public class DocumentsDisplayer {
         return queyNmber.get();
     }
 
-    public SimpleStringProperty queyNmberProperty() {
+    public SimpleStringProperty queyNmberPropertsy() {
         return queyNmber;
     }
 

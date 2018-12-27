@@ -51,6 +51,7 @@ public class DisplayerController {
             table.setItems(getData(allDocs));
             table.getColumns().addAll(queyNmber, Documents, entities);
             table.setMinHeight(800);
+            table.setMinHeight(800);
             ObservableList<DocumentsDisplayer> dict = table.getItems();
             for (DocumentsDisplayer dis:dict
                  ) {
@@ -58,7 +59,7 @@ public class DisplayerController {
             }
             final VBox vbox = new VBox();
             vbox.setSpacing(20);
-            vbox.setPadding(new Insets(20, 0, 0, 10));
+            vbox.setPadding(new Insets(20, 10, 0, 20));
             vbox.getChildren().addAll(lable, table);
 
             ((Group) scene.getRoot()).getChildren().addAll(vbox);
