@@ -24,7 +24,7 @@ public class Ranker {
                 int numOfAppearanceInQuery = termsOfQuery.get(termsInDoc[0]);
                 int numOfAppearanceInCorpus = Integer.parseInt(termsInDoc[2]);
                 //constants of the B25 equation.
-                double k = 0.6;
+                double k = 1.2;
                 double b = 0.75;
                 int m = DocsInformation.allDocsInformation.size();
                 int numOfAppearanceInDoc = Integer.parseInt(termsInDoc[1]);
@@ -52,12 +52,12 @@ public class Ranker {
         double gradeForSemantic = 0;
         if(isDescription && semanticCare){
             gradeForPure = 0.7;
-            gradeForSemantic = 0.15;
-            gradeForDescription = 0.15;
+            gradeForSemantic = 0.1;
+            gradeForDescription = 0.2;
         }
         else if(isDescription && !semanticCare){
-            gradeForPure = 0.8;
-            gradeForDescription = 0.2;
+            gradeForPure = 0.7;
+            gradeForDescription = 0.3;
         }else if(!isDescription && semanticCare){
             gradeForPure = 0.85;
             gradeForSemantic = 0.15;
@@ -73,10 +73,10 @@ public class Ranker {
                 }
                 double rank = (gradeForPure * originRank) + (gradeForSemantic * semanticRank);
                 String date = DocsInformation.allDocsInformation.get(document)[4];
+                System.out.println(date);
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
-                    System.out.println(0.1*(2018 - Double.parseDouble(splitDate[2])));
-                    rank = (0.9*rank) + (0.1*(2018 - Double.parseDouble(splitDate[2])));
+                    rank = (0.99*rank) + (0.01*(2018 - Double.parseDouble(splitDate[2])));
                 }
                 result.put(document, rank);
             }
@@ -103,8 +103,7 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            System.out.println(0.1*(2018 - Double.parseDouble(splitDate[2])));
-                            rank = (0.9*rank) + (0.1*(2018 - Double.parseDouble(splitDate[2])));
+                            rank = (0.99*rank) + (0.01*(2018 - Double.parseDouble(splitDate[2])));
                         }
                     }
                 }
@@ -136,8 +135,7 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            System.out.println((0.9*rank) + (0.1*(2018 - Double.parseDouble(splitDate[2]))));
-                            rank = (0.9*rank) + (0.1*(2018 - Double.parseDouble(splitDate[2])));
+                            rank = (0.99*rank) + (0.01*(2018 - Double.parseDouble(splitDate[2])));
                         }
                     }
                 }

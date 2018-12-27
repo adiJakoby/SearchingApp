@@ -31,9 +31,11 @@ public class DocumentsDisplayer {
                 sortedEntities.put(docEntities.get(key),key);
             }
             String allDetails = "";
+            double counterasDouble;
             for (Integer counter:sortedEntities.keySet()
                     ) {
-                allDetails += sortedEntities.get(counter) + " with the rate " + counter/Integer.parseInt((DocsInformation.allDocsInformation.get(document))[3]) + "\n";
+                counterasDouble = counter.doubleValue();
+                allDetails += sortedEntities.get(counter) + " with the rate " + counterasDouble/(Double.parseDouble((DocsInformation.allDocsInformation.get(document))[3])) + "\n";
             }
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Entities Details");

@@ -53,10 +53,6 @@ public class DisplayerController {
             table.setMinHeight(800);
             table.setMinHeight(800);
             ObservableList<DocumentsDisplayer> dict = table.getItems();
-            for (DocumentsDisplayer dis:dict
-                 ) {
-                System.out.println("query numbe :" + dis.getQueyNmber() + "docNum:" + dis.getDocuments());
-            }
             final VBox vbox = new VBox();
             vbox.setSpacing(20);
             vbox.setPadding(new Insets(20, 10, 0, 20));
