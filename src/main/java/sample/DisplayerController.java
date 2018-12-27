@@ -46,7 +46,7 @@ public class DisplayerController {
 
             TableColumn entities = new TableColumn("Entities");
             entities.setMinWidth(150);
-            entities.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, Button>("Get entities"));
+            entities.setCellValueFactory(new PropertyValueFactory<DocumentsDisplayer, Button>("btn_getEntities"));
 
             table.setItems(getData(allDocs));
             table.getColumns().addAll(queyNmber, Documents, entities);

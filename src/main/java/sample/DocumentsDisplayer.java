@@ -14,51 +14,61 @@ public class DocumentsDisplayer {
 
     private final SimpleStringProperty queyNmber;
     private final SimpleStringProperty Documents;
-    private Button getEntities;
+    private Button btn_getEntities;
+
 
 
     public DocumentsDisplayer(String queyNmber, String document) {
         this.queyNmber = new SimpleStringProperty(queyNmber);
         Documents = new SimpleStringProperty(document);
-        getEntities = new Button("Get entities");
-        getEntities.setVisible(true);
-        getEntities.setDisable(false);
-        getEntities.setOnAction(event -> {
+        btn_getEntities = new Button("Get entities");
+        btn_getEntities.setVisible(true);
+        btn_getEntities.setDisable(false);
+        btn_getEntities.setOnAction(event -> {
             //getting all docs entities
             HashMap<String,Integer> docEntities = DocsInformation.entities.get(document);
             TreeMap<Integer,String> sortedEntities = new TreeMap<>();
-            for (String key :docEntities.keySet()) {
-                sortedEntities.put(docEntities.get(key),key);
+            if(docEntities!=null) {
+                for (String key : docEntities.keySet()) {
+                    sortedEntities.put(docEntities.get(key), key);
+                }
+                String allDetails = "";
+                for (Integer counter : sortedEntities.keySet()
+                        ) {
+                    allDetails += sortedEntities.get(counter) + " with the rate " + counter + "\n";///(Double.parseDouble((DocsInformation.allDocsInformation.get(document))[3])) + "\n";
+                }
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Entities Details");
+                alert.setHeaderText(allDetails);
+                alert.show();
+            }else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Entities Details");
+                alert.setHeaderText("Document not contains entities");
+                alert.show();
             }
-            String allDetails = "";
-            double counterasDouble;
-            for (Integer counter:sortedEntities.keySet()
-                    ) {
-                counterasDouble = counter.doubleValue();
-                allDetails += sortedEntities.get(counter) + " with the rate " + counterasDouble/(Double.parseDouble((DocsInformation.allDocsInformation.get(document))[3])) + "\n";
-            }
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Entities Details");
-            alert.setHeaderText(allDetails);
         });
-        HashMap<String,Integer> docEntities = DocsInformation.entities.get(document);
-        TreeMap<Integer,String> sortedEntities = new TreeMap<>();
-        if(docEntities!= null) {
-            for (String key : docEntities.keySet()) {
-                sortedEntities.put(docEntities.get(key), key);
-            }
-            String allDetails = "";
-            for (Integer counter : sortedEntities.keySet()
-                    ) {
-                allDetails += sortedEntities.get(counter) + " with the rate " + counter / Integer.parseInt((DocsInformation.allDocsInformation.get(document))[3]) + "\n";
-            }
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Entities Details");
-            alert.setHeaderText(allDetails);
-            System.out.println(allDetails);
-        }
     }
 
+    public void setDocuments(String documents) {
+        this.Documents.set(documents);
+    }
+
+    public Button getBtn_getEntities() {
+        return btn_getEntities;
+    }
+
+    public void setBtn_getEntities(Button btn_getEntities) {
+        this.btn_getEntities = btn_getEntities;
+    }
+
+    public SimpleStringProperty queyNmberProperty() {
+        return queyNmber;
+    }
+
+    public void setQueyNmber(String queyNmber) {
+        this.queyNmber.set(queyNmber);
+    }
 
     public String getQueyNmber() {
         return queyNmber.get();
