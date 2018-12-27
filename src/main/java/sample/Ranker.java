@@ -89,7 +89,7 @@ public class Ranker {
                 }
             }
             return result;
-        }
+        } 
         else if(isDescription && !semanticCare){
             for (String document : rankBM.keySet()
                     ) {
