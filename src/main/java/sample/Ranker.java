@@ -75,7 +75,7 @@ public class Ranker {
                 String date = DocsInformation.allDocsInformation.get(document)[4];
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
-                    rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                    rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
                 }
                 result.put(document, rank);
             }
@@ -93,6 +93,36 @@ public class Ranker {
                 double originRank = rankBM.get(document);
                 double semanticRank = 0;
                 double descriptionRank = 0;
+                if(descriptionRankBM.containsKey(document)){
+                    descriptionRank = descriptionRankBM.get(document);
+                }
+                double rank = (gradeForPure * originRank) + (gradeForDescription * descriptionRank);
+                String date = DocsInformation.allDocsInformation.get(document)[4];
+                if (!date.equals("")) {
+                    String[] splitDate = date.split(" ");
+                    if(splitDate.length >= 3) {
+                        if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
+                            rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
+                        }
+                    }
+                }
+                result.put(document, rank);
+            }
+            for (String document : descriptionRankBM.keySet()
+                    ) {
+                double descriptionRank = 0;
+                if (!result.containsKey(document)) {
+                    result.put(document, (gradeForDescription * descriptionRankBM.get(document)));
+                }
+            }
+            return result;
+        }
+        else if(isDescription && semanticCare){
+            for (String document : rankBM.keySet()
+                    ) {
+                double originRank = rankBM.get(document);
+                double semanticRank = 0;
+                double descriptionRank = 0;
                 if (semanticRankBM.containsKey(document)) {
                     semanticRank = semanticRankBM.get(document);
                 }if(descriptionRankBM.containsKey(document)){
@@ -104,7 +134,7 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            rank = rank + (Integer.parseInt(splitDate[2]) / 2108);
+                            rank = rank + (Integer.parseInt(splitDate[2]) / 2109);
                         }
                     }
                 }
@@ -112,12 +142,18 @@ public class Ranker {
             }
             for (String document : semanticRankBM.keySet()
                     ) {
-                double descriptionRank = 0;
-                if(descriptionRankBM.containsKey(document)){
-                    descriptionRank = gradeForDescription * descriptionRankBM.get(document);
-                }
+                double descriptionRank;
+                double semanticRank;
                 if (!result.containsKey(document)) {
-                    result.put(document, (gradeForSemantic * semanticRankBM.get(document)) + descriptionRank);
+                    semanticRank = semanticRankBM.get(document);
+                    if(descriptionRankBM.containsKey(document)){
+                        descriptionRank = descriptionRankBM.get(document);
+                        result.put(document, (gradeForSemantic * semanticRank) + (gradeForDescription * descriptionRank));
+                    }
+                    else{
+                        result.put(document, gradeForSemantic * semanticRank);
+                    }
+
                 }
             }
             for (String document : descriptionRankBM.keySet()

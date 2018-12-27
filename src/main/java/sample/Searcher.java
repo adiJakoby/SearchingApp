@@ -53,7 +53,6 @@ public class Searcher {
         stemmer = new Stemmer();
         tokens = parser.queryParser(query);
 
-
         HashMap<String, Double> descriptionRanksOfDocuments = new HashMap<>();
         if(!description.equals("NO DESCRIPTION")){
             descriptionTokens = parser.queryParser(description);
@@ -94,20 +93,7 @@ public class Searcher {
             HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments, semanticCare, descriptionRanksOfDocuments, isDescription);
 
             TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
-            /*try {
-                BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
-                for (double rank : sortedRanksOfDocuments.descendingKeySet()
-                        ) {
-                    LinkedList<String> documentsOfRank = sortedRanksOfDocuments.get(rank);
-                    while (!documentsOfRank.isEmpty()) {
-                        WriteFileBuffer.write(documentsOfRank.pollFirst() + ": " + rank + '\n');
-                    }
-                }
-                WriteFileBuffer.flush();
-                WriteFileBuffer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
+
             List<String> relevantDocuments = new LinkedList<>();
             int counter  = 0;
             for (double rank : sortedRanksOfDocuments.descendingKeySet()
@@ -210,8 +196,8 @@ public class Searcher {
                         }
                     }
                 } else {
-                    //System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
-                    //System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
+                    System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
+                    System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
 
                 }
                 tokensToFind.pollFirstEntry();
@@ -313,7 +299,7 @@ public class Searcher {
                     word = (String) ((JSONObject) O).get("word");
                     semanticWords.put(word, tokens.get(key));
                     counter++;
-                    if (counter == 5) {
+                    if (counter == 2) {
                         break;
                     }
                 }
