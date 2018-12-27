@@ -24,7 +24,7 @@ public class Ranker {
                 int numOfAppearanceInQuery = termsOfQuery.get(termsInDoc[0]);
                 int numOfAppearanceInCorpus = Integer.parseInt(termsInDoc[2]);
                 //constants of the B25 equation.
-                int k = 2;
+                double k = 2;
                 double b = 0.75;
                 int m = DocsInformation.allDocsInformation.size();
                 int numOfAppearanceInDoc = Integer.parseInt(termsInDoc[1]);
@@ -75,7 +75,7 @@ public class Ranker {
                 String date = DocsInformation.allDocsInformation.get(document)[4];
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
-                    rank = (0.9*rank) + (0.1*(double)(Double.parseDouble(splitDate[2]) / 2018));
+                    rank = (0.97*rank) + (0.03*(double)(Double.parseDouble(splitDate[2]) / 2018));
                 }
                 result.put(document, rank);
             }
@@ -102,7 +102,7 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            rank = (0.9*rank) + (0.1*(double)(Double.parseDouble(splitDate[2]) / 2018));
+                            rank = (0.97*rank) + (0.03*(double)(Double.parseDouble(splitDate[2]) / 2018));
                         }
                     }
                 }
@@ -134,7 +134,7 @@ public class Ranker {
                     String[] splitDate = date.split(" ");
                     if(splitDate.length >= 3) {
                         if (!splitDate[2].equals("") && Parse.isNumeric(splitDate[2])) {
-                            rank = (0.9*rank) + (0.1*(double)(Double.parseDouble(splitDate[2]) / 2018));
+                            rank = (0.97*rank) + (0.03*(double)(Double.parseDouble(splitDate[2]) / 2018));
                         }
                     }
                 }
