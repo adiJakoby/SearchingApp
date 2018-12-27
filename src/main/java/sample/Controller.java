@@ -161,7 +161,6 @@ public class Controller {
             Long endTime = System.currentTimeMillis();
 
             btn_displayDictionary.setDisable(false);
-            Alert detailsAlert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information");
             alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
                                 "Number of unique terms: " + indexer.dictionary.size() + "\n" +
