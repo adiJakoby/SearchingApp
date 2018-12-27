@@ -31,7 +31,7 @@ public class DisplayerController {
             Scene scene = new Scene(new Group());
             stage.setTitle("Relevant Documents");
             stage.setWidth(800);
-            stage.setHeight(600);
+            stage.setHeight(800);
             final Label lable = new Label("Relevant Documents");
             lable.setFont(new Font("Ariel", 22));
             table.setEditable(false);

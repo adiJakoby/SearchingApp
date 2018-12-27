@@ -367,6 +367,7 @@ public class Controller {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    alert.close();
                     displayerController.displayrelevantDocs(queriesResult);
                 }
             }
