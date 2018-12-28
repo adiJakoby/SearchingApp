@@ -17,6 +17,7 @@ public class Parse {
     DocsInformation docsInformation = new DocsInformation();
     int maxTf = 0;
     String maxTerm = "";
+    int docLength = 0;
 
 
     public Parse(String stopWordPath) {
@@ -75,6 +76,7 @@ public class Parse {
     }
 
     private int startParse(String doc){
+        docLength = 0;
         char[] toReplace = {'_', ',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
         doc = OurReplace(doc,"\n", " ");
         doc = OurReplace(doc, toReplace, " ");
@@ -83,11 +85,12 @@ public class Parse {
             splitDoc[i] = removeFromTheEdges(splitDoc[i]);
         }
 
-        int docLength = 0;
+
         while (splitDocIndex < splitDoc.length) {
             String word = splitDoc[splitDocIndex];
+            //docLength = splitDoc.length;
             if (!stopWordsSet.contains(word.toLowerCase())) {
-                docLength++;
+                //docLength++;
                 if (word.contains("-")) {
                     hyphenTests(word);
                 } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
@@ -114,30 +117,6 @@ public class Parse {
             myCitiesIndexer.addCityToCorpusMap(city, docNo);
         }
         this.docName=docNo;
-//        char[] toReplace = {'_', ',', '¥', '�', ')', '(', '{', '}', '[', ']', '*', '|', '#', '!', ';', '<', '>', '~', '^', '&', '=', '+', ':', '?', '"'};
-//        doc = OurReplace(doc,"\n", " ");
-//        doc = OurReplace(doc, toReplace, " ");
-//        splitDoc = mySplit(doc, " ");
-//        for (int i = 0; i < splitDoc.length; i++) {
-//            splitDoc[i] = removeFromTheEdges(splitDoc[i]);
-//        }
-//
-//        int docLength = 0;
-//        while (splitDocIndex < splitDoc.length) {
-//            String word = splitDoc[splitDocIndex];
-//            if (!stopWordsSet.contains(word.toLowerCase())) {
-//                docLength++;
-//                if (word.contains("-")) {
-//                    hyphenTests(word);
-//                } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
-//                    numberTests(word);
-//                } else {
-//                    wordTests(word);
-//                }
-//            } else {
-//                splitDocIndex++;
-//            }
-//        }
         int docLength = startParse(doc);
         docsInformation.addDocLength(docNo, docLength);
         stemmer.stemming(tokens, docNo, doneFile, toStemmer, maxTf, maxTerm);
@@ -492,8 +471,10 @@ public class Parse {
         }
         if (tokens.containsKey(newToken)) {
             tokens.put(newToken, tokens.get(newToken) + 1);
+            docLength++;
         } else {
             tokens.put(newToken, 1);
+            docLength++;
         }
         if(tokens.get(newToken) > maxTf){
             maxTerm = newToken;
@@ -661,6 +642,7 @@ public class Parse {
             counter++;
             tokens.remove(word.toUpperCase());
             tokens.put(word, counter);
+            docLength++;
             if(tokens.get(word) > maxTf){
                 maxTerm = word;
                 maxTf = tokens.get(word);

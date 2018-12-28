@@ -54,6 +54,7 @@ public class Searcher {
         tokens = parser.queryParser(query);
 
         HashMap<String, Double> descriptionRanksOfDocuments = new HashMap<>();
+        HashMap<String, Double> descriptionRanksOfDocumentsTfIdf = new HashMap<>();
         if(!description.equals("NO DESCRIPTION")){
             descriptionTokens = parser.queryParser(description);
             if(!descriptionTokens.isEmpty()){
@@ -63,6 +64,7 @@ public class Searcher {
                 }
                 Map<String, ArrayList<String[]>> descriptionAllDocumentBeforeRank = getAllDocuments(descriptionTokens, allDocsByCity, cityFilter);
                 descriptionRanksOfDocuments = ranker.rankBM25(descriptionAllDocumentBeforeRank, descriptionTokens);
+                descriptionRanksOfDocumentsTfIdf = ranker.tfIdf(descriptionAllDocumentBeforeRank, descriptionTokens);
             }
         }
 
@@ -85,14 +87,19 @@ public class Searcher {
             }
 
             HashMap<String, Double> ranksOfDocuments = ranker.rankBM25(allDocumentBeforeRank, tokens);
+            //HashMap<String, Double> ranksOfDocumentsTfIdf = ranker.tfIdf(allDocumentBeforeRank, tokens);
             HashMap<String, Double> semanticRankOfDocuments = new HashMap<>();
+            //HashMap<String, Double> semanticRankOfDocumentsTfIdf = new HashMap<>();
             if(semanticCare) {
                 semanticRankOfDocuments = ranker.rankBM25(semanticAllDocumentBeforeRank, semanticTokens);
+                //semanticRankOfDocumentsTfIdf = ranker.tfIdf(semanticAllDocumentBeforeRank, semanticTokens);
             }
 
-            HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments, semanticRankOfDocuments, semanticCare, descriptionRanksOfDocuments, isDescription);
+            HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments,semanticRankOfDocuments,
+                    semanticCare, descriptionRanksOfDocuments, isDescription);
 
             TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
+            //TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(ranksOfDocuments);
 
             List<String> relevantDocuments = new LinkedList<>();
             int counter  = 0;

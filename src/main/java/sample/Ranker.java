@@ -16,6 +16,33 @@ public class Ranker {
     public HashMap rankBM25(Map<String, ArrayList<String[]>> queryAndAppears, Map<String, Integer> termsOfQuery){
         HashMap<String, Double> result = new HashMap<>();
 
+        /*for (String key: queryAndAppears.keySet()
+                ) {
+            double sum = 0;
+            for (int i = 0; i < queryAndAppears.get(key).size(); i++) {
+                String[] termsInDoc = queryAndAppears.get(key).get(i);
+                int numOfAppearanceInQuery = termsOfQuery.get(termsInDoc[0]);
+                int numOfAppearanceInCorpus = Integer.parseInt(termsInDoc[2]);
+                int numOfAppearanceInDoc = Integer.parseInt(termsInDoc[1]);
+                int docLength = Integer.parseInt(DocsInformation.allDocsInformation.get(key)[3]);
+                double avdl = DocsInformation.avdl;
+                //constants of the BM25 equation.
+                double k = 1.6;
+                double b = 0.75;
+
+                double idf = Math.log10((DocsInformation.allDocsInformation.size() - numOfAppearanceInCorpus + 0.5) / (numOfAppearanceInCorpus + 0.5));
+                double numerator = numOfAppearanceInDoc*(k + 1);
+                double denominator = numOfAppearanceInDoc + (k*(1 - b + (b * docLength / avdl)));
+
+                //System.out.println("doc: " + key + " word: " + termsInDoc[0] + " ");
+
+                sum = sum + (idf * numerator / denominator);
+            }
+            result.put(key, sum);
+        }
+
+        return result;*/
+
         for (String key: queryAndAppears.keySet()
              ) {
             double sum = 0;
@@ -45,6 +72,40 @@ public class Ranker {
         return result;
     }
 
+    public HashMap tfIdf(Map<String, ArrayList<String[]>> queryAndAppears, Map<String, Integer> termsOfQuery) {
+        HashMap<String, Double> result = new HashMap<>();
+        for (String key: queryAndAppears.keySet()
+                ) {
+            double sum = 0;
+            for (int i = 0; i < queryAndAppears.get(key).size(); i++) {
+                String[] termsInDoc = queryAndAppears.get(key).get(i);
+                int numOfAppearanceInDoc = Integer.parseInt(termsInDoc[1]);
+                int numOfAppearanceInCorpus = Integer.parseInt(termsInDoc[2]);
+                int m = DocsInformation.allDocsInformation.size();
+
+                sum = sum + (numOfAppearanceInDoc * (Math.log10(m/numOfAppearanceInCorpus)));
+            }
+            result.put(key, sum);
+        }
+        return result;
+    }
+
+    public HashMap<String, Double> tfIdfAndBM25(HashMap<String, Double> rankBM, HashMap<String, Double> tfIdf){
+        HashMap<String, Double> result = new HashMap<>();
+        for (String document : rankBM.keySet()
+                ) {
+            double bm = rankBM.get(document);
+            if(tfIdf.containsKey(document)) {
+                double tf = tfIdf.get(document);
+                result.put(document, (0.98*bm + 0.02*tf));
+            }else{
+                result.put(document, bm);
+            }
+        }
+        return result;
+    }
+
+
     public HashMap totalRanks(HashMap<String, Double> rankBM, HashMap<String, Double> semanticRankBM, boolean semanticCare, HashMap<String, Double> descriptionRankBM, boolean isDescription){
         HashMap<String, Double> result = new HashMap<>();
         double gradeForDescription = 0;
@@ -56,8 +117,8 @@ public class Ranker {
             gradeForDescription = 0.05;
         }
         else if(isDescription && !semanticCare){
-            gradeForPure = 0.9;
-            gradeForDescription = 0.1;
+            gradeForPure = 0.85;
+            gradeForDescription = 0.15;
         }else if(!isDescription && semanticCare){
             gradeForPure = 0.8;
             gradeForSemantic = 0.2;

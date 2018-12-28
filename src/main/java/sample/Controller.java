@@ -74,7 +74,7 @@ public class Controller {
         txt_LanguageLabel.setEditable(false);
         txt_savePathLabel.setEditable(false);
         btn_initialMemory.setDisable(true);
-        btn_loadDictionary.setDisable(true);
+        btn_loadDictionary.setDisable(false);
         btn_play.setDisable(false);
         btn_displayDictionary.setDisable(true);
         dictionaryLoaded = false;
@@ -252,7 +252,7 @@ public class Controller {
             if (load) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good news");
-                alert.setHeaderText("Loading Dictionary, please wait!");
+                alert.setHeaderText("Loading dictionary, please wait!");
                 alert.show();
                 btn_displayDictionary.setDisable(false);
                 Indexer indexer = new Indexer(txt_savePath.getText());
@@ -301,7 +301,7 @@ public class Controller {
             if(!txt_queryLabel.getText().trim().isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good news");
-                alert.setHeaderText("Run query Search, please wait!");
+                alert.setHeaderText("Searching your query, please wait!");
                 alert.show();
                 List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                 if(result != null){
@@ -341,7 +341,7 @@ public class Controller {
                 else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Good news");
-                    alert.setHeaderText("Run queries Search, please wait!");
+                    alert.setHeaderText("searching your query, please wait!");
                     alert.show();
                     DisplayerController displayerController = new DisplayerController();
                     LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
