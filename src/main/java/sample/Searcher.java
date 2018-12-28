@@ -64,7 +64,7 @@ public class Searcher {
                 }
                 Map<String, ArrayList<String[]>> descriptionAllDocumentBeforeRank = getAllDocuments(descriptionTokens, allDocsByCity, cityFilter);
                 descriptionRanksOfDocuments = ranker.rankBM25(descriptionAllDocumentBeforeRank, descriptionTokens);
-                descriptionRanksOfDocumentsTfIdf = ranker.tfIdf(descriptionAllDocumentBeforeRank, descriptionTokens);
+               // descriptionRanksOfDocumentsTfIdf = ranker.tfIdf(descriptionAllDocumentBeforeRank, descriptionTokens);
             }
         }
 

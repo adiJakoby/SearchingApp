@@ -219,56 +219,57 @@ public class Controller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void loadDictionary() {
-        if(txt_savePath.getText().trim().isEmpty()){
-            Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
-            alert1.setTitle("Wrong Input");
-            alert1.setHeaderText("Please enter the path of the saved dictionary to the save field");
-            alert1.show();
-        }
-        else {
-            File dic1 = new File(txt_savePath.getText() + "\\Dictionary with stemmer.txt");
-            File dic2 = new File(txt_savePath.getText() + "\\Dictionary without stemmer.txt");
-            boolean stemmer = checkBox_stemming.isSelected();
-            boolean load = true;
-            if (!dic1.exists() && stemmer) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Wrong Input");
-                alert.setHeaderText("There is no saved dictionary with stemmer");
-                alert.show();
-                load = false;
+        try {
+            if (txt_savePath.getText().trim().isEmpty()) {
+                Alert alert1 = new Alert(Alert.AlertType.INFORMATION);
+                alert1.setTitle("Wrong Input");
+                alert1.setHeaderText("Please enter the path of the saved dictionary to the save field");
+                alert1.show();
+            } else {
+                File dic1 = new File(txt_savePath.getText() + "\\Dictionary with stemmer.txt");
+                File dic2 = new File(txt_savePath.getText() + "\\Dictionary without stemmer.txt");
+                boolean stemmer = checkBox_stemming.isSelected();
+                boolean load = true;
+                if (!dic1.exists() && stemmer) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Wrong Input");
+                    alert.setHeaderText("There is no saved dictionary with stemmer");
+                    alert.show();
+                    load = false;
+                }
+                if (!dic2.exists() && !stemmer) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Wrong Input");
+                    alert.setHeaderText("There is no saved dictionary without stemmer");
+                    alert.show();
+                    load = false;
+                }
+                if (load) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Good news");
+                    alert.setHeaderText("Loading dictionary, please wait!");
+                    alert.show();
+                    btn_displayDictionary.setDisable(false);
+                    Indexer indexer = new Indexer(txt_savePath.getText());
+                    DocsInformation docsInformation = new DocsInformation();
+                    CitiesIndexer citiesIndexer = new CitiesIndexer();
+                    indexer.setDictionary(stemmer);
+                    docsInformation.setAllDocsInformation(txt_savePath.getText(), stemmer);
+                    citiesIndexer.setAllCitiesInCorpus(txt_savePath.getText());
+                    alert.close();
+                    dictionaryLoaded = true;
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Good News");
+                    alert.setHeaderText("Your dictionary is loaded, you can take a look");
+                    alert.show();
+                    handleCitiesFilter();
+                }
             }
-            if (!dic2.exists() && !stemmer) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Wrong Input");
-                alert.setHeaderText("There is no saved dictionary without stemmer");
-                alert.show();
-                load = false;
-            }
-            if (load) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Good news");
-                alert.setHeaderText("Loading dictionary, please wait!");
-                alert.show();
-                btn_displayDictionary.setDisable(false);
-                Indexer indexer = new Indexer(txt_savePath.getText());
-                DocsInformation docsInformation = new DocsInformation();
-                CitiesIndexer citiesIndexer = new CitiesIndexer();
-                indexer.setDictionary(stemmer);
-                docsInformation.setAllDocsInformation(txt_savePath.getText(), stemmer);
-                citiesIndexer.setAllCitiesInCorpus(txt_savePath.getText());
-                alert.close();
-                dictionaryLoaded = true;
-                alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Good News");
-                alert.setHeaderText("Your dictionary is loaded, you can take a look");
-                alert.show();
-                handleCitiesFilter();
-            }
+        }catch (Exception e){
+            System.out.println("something went wrong");
         }
     }
 
@@ -291,92 +292,94 @@ public class Controller {
     }
 
     public void handleSearch(){
-        if(dictionaryLoaded) {
-            Searcher searcher = new Searcher(txt_savePath.getText());
-            List<String> cities = new LinkedList<>();
-            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
-            for (int cityIdex :allCitiesChoosenIdex) {
-                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
-            }
-            if(!txt_queryLabel.getText().trim().isEmpty()) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Good news");
-                alert.setHeaderText("Searching your query, please wait!");
-                alert.show();
-                List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                if(result != null){
-                    try {
-                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
-                        for(int i = 0; i < result.size(); i++){
-                            WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
-                            System.out.println("Entities of: " + result.get(i) + ":");
-                            if(DocsInformation.entities.containsKey(result.get(i))) {
-                                for (String s : DocsInformation.entities.get(result.get(i)).keySet()
-                                        ) {
-                                    System.out.println(s);
-                                }
-                            }
-                        }
-                        WriteFileBuffer.flush();
-                        WriteFileBuffer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    queryID++;
+        try {
+            if (dictionaryLoaded) {
+                Searcher searcher = new Searcher(txt_savePath.getText());
+                List<String> cities = new LinkedList<>();
+                final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
+                for (int cityIdex : allCitiesChoosenIdex) {
+                    cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
                 }
-                else{
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Ho NO!");
-                    alert.setHeaderText("There is no relevant documents to your query, Please try again");
-                    alert.show();
-                }
-            }else if(!txt_queriesPath. getText().trim().isEmpty()){
-                File f = new File(txt_queriesPath.getText());
-                if(!f.exists()) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Oooops!");
-                    alert.setHeaderText("queries file does not exist! please choose valid file");
-                    alert.show();
-                }
-                else {
+                if (!txt_queryLabel.getText().trim().isEmpty()) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Good news");
-                    alert.setHeaderText("searching your query, please wait!");
+                    alert.setHeaderText("Searching your query, please wait!");
                     alert.show();
-                    DisplayerController displayerController = new DisplayerController();
-                    LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
-                    ReadQuery readQuery = new ReadQuery();
-                    ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
-                    for (int i = 0; i < queries.size(); i++) {
-                        List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                        queriesResult.put(queries.get(i)[0], result);
-                    }
-                    try {
-                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
-                        for (String query : queriesResult.keySet()
-                                ) {
-                            List<String> result = queriesResult.get(query);
-                            if (result != null) {
-                                for (int i = 0; i < result.size(); i++) {
-                                    WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                    List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                    if (result != null) {
+                        try {
+                            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                            for (int i = 0; i < result.size(); i++) {
+                                WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
+                                System.out.println("Entities of: " + result.get(i) + ":");
+                                if (DocsInformation.entities.containsKey(result.get(i))) {
+                                    for (String s : DocsInformation.entities.get(result.get(i)).keySet()
+                                            ) {
+                                        System.out.println(s);
+                                    }
                                 }
                             }
+                            WriteFileBuffer.flush();
+                            WriteFileBuffer.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        WriteFileBuffer.flush();
-                        WriteFileBuffer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        queryID++;
+                    } else {
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Ho NO!");
+                        alert.setHeaderText("There is no relevant documents to your query, Please try again");
+                        alert.show();
                     }
-                    alert.close();
-                    displayerController.displayrelevantDocs(queriesResult);
+                } else if (!txt_queriesPath.getText().trim().isEmpty()) {
+                    File f = new File(txt_queriesPath.getText());
+                    if (!f.exists()) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Oooops!");
+                        alert.setHeaderText("queries file does not exist! please choose valid file");
+                        alert.show();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Good news");
+                        alert.setHeaderText("searching your query, please wait!");
+                        alert.show();
+                        DisplayerController displayerController = new DisplayerController();
+                        LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
+                        ReadQuery readQuery = new ReadQuery();
+                        ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
+                        for (int i = 0; i < queries.size(); i++) {
+                            List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                            queriesResult.put(queries.get(i)[0], result);
+                        }
+                        try {
+                            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                            for (String query : queriesResult.keySet()
+                                    ) {
+                                List<String> result = queriesResult.get(query);
+                                if (result != null) {
+                                    for (int i = 0; i < result.size(); i++) {
+                                        WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                                    }
+                                }
+                            }
+                            WriteFileBuffer.flush();
+                            WriteFileBuffer.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        alert.close();
+                        displayerController.displayrelevantDocs(queriesResult);
+                    }
                 }
-            }
 
-        }else{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Oooops!");
-            alert.setHeaderText("Before running some queries you have to load a dictionary!");
-            alert.show();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Oooops!");
+                alert.setHeaderText("Before running some queries you have to load a dictionary!");
+                alert.show();
+            }
+        }catch (Exception e){
+            System.out.println("Something went wrong");
         }
     }
 

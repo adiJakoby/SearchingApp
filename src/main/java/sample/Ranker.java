@@ -63,6 +63,12 @@ public class Ranker {
                 double numerator = (k+1)*numOfAppearanceInDoc*numOfAppearanceInQuery;
                 double log = Math.log10((m+1)/numOfAppearanceInCorpus);
 
+                /*if(DocsInformation.entities.get(key) != null) {
+                    if (DocsInformation.entities.get(key).containsKey(termsInDoc[0])) {
+                        sum = sum + (DocsInformation.entities.get(key).get(termsInDoc[0]) / DocsInformation.entities.get(key).size());
+                    }
+                }*/
+
                 sum = sum + (numerator*log/denominator);
 
             }
