@@ -23,11 +23,12 @@ public class ReadQuery {
             StringBuilder writer = new StringBuilder();
             Elements queries = doc.select("top");
             for (Element e : queries) {
-                String[] allQueryParts = new String[3];
+                String[] allQueryParts = new String[4];
                 String query = e.getElementsByTag("num").toString();
-                String[] bodyAfterSplit = CitiesIndexer.mySplit(query," ");
+                String[] bodyAfterSplit = CitiesIndexer.mySplit(query, " ");
                 allQueryParts[1] = "";
                 allQueryParts[2] = "";
+                allQueryParts[3] = "";
                 int index = 0;
                 for (int i = 0; i < bodyAfterSplit.length; i++) {
                     if (bodyAfterSplit[i].equals("Number:")) {
@@ -46,7 +47,7 @@ public class ReadQuery {
                             }
                         }
                         index = i;
-                        allQueryParts[1]=writer.toString();
+                        allQueryParts[1] = writer.toString();
                         writer = new StringBuilder();
                         break;
                     }
@@ -56,7 +57,7 @@ public class ReadQuery {
                         i++;
                         while (!bodyAfterSplit[i].contains("<narr>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
-                                if(bodyAfterSplit[i].contains("Description:")){
+                                if (bodyAfterSplit[i].contains("Description:")) {
                                     i++;
                                 }
                                 writer.append(" " + bodyAfterSplit[i]);
@@ -65,12 +66,28 @@ public class ReadQuery {
                         }
                         allQueryParts[2] = writer.toString();
                         writer = new StringBuilder();
+                        index = i;
                         break;
                     }
                 }
-                //System.out.println("Done : query num " + queynum + " Contains the title:" +allQueryParts[1]);
-                queynum++;
-                queriesArray.add(allQueryParts);
+                String narrative = e.getElementsByTag("narr").toString();
+                String[] narrativeSplited = CitiesIndexer.mySplit(narrative, "relevant");
+                String narrativeText = "";
+                for (int i = 0; i < narrativeSplited.length; i++) {
+                    if (!narrativeSplited[i].contains("not") && !narrativeSplited[i].contains("non")) {
+                        if (narrativeSplited[i].contains("<narr>")) {
+                            narrativeSplited[i] = narrativeSplited[i].substring(narrativeSplited[i].indexOf("<narr>") + 6);
+                            if (narrativeSplited[i].contains("</narr>")) {
+                                narrativeSplited[i] = narrativeSplited[i].substring(0, narrativeSplited[i].indexOf("</narr>"));
+                            }
+                            narrativeText += narrativeSplited[i];
+                        }
+                    }
+                    allQueryParts[3] = narrativeText;
+                    //System.out.println("Done : query num " + queynum + " Contains the title:" +allQueryParts[1]);
+                    queynum++;
+                    queriesArray.add(allQueryParts);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

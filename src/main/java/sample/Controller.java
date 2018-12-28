@@ -305,7 +305,7 @@ public class Controller {
                     alert.setTitle("Good news");
                     alert.setHeaderText("Searching your query, please wait!");
                     alert.show();
-                    List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                    List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", "",checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                     if (result != null) {
                         try {
                             BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
@@ -348,7 +348,7 @@ public class Controller {
                         ReadQuery readQuery = new ReadQuery();
                         ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
                         for (int i = 0; i < queries.size(); i++) {
-                            List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(1)[2], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                            List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(i)[2],queries.get(i)[3] ,checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                             queriesResult.put(queries.get(i)[0], result);
                         }
                         try {
