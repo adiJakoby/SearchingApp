@@ -292,7 +292,6 @@ public class Controller {
     }
 
     public void handleSearch(){
-        try {
             if (dictionaryLoaded) {
                 Searcher searcher = new Searcher(txt_savePath.getText());
                 List<String> cities = new LinkedList<>();
@@ -378,9 +377,6 @@ public class Controller {
                 alert.setHeaderText("Before running some queries you have to load a dictionary!");
                 alert.show();
             }
-        }catch (Exception e){
-            System.out.println("Something went wrong");
-        }
     }
 
 }

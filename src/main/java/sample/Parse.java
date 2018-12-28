@@ -88,9 +88,8 @@ public class Parse {
 
         while (splitDocIndex < splitDoc.length) {
             String word = splitDoc[splitDocIndex];
-            //docLength = splitDoc.length;
             if (!stopWordsSet.contains(word.toLowerCase())) {
-                //docLength++;
+                docLength++;
                 if (word.contains("-")) {
                     hyphenTests(word);
                 } else if (Pattern.compile("[0-9]").matcher(word).find() && isReadyForNumberTest(word)) {
@@ -471,10 +470,10 @@ public class Parse {
         }
         if (tokens.containsKey(newToken)) {
             tokens.put(newToken, tokens.get(newToken) + 1);
-            docLength++;
+            //docLength++;
         } else {
             tokens.put(newToken, 1);
-            docLength++;
+            //docLength++;
         }
         if(tokens.get(newToken) > maxTf){
             maxTerm = newToken;
@@ -642,7 +641,7 @@ public class Parse {
             counter++;
             tokens.remove(word.toUpperCase());
             tokens.put(word, counter);
-            docLength++;
+            //docLength++;
             if(tokens.get(word) > maxTf){
                 maxTerm = word;
                 maxTf = tokens.get(word);

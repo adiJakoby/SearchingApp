@@ -36,6 +36,8 @@ public class Searcher {
         Map<String, Integer> allDocsByCity = new HashMap<>();
         boolean cityFilter = false;
         boolean isDescription = false;
+        boolean isNarrative = false;
+
         if(cities.size() > 0){
             allDocsByCity = getAllDocsByCity(cities);
             cityFilter = true;
@@ -47,7 +49,7 @@ public class Searcher {
         }
 
         Map<String, Integer> tokens;
-        Map<String, Integer> descriptionTokens;
+        Map<String, Integer> descriptionTokens = new HashMap<>();
         Map<String, Integer> narrativeTokens=null;
         Map<String, Integer> cutNarrDescTokens=new HashMap<>();
         Map<String, Integer> semanticTokens = new HashMap<>();
@@ -56,20 +58,27 @@ public class Searcher {
         tokens = parser.queryParser(query);
 
         HashMap<String, Double> descriptionVSNarrRanksOfDocuments = new HashMap<>();
-        HashMap<String, Double> descriptionRanksOfDocumentsTfIdf = new HashMap<>();
         if(!narrative.equals("")){
             narrativeTokens = parser.queryParser(narrative);
-            if(toStem){
-                narrativeTokens = stemmer.queryStemmer(narrativeTokens);
+            if(narrativeTokens.size() > 0){
+                isNarrative = true;
+                if(toStem){
+                    narrativeTokens = stemmer.queryStemmer(narrativeTokens);
+                }
             }
         }
+
         if(!description.equals("NO DESCRIPTION")){
             descriptionTokens = parser.queryParser(description);
-            if(!descriptionTokens.isEmpty()){
+            if(!descriptionTokens.isEmpty()) {
                 isDescription = true;
                 if (toStem) {
                     descriptionTokens = stemmer.queryStemmer(descriptionTokens);
                 }
+            }
+        }
+
+        if(isNarrative && isDescription){
                 //finding the cut between narrative and descriptions term
                 for (String termInDescription:descriptionTokens.keySet()) {
                     for (String termInNarrative:narrativeTokens.keySet()) {
@@ -80,9 +89,16 @@ public class Searcher {
                 }
                 Map<String, ArrayList<String[]>> descriptionVsNarrAllDocumentBeforeRank = getAllDocuments(cutNarrDescTokens, allDocsByCity, cityFilter);
                 descriptionVSNarrRanksOfDocuments = ranker.rankBM25(descriptionVsNarrAllDocumentBeforeRank, cutNarrDescTokens);
-               // descriptionRanksOfDocumentsTfIdf = ranker.tfIdf(descriptionVsNarrAllDocumentBeforeRank, descriptionTokens);
-            }
+
         }
+        else if(!isNarrative && isDescription){
+            Map<String, ArrayList<String[]>> descriptionVsNarrAllDocumentBeforeRank = getAllDocuments(descriptionTokens, allDocsByCity, cityFilter);
+            descriptionVSNarrRanksOfDocuments = ranker.rankBM25(descriptionVsNarrAllDocumentBeforeRank, descriptionTokens);
+        }else if(isNarrative && !isDescription){
+            Map<String, ArrayList<String[]>> descriptionVsNarrAllDocumentBeforeRank = getAllDocuments(narrativeTokens, allDocsByCity, cityFilter);
+            descriptionVSNarrRanksOfDocuments = ranker.rankBM25(descriptionVsNarrAllDocumentBeforeRank, narrativeTokens);
+        }
+
         if(!tokens.isEmpty()) {
             if(semanticCare) {
                 semanticTokens = getSemanticWords(tokens);
@@ -102,19 +118,17 @@ public class Searcher {
             }
 
             HashMap<String, Double> ranksOfDocuments = ranker.rankBM25(allDocumentBeforeRank, tokens);
-            //HashMap<String, Double> ranksOfDocumentsTfIdf = ranker.tfIdf(allDocumentBeforeRank, tokens);
             HashMap<String, Double> semanticRankOfDocuments = new HashMap<>();
-            //HashMap<String, Double> semanticRankOfDocumentsTfIdf = new HashMap<>();
+
             if(semanticCare) {
                 semanticRankOfDocuments = ranker.rankBM25(semanticAllDocumentBeforeRank, semanticTokens);
-                //semanticRankOfDocumentsTfIdf = ranker.tfIdf(semanticAllDocumentBeforeRank, semanticTokens);
             }
 
+            isDescription = (isDescription || isNarrative);
             HashMap<String, Double> totalRanks = ranker.totalRanks(ranksOfDocuments,semanticRankOfDocuments,
                     semanticCare, descriptionVSNarrRanksOfDocuments, isDescription);
 
             TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(totalRanks);
-            //TreeMap<Double, LinkedList> sortedRanksOfDocuments = getRankDocumentsSortedByRank(ranksOfDocuments);
 
             List<String> relevantDocuments = new LinkedList<>();
             int counter  = 0;

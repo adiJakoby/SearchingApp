@@ -63,11 +63,11 @@ public class Ranker {
                 double numerator = (k+1)*numOfAppearanceInDoc*numOfAppearanceInQuery;
                 double log = Math.log10((m+1)/numOfAppearanceInCorpus);
 
-                /*if(DocsInformation.entities.get(key) != null) {
-                    if (DocsInformation.entities.get(key).containsKey(termsInDoc[0])) {
-                        sum = sum + (DocsInformation.entities.get(key).get(termsInDoc[0]) / DocsInformation.entities.get(key).size());
-                    }
-                }*/
+//                if(DocsInformation.entities.get(key) != null) {
+//                    if (DocsInformation.entities.get(key).containsKey(termsInDoc[0])) {
+//                        sum = sum + (DocsInformation.entities.get(key).get(termsInDoc[0]) / DocsInformation.entities.get(key).size());
+//                    }
+//                }
 
                 sum = sum + (numerator*log/denominator);
 
@@ -119,12 +119,12 @@ public class Ranker {
         double gradeForSemantic = 0;
         if(isDescription && semanticCare){
             gradeForPure = 0.7;
-            gradeForSemantic = 0.25;
-            gradeForDescription = 0.05;
+            gradeForSemantic = 0.15;
+            gradeForDescription = 0.15;
         }
         else if(isDescription && !semanticCare){
-            gradeForPure = 0.85;
-            gradeForDescription = 0.15;
+            gradeForPure = 0.8;
+            gradeForDescription = 0.2;
         }else if(!isDescription && semanticCare){
             gradeForPure = 0.8;
             gradeForSemantic = 0.2;
