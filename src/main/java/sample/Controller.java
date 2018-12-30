@@ -42,6 +42,8 @@ public class Controller {
     @FXML
     public javafx.scene.control.Button btn_browseQueries;
     @FXML
+    public javafx.scene.control.Button btn_saveQueriesResultsPath;
+    @FXML
     public javafx.scene.control.TextField txt_corpusPath;
     @FXML
     public javafx.scene.control.TextField txt_savePath;
@@ -53,6 +55,8 @@ public class Controller {
     public javafx.scene.control.TextField txt_LanguageLabel;
     @FXML
     public javafx.scene.control.TextField txt_queriesPath;
+    @FXML
+    public javafx.scene.control.TextField txt_queriesResultPath;
     @FXML
     public javafx.scene.control.TextField txt_queryLabel;
     @FXML
@@ -66,6 +70,7 @@ public class Controller {
 
     boolean dictionaryLoaded;
     static int queryID;
+    boolean resultPath;
 
 
     @FXML
@@ -78,6 +83,7 @@ public class Controller {
         btn_play.setDisable(false);
         btn_displayDictionary.setDisable(true);
         dictionaryLoaded = false;
+        resultPath = false;
         queryID = 0;
     }
 
@@ -130,8 +136,8 @@ public class Controller {
             btn_play.setDisable(true);
             btn_searchCorpusPath.setDisable(true);
             btn_searchSavePath.setDisable(true);
-            Indexer.dictionary=new HashMap<>();
-            Indexer.postingIndex=0;
+            Indexer.dictionary = new HashMap<>();
+            Indexer.postingIndex = 0;
             DocsInformation docsInformation = new DocsInformation();
             ReadFile myReader = new ReadFile();
             Indexer indexer = new Indexer(txt_savePath.getText());
@@ -163,8 +169,8 @@ public class Controller {
             btn_displayDictionary.setDisable(false);
             alert.setTitle("Information");
             alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
-                                "Number of unique terms: " + indexer.dictionary.size() + "\n" +
-                                "Time in seconds: " + ((endTime-startTime)/1000));
+                    "Number of unique terms: " + indexer.dictionary.size() + "\n" +
+                    "Time in seconds: " + ((endTime - startTime) / 1000));
             alert.show();
             dictionaryLoaded = true;
             btn_initialMemory.setDisable(false);
@@ -180,7 +186,7 @@ public class Controller {
     //the function set up the choice combo box for cities filter
     private void handleCitiesFilter() {
         final ObservableList<String> allCities = FXCollections.observableArrayList();
-        for (String city: CitiesIndexer.allCitiesInCorpus.keySet()) {
+        for (String city : CitiesIndexer.allCitiesInCorpus.keySet()) {
             allCities.add(city);
         }
         citiesFilter.getItems().setAll(allCities);
@@ -268,13 +274,13 @@ public class Controller {
                     handleCitiesFilter();
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("something went wrong");
         }
     }
 
-    public void browseQueriesPath(){
-        if(txt_queryLabel.getText().trim().isEmpty()) {
+    public void browseQueriesPath() {
+        if (txt_queryLabel.getText().trim().isEmpty()) {
             FileChooser fileChooser = new FileChooser();
             File file = fileChooser.showOpenDialog(null);
             if (file != null) {
@@ -283,7 +289,7 @@ public class Controller {
             } else {
                 txt_queriesPath.setText(null);
             }
-        }else{
+        } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ooops");
             alert.setHeaderText("You can't run both file of queries and the query you have inserted");
@@ -291,92 +297,111 @@ public class Controller {
         }
     }
 
-    public void handleSearch(){
-            if (dictionaryLoaded) {
-                Searcher searcher = new Searcher(txt_savePath.getText());
-                List<String> cities = new LinkedList<>();
-                final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
-                for (int cityIdex : allCitiesChoosenIdex) {
-                    cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
+    public void browseSaveResultsPath() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File dir = directoryChooser.showDialog(null);
+        if (dir != null) {
+            txt_queriesResultPath.setText(dir.getAbsolutePath());
+            resultPath = true;
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Something went wrong");
+            alert.setHeaderText("You haven't choose directory to save the results of your query ");
+            alert.show();
+        }
+    }
+
+    public void handleSearch() {
+        if (dictionaryLoaded && resultPath) {
+            Searcher searcher = new Searcher(txt_savePath.getText());
+            List<String> cities = new LinkedList<>();
+            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
+            for (int cityIdex : allCitiesChoosenIdex) {
+                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
+            }
+            if (!txt_queryLabel.getText().trim().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Good news");
+                alert.setHeaderText("Searching your query, please wait!");
+                alert.show();
+                List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", "", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                if (result != null) {
+                    try {
+                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                        for (int i = 0; i < result.size(); i++) {
+                            WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
+                            System.out.println("Entities of: " + result.get(i) + ":");
+                            if (DocsInformation.entities.containsKey(result.get(i))) {
+                                for (String s : DocsInformation.entities.get(result.get(i)).keySet()
+                                        ) {
+                                    System.out.println(s);
+                                }
+                            }
+                        }
+                        WriteFileBuffer.flush();
+                        WriteFileBuffer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    queryID++;
+                } else {
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Ho NO!");
+                    alert.setHeaderText("There is no relevant documents to your query, Please try again");
+                    alert.show();
                 }
-                if (!txt_queryLabel.getText().trim().isEmpty()) {
+            } else if (!txt_queriesPath.getText().trim().isEmpty()) {
+                File f = new File(txt_queriesPath.getText());
+                if (!f.exists()) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Oooops!");
+                    alert.setHeaderText("queries file does not exist! please choose valid file");
+                    alert.show();
+                } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Good news");
-                    alert.setHeaderText("Searching your query, please wait!");
+                    alert.setHeaderText("searching your query, please wait!");
                     alert.show();
-                    List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", "",checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                    if (result != null) {
-                        try {
-                            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
-                            for (int i = 0; i < result.size(); i++) {
-                                WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
-                                System.out.println("Entities of: " + result.get(i) + ":");
-                                if (DocsInformation.entities.containsKey(result.get(i))) {
-                                    for (String s : DocsInformation.entities.get(result.get(i)).keySet()
-                                            ) {
-                                        System.out.println(s);
-                                    }
+                    DisplayerController displayerController = new DisplayerController();
+                    LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
+                    ReadQuery readQuery = new ReadQuery();
+                    ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
+                    for (int i = 0; i < queries.size(); i++) {
+                        List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(i)[2], queries.get(i)[3], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
+                        queriesResult.put(queries.get(i)[0], result);
+                    }
+                    try {
+                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txt_queriesResultPath + "\\results.txt"), "UTF-8"));
+                        for (String query : queriesResult.keySet()
+                                ) {
+                            List<String> result = queriesResult.get(query);
+                            if (result != null) {
+                                for (int i = 0; i < result.size(); i++) {
+                                    WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
                                 }
                             }
-                            WriteFileBuffer.flush();
-                            WriteFileBuffer.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
-                        queryID++;
-                    } else {
-                        alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Ho NO!");
-                        alert.setHeaderText("There is no relevant documents to your query, Please try again");
-                        alert.show();
+                        WriteFileBuffer.flush();
+                        WriteFileBuffer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } else if (!txt_queriesPath.getText().trim().isEmpty()) {
-                    File f = new File(txt_queriesPath.getText());
-                    if (!f.exists()) {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Oooops!");
-                        alert.setHeaderText("queries file does not exist! please choose valid file");
-                        alert.show();
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Good news");
-                        alert.setHeaderText("searching your query, please wait!");
-                        alert.show();
-                        DisplayerController displayerController = new DisplayerController();
-                        LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
-                        ReadQuery readQuery = new ReadQuery();
-                        ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
-                        for (int i = 0; i < queries.size(); i++) {
-                            List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(i)[2],queries.get(i)[3] ,checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                            queriesResult.put(queries.get(i)[0], result);
-                        }
-                        try {
-                            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
-                            for (String query : queriesResult.keySet()
-                                    ) {
-                                List<String> result = queriesResult.get(query);
-                                if (result != null) {
-                                    for (int i = 0; i < result.size(); i++) {
-                                        WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
-                                    }
-                                }
-                            }
-                            WriteFileBuffer.flush();
-                            WriteFileBuffer.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        alert.close();
-                        displayerController.displayrelevantDocs(queriesResult);
-                    }
+                    alert.close();
+                    displayerController.displayrelevantDocs(queriesResult);
                 }
-
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Oooops!");
-                alert.setHeaderText("Before running some queries you have to load a dictionary!");
-                alert.show();
             }
+
+        } else if(!dictionaryLoaded){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Oooops!");
+            alert.setHeaderText("Before running some queries you have to load a dictionary!");
+            alert.show();
+        } else if(!resultPath){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Oooops!");
+            alert.setHeaderText("Before running some queries you have to enter a directory where you want to save the results of your query!");
+            alert.show();
+        }
     }
 
 }
