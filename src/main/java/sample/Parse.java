@@ -465,8 +465,8 @@ public class Parse {
      */
     private void addToMap(String newToken) {
         //case when the new token it a city
-        if(myCitiesIndexer.citiesDetails.containsKey(newToken.toUpperCase())){
-            myCitiesIndexer.citiesDetails.get(newToken.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
+        if(CitiesIndexer.allCitiesInCorpus.containsKey(newToken.toUpperCase())){
+            CitiesIndexer.allCitiesInCorpus.get(newToken.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
         }
         if (tokens.containsKey(newToken)) {
             tokens.put(newToken, tokens.get(newToken) + 1);
@@ -634,8 +634,8 @@ public class Parse {
     private void addToMapLowCase(String word) {
         word = word.toLowerCase();
         if (tokens.containsKey(word.toUpperCase())) {
-            if(myCitiesIndexer.citiesDetails.containsKey(word.toUpperCase())){
-                myCitiesIndexer.citiesDetails.get(word.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
+            if(CitiesIndexer.allCitiesInCorpus.containsKey(word.toUpperCase())){
+                CitiesIndexer.allCitiesInCorpus.get(word.toUpperCase()).addDocToMap(docName,Integer.toString(splitDocIndex));
             }
             int counter = tokens.get(word.toUpperCase());
             counter++;

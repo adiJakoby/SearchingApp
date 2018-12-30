@@ -78,6 +78,7 @@ public class Controller {
     boolean dictionaryLoaded;
     static int queryID;
     boolean resultPath;
+    CitiesController citiesController;
 
 
     @FXML
@@ -184,19 +185,22 @@ public class Controller {
             btn_searchCorpusPath.setDisable(false);
             btn_searchSavePath.setDisable(false);
             choiceBox_Language.setItems(FXCollections.observableArrayList(CitiesIndexer.allCitiesInCorpus));
-            handleCitiesFilter();
+            //handleCitiesFilter();
         }
     }
 
     //the function set up the choice combo box for cities filter
+    @FXML
     private void handleCitiesFilter() {
-        final ObservableList<String> allCities = FXCollections.observableArrayList();
-        TreeMap<String, City> sortedAllCities = new TreeMap<>();
-        sortedAllCities.putAll(CitiesIndexer.allCitiesInCorpus);
-        for (String city : sortedAllCities.keySet()) {
-            allCities.add(city);
-        }
-        citiesFilter.getItems().setAll(allCities);
+//        final ObservableList<String> allCities = FXCollections.observableArrayList();
+//        TreeMap<String, City> sortedAllCities = new TreeMap<>();
+//        sortedAllCities.putAll(CitiesIndexer.allCitiesInCorpus);
+//        for (String city : sortedAllCities.keySet()) {
+//            allCities.add(city);
+//        }
+//        citiesFilter.getItems().setAll(allCities);
+        citiesController = new CitiesController();
+        citiesController.displayCities();
     }
 
     public void handleDisplayDictionary(ActionEvent actionEvent) {
@@ -278,7 +282,7 @@ public class Controller {
                     alert.setTitle("Good News");
                     alert.setHeaderText("Your dictionary is loaded, you can take a look");
                     alert.show();
-                    handleCitiesFilter();
+                    //handleCitiesFilter();
                 }
             }
         } catch (Exception e) {
@@ -323,11 +327,11 @@ public class Controller {
         LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
         if (dictionaryLoaded && resultPath) {
             Searcher searcher = new Searcher(txt_savePath.getText());
-            List<String> cities = new LinkedList<>();
-            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
-            for (int cityIdex : allCitiesChoosenIdex) {
-                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
-            }
+            List<String> cities = citiesController.getCitiesSelected();
+//            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
+//            for (int cityIdex : allCitiesChoosenIdex) {
+//                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
+//            }
             if (!txt_queryLabel.getText().trim().isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good news");
