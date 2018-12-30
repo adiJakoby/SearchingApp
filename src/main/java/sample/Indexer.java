@@ -323,6 +323,7 @@ public class Indexer {
     }
 
     public void setDictionary(boolean stemmer){
+        dictionary = new HashMap<>();
         String fileName = "";
         if(stemmer){
             fileName = " with stemmer.txt";

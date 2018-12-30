@@ -140,7 +140,6 @@ public class Ranker {
                 }
                 double rank = (gradeForPure * originRank) + (gradeForSemantic * semanticRank);
                 String date = DocsInformation.allDocsInformation.get(document)[4];
-                System.out.println(date);
                 if (!date.equals("")) {
                     String[] splitDate = date.split(" ");
                     rank = (0.99*rank) + (0.01*(2018 - Double.parseDouble(splitDate[2])));

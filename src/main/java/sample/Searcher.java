@@ -314,29 +314,31 @@ public class Searcher {
                 res = myClient.newCall(req).execute();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Connection to the API, for the term " + key + " failed..");
             }
             Object object = null;
             myParser = new org.json.simple.parser.JSONParser();
-            try {
+            if (res != null) {
                 try {
-                    object = myParser.parse(res.body().string());
-                } catch (ParseException e) {
+                    try {
+                        object = myParser.parse(res.body().string());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (object != null) {
-                Object[] parsed_json = ((JSONArray) object).toArray();
-                String word = "";
-                int counter = 0;
-                for (Object O : parsed_json) {
-                    word = (String) ((JSONObject) O).get("word");
-                    semanticWords.put(word, tokens.get(key));
-                    counter++;
-                    if (counter == 5) {
-                        break;
+                if (object != null) {
+                    Object[] parsed_json = ((JSONArray) object).toArray();
+                    String word = "";
+                    int counter = 0;
+                    for (Object O : parsed_json) {
+                        word = (String) ((JSONObject) O).get("word");
+                        semanticWords.put(word, tokens.get(key));
+                        counter++;
+                        if (counter == 5) {
+                            break;
+                        }
                     }
                 }
             }

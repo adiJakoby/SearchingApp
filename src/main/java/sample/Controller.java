@@ -20,8 +20,11 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -34,6 +37,8 @@ public class Controller {
     @FXML
     public javafx.scene.control.Button btn_loadDictionary;
     @FXML
+    public javafx.scene.control.Button btn_runSearch;
+    @FXML
     public javafx.scene.control.Button btn_displayDictionary;
     @FXML
     public javafx.scene.control.Button btn_initialMemory;
@@ -43,6 +48,8 @@ public class Controller {
     public javafx.scene.control.Button btn_browseQueries;
     @FXML
     public javafx.scene.control.Button btn_saveQueriesResultsPath;
+    @FXML
+    public javafx.scene.control.Button btn_resetQuery;
     @FXML
     public javafx.scene.control.TextField txt_corpusPath;
     @FXML
@@ -148,7 +155,6 @@ public class Controller {
 
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
-            System.out.println(dateFormat.format(date)); //2016/11/16 12:08:43
             Long startTime = System.currentTimeMillis();
 
             try {
@@ -163,7 +169,6 @@ public class Controller {
 
             alert.close();
             Date date1 = new Date();
-            System.out.println(dateFormat.format(date1));
             Long endTime = System.currentTimeMillis();
 
             btn_displayDictionary.setDisable(false);
@@ -186,7 +191,9 @@ public class Controller {
     //the function set up the choice combo box for cities filter
     private void handleCitiesFilter() {
         final ObservableList<String> allCities = FXCollections.observableArrayList();
-        for (String city : CitiesIndexer.allCitiesInCorpus.keySet()) {
+        TreeMap<String, City> sortedAllCities = new TreeMap<>();
+        sortedAllCities.putAll(CitiesIndexer.allCitiesInCorpus);
+        for (String city : sortedAllCities.keySet()) {
             allCities.add(city);
         }
         citiesFilter.getItems().setAll(allCities);
@@ -312,6 +319,8 @@ public class Controller {
     }
 
     public void handleSearch() {
+        DisplayerController displayerController = new DisplayerController();
+        LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
         if (dictionaryLoaded && resultPath) {
             Searcher searcher = new Searcher(txt_savePath.getText());
             List<String> cities = new LinkedList<>();
@@ -330,19 +339,15 @@ public class Controller {
                         BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
                         for (int i = 0; i < result.size(); i++) {
                             WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
-                            System.out.println("Entities of: " + result.get(i) + ":");
-                            if (DocsInformation.entities.containsKey(result.get(i))) {
-                                for (String s : DocsInformation.entities.get(result.get(i)).keySet()
-                                        ) {
-                                    System.out.println(s);
-                                }
-                            }
+                            queriesResult.put(Integer.toString(queryID), result);
                         }
                         WriteFileBuffer.flush();
                         WriteFileBuffer.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    alert.close();
+                    displayerController.displayrelevantDocs(queriesResult);
                     queryID++;
                 } else {
                     alert = new Alert(Alert.AlertType.INFORMATION);
@@ -362,46 +367,65 @@ public class Controller {
                     alert.setTitle("Good news");
                     alert.setHeaderText("searching your query, please wait!");
                     alert.show();
-                    DisplayerController displayerController = new DisplayerController();
-                    LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
                     ReadQuery readQuery = new ReadQuery();
                     ArrayList<String[]> queries = readQuery.getQueryFromFile(txt_queriesPath.getText());
                     for (int i = 0; i < queries.size(); i++) {
                         List<String> result = searcher.getRelevantDocuments(queries.get(i)[1], queries.get(i)[2], queries.get(i)[3], checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
-                        queriesResult.put(queries.get(i)[0], result);
+                        if (result != null) {
+                            queriesResult.put(queries.get(i)[0], result);
+                        }
                     }
-                    try {
-                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txt_queriesResultPath + "\\results.txt"), "UTF-8"));
-                        for (String query : queriesResult.keySet()
-                                ) {
-                            List<String> result = queriesResult.get(query);
-                            if (result != null) {
-                                for (int i = 0; i < result.size(); i++) {
-                                    WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                    if (queriesResult.size() > 0) {
+                        try {
+                            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txt_queriesResultPath.getText() + "\\results.txt"), "UTF-8"));
+                            for (String query : queriesResult.keySet()
+                                    ) {
+                                List<String> result = queriesResult.get(query);
+                                if (result != null) {
+                                    for (int i = 0; i < result.size(); i++) {
+                                        WriteFileBuffer.write(query + " 0 " + result.get(i) + " 0 0 mt\n");
+                                    }
                                 }
                             }
+                            WriteFileBuffer.flush();
+                            WriteFileBuffer.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        WriteFileBuffer.flush();
-                        WriteFileBuffer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        alert.close();
+                        displayerController.displayrelevantDocs(queriesResult);
+                    } else {
+                        alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Ho NO!");
+                        alert.setHeaderText("There is no relevant documents to your query, Please try again");
+                        alert.show();
                     }
-                    alert.close();
-                    displayerController.displayrelevantDocs(queriesResult);
                 }
             }
-
-        } else if(!dictionaryLoaded){
+            btn_runSearch.setDisable(true);
+        } else if (!dictionaryLoaded) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Oooops!");
             alert.setHeaderText("Before running some queries you have to load a dictionary!");
             alert.show();
-        } else if(!resultPath){
+        } else if (!resultPath) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Oooops!");
             alert.setHeaderText("Before running some queries you have to enter a directory where you want to save the results of your query!");
             alert.show();
         }
+    }
+
+    public void resetQuery() {
+        resultPath = false;
+        txt_queryLabel.setText("");
+        txt_queriesPath.setText("");
+        txt_queriesResultPath.setText("");
+        checkBox_semanticCare.setSelected(false);
+        for (int i = 0; i < citiesFilter.getItems().size(); i++) {
+            citiesFilter.getCheckModel().clearCheck(i);
+        }
+        btn_runSearch.setDisable(false);
     }
 
 }

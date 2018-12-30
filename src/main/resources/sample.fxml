@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import org.controlsfx.control.CheckComboBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="427.0" prefWidth="879.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="461.0" prefWidth="879.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <children>
       <TextField fx:id="txt_corpusPath" layoutX="222.0" layoutY="35.0" onAction="#editPath" onKeyPressed="#editPath" />
       <TextField fx:id="txt_savePath" layoutX="222.0" layoutY="71.0" onKeyPressed="#editPath" />
@@ -23,17 +23,21 @@
       <Button fx:id="btn_initialMemory" layoutX="14.0" layoutY="276.0" mnemonicParsing="false" onAction="#initialMemory" prefHeight="25.0" prefWidth="161.0" text="Reset" />
       <Button fx:id="btn_loadDictionary" layoutX="14.0" layoutY="239.0" mnemonicParsing="false" onAction="#loadDictionary" prefHeight="25.0" prefWidth="161.0" text="Load dictionary to memory" />
       <Button fx:id="btn_displayDictionary" layoutX="16.0" layoutY="203.0" mnemonicParsing="false" onAction="#handleDisplayDictionary" prefHeight="25.0" prefWidth="161.0" text="Show dictionary" />
-      <Button layoutX="641.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleSearch" text="Run query" />
+      <Button fx:id="btn_runSearch" layoutX="641.0" layoutY="311.0" mnemonicParsing="false" onAction="#handleSearch" text="Run query" />
       <TextField editable="false" layoutX="624.0" layoutY="40.0" prefHeight="25.0" prefWidth="108.0" text="Enter your query:" />
       <TextField fx:id="txt_queryLabel" layoutX="519.0" layoutY="76.0" prefHeight="25.0" prefWidth="333.0" />
       <Button fx:id="btn_browseQueries" layoutX="512.0" layoutY="158.0" mnemonicParsing="false" onAction="#browseQueriesPath" text="Browse file of queries" />
       <TextField editable="false" layoutX="598.0" layoutY="115.0" prefHeight="25.0" prefWidth="161.0" text="OR choose a file of queries:" />
-      <TextArea editable="false" layoutX="511.0" layoutY="347.0" prefHeight="57.0" prefWidth="333.0" promptText="*Be aware that if you have choose to run a file of queries and to filter by city, the filter will be for all of the quries in the file!" />
       <CheckBox fx:id="checkBox_semanticCare" layoutX="627.0" layoutY="283.0" mnemonicParsing="false" text="Semantic care" />
       <TextField fx:id="txt_queriesPath" layoutX="677.0" layoutY="158.0" prefHeight="25.0" prefWidth="177.0" />
       <CheckComboBox fx:id="citiesFilter" layoutX="676.0" layoutY="242.0" prefHeight="25.0" prefWidth="177.0" />
       <Button fx:id="btn_saveQueriesResultsPath" layoutX="492.0" layoutY="201.0" mnemonicParsing="false" onAction="#browseSaveResultsPath" text="Browse file for the results file" />
       <TextField fx:id="txt_queriesResultPath" editable="false" layoutX="677.0" layoutY="201.0" prefHeight="25.0" prefWidth="177.0" />
       <TextField editable="false" layoutX="521.0" layoutY="242.0" prefHeight="25.0" prefWidth="115.0" text="Select city for filter" />
+      <TextArea editable="false" layoutX="11.0" layoutY="308.0" prefHeight="60.0" prefWidth="199.0" promptText="*Be aware that if you have choose to run a file of queries and to filter by city, the filter will be for all of the quries in the file!" text="*NOTE by click on reset you may &#10;delete the saved files from the &#10;disk" />
+      <Button fx:id="btn_resetQuery" layoutX="609.0" layoutY="347.0" mnemonicParsing="false" onAction="#resetQuery" text="Reset the queries fields" />
+      <TextArea editable="false" layoutX="11.0" layoutY="376.0" prefHeight="78.0" prefWidth="311.0" promptText="*Be aware that if you have choose to run a file of queries and to filter by city, the filter will be for all of the quries in the file!" text="*NOTE after loading the dictionary the &quot;With stemming&quot;&#10;checkbox will be irrelvant and the query search will&#10;function as the dictionary you loaded." />
+      <TextArea editable="false" layoutX="724.0" layoutY="381.0" prefHeight="60.0" prefWidth="115.0" promptText="*Be aware that if you have choose to run a file of queries and to filter by city, the filter will be for all of the quries in the file!" text="To run another&#10;qurey please press&#10;the reset button" />
+      <TextArea editable="false" layoutX="470.0" layoutY="381.0" prefHeight="60.0" prefWidth="248.0" promptText="*Be aware that if you have choose to run a file of queries and to filter by city, the filter will be for all of the quries in the file!" text="*Be aware that if you have choose to run a&#10;file of queries and to filter by city, the filter&#10; will be for all of the quries in the file!" />
    </children>
 </Pane>
