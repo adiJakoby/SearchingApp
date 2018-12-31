@@ -184,7 +184,7 @@ public class Controller {
             btn_play.setDisable(false);
             btn_searchCorpusPath.setDisable(false);
             btn_searchSavePath.setDisable(false);
-            choiceBox_Language.setItems(FXCollections.observableArrayList(CitiesIndexer.allCitiesInCorpus));
+            choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
             //handleCitiesFilter();
         }
     }
@@ -233,6 +233,7 @@ public class Controller {
             Files.deleteIfExists(Paths.get(txt_savePath.getText() + "\\Docs Information with stemmer.txt"));
             btn_displayDictionary.setDisable(true);
             dictionaryLoaded = false;
+            choiceBox_Language.setItems(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -283,7 +284,9 @@ public class Controller {
                     alert.setHeaderText("Your dictionary is loaded, you can take a look");
                     alert.show();
                     //handleCitiesFilter();
+                    choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
                 }
+
             }
         } catch (Exception e) {
             System.out.println("something went wrong");

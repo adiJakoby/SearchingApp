@@ -121,6 +121,10 @@ public class DocsInformation {
              ObjectOutputStream oos1 = new ObjectOutputStream(fos1);
              oos1.writeObject(entities);
              oos1.close();
+             FileOutputStream fos2 = new FileOutputStream(path + "\\Languages Information" + fileName);
+             ObjectOutputStream oos2 = new ObjectOutputStream(fos2);
+             oos2.writeObject(allLanguages);
+             oos2.close();
 
          } catch (Exception e) {
              e.printStackTrace();
@@ -150,6 +154,10 @@ public class DocsInformation {
              ObjectInputStream ois1 = new ObjectInputStream(fis1);
              entities = (HashMap<String, HashMap<String, Integer>>) ois1.readObject();
              ois1.close();
+             FileInputStream fis2 = new FileInputStream(path + "\\Languages Information" + fileName);
+             ObjectInputStream ois2 = new ObjectInputStream(fis2);
+             allLanguages = (HashSet<String>) ois2.readObject();
+             ois2.close();
          }catch(Exception e){
              System.out.println(e);
          }
