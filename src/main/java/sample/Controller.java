@@ -331,6 +331,7 @@ public class Controller {
         if (dictionaryLoaded && resultPath) {
             Searcher searcher = new Searcher(txt_savePath.getText());
             List<String> cities = citiesController.getCitiesSelected();
+            System.out.println(cities);
 //            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
 //            for (int cityIdex : allCitiesChoosenIdex) {
 //                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
@@ -429,9 +430,6 @@ public class Controller {
         txt_queriesPath.setText("");
         txt_queriesResultPath.setText("");
         checkBox_semanticCare.setSelected(false);
-        for (int i = 0; i < citiesFilter.getItems().size(); i++) {
-            citiesFilter.getCheckModel().clearCheck(i);
-        }
         btn_runSearch.setDisable(false);
     }
 
