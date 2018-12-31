@@ -11,6 +11,15 @@ public class CitiesDisplayer {
     public CitiesDisplayer(String city) {
         cityName = new SimpleStringProperty(city);
         cityChooser = new CheckBox();
+        cityChooser.setOnAction(event -> {
+            if(cityChooser.isSelected()){
+                CitiesController.allCitiesSelected.add(city);
+            }else{
+                if(CitiesController.allCitiesSelected.contains(city)){
+                    CitiesController.allCitiesSelected.remove(city);
+                }
+            }
+        });
     }
 
     public String getCityName() {

@@ -20,11 +20,12 @@ import java.util.TreeMap;
 public class CitiesController {
     @FXML
     public TableView table = new TableView();
-    List <String> allCitiesSelected;
+    static List<String> allCitiesSelected;
 
 
     public void displayCities() {
         try {
+            allCitiesSelected = new LinkedList<>();
             Stage stage = new Stage();
             Scene scene = new Scene(new Group());
             stage.setTitle("Cities Chooser");
@@ -56,16 +57,16 @@ public class CitiesController {
             table.setStyle("-fx-selection-bar: #b3e0ff; -fx-selection-bar-non-focused: #b3e0ff;  -fx-background-color: #1aa3ff;");
             stage.setScene(scene);
             stage.show();
-            boolean selected;
+            /*boolean selected;
             CitiesDisplayer citySelected;
             allCitiesSelected = new LinkedList<>();
-            for(int i=0;i<dict.size();i++) {
-                selected = table.getSelectionModel().isSelected(i,cityCheckBox);
-                if(selected) {
+            for (int i = 0; i < dict.size(); i++) {
+                selected = table.getSelectionModel().isSelected(i, cityCheckBox);
+                if (selected) {
                     citySelected = dict.get(i);
                     ((LinkedList<String>) allCitiesSelected).addLast(citySelected.getCityName());
                 }
-            }
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,16 +75,16 @@ public class CitiesController {
 
     private ObservableList<CitiesDisplayer> getData() {
         ObservableList<CitiesDisplayer> dict = FXCollections.observableArrayList();
-        TreeMap<String , City> sortedCities = new TreeMap<>();
+        TreeMap<String, City> sortedCities = new TreeMap<>();
         sortedCities.putAll(CitiesIndexer.allCitiesInCorpus);
         for (String city : sortedCities.keySet()
-        ) {
+                ) {
             dict.add(new CitiesDisplayer(city));
         }
         return dict;
     }
 
-    public List <String> getCitiesSelected(){
+    public List<String> getCitiesSelected() {
         return allCitiesSelected;
     }
 }
