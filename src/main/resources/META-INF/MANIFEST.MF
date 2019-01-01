@@ -1,9 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: jsoup-1.11.3.jar commons-lang3-3.8.1.jar snowball-stemmer-
- 1.3.0.581.1.jar okio-1.15.0.jar lombok-1.18.2.jar swagger-annotations
- -1.5.21.jar okhttp-2.7.5.jar logging-interceptor-2.7.5.jar geodb-java
- -client-1.1.2.jar gson-2.8.5.jar junit-4.10.jar json-simple-1.1.1.jar
-  commons-csv-1.6.jar javax.annotation-api-1.3.2.jar okhttp-3.12.0.jar
-  gson-fire-1.8.3.jar hamcrest-core-1.1.jar
 Main-Class: sample.Main
 

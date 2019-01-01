@@ -47,7 +47,7 @@ public class CitiesController {
             table.getColumns().addAll(cityName, cityCheckBox);
             table.setMinHeight(500);
             table.setMinWidth(600);
-            ObservableList<CitiesDisplayer> dict = table.getItems();
+            //ObservableList<CitiesDisplayer> dict = table.getItems();
             final VBox vbox = new VBox();
             vbox.setSpacing(20);
             vbox.setPadding(new Insets(20, 10, 0, 20));
@@ -57,16 +57,6 @@ public class CitiesController {
             table.setStyle("-fx-selection-bar: #b3e0ff; -fx-selection-bar-non-focused: #b3e0ff;  -fx-background-color: #1aa3ff;");
             stage.setScene(scene);
             stage.show();
-            /*boolean selected;
-            CitiesDisplayer citySelected;
-            allCitiesSelected = new LinkedList<>();
-            for (int i = 0; i < dict.size(); i++) {
-                selected = table.getSelectionModel().isSelected(i, cityCheckBox);
-                if (selected) {
-                    citySelected = dict.get(i);
-                    ((LinkedList<String>) allCitiesSelected).addLast(citySelected.getCityName());
-                }
-            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
