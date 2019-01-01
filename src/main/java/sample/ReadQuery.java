@@ -40,7 +40,7 @@ public class ReadQuery {
                 for (int i = index; i < bodyAfterSplit.length; i++) {
                     if (bodyAfterSplit[i].contains("<title>")) {
                         i++;
-                        while (!bodyAfterSplit[i].contains("<desc>") && !bodyAfterSplit[i].contains("</title>")) {
+                        while (i < bodyAfterSplit.length && !bodyAfterSplit[i].contains("<desc>") && !bodyAfterSplit[i].contains("</title>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
                                 writer.append(" " + bodyAfterSplit[i]);
                                 i++;
@@ -55,7 +55,7 @@ public class ReadQuery {
                 for (int i = index; i < bodyAfterSplit.length; i++) {
                     if (bodyAfterSplit[i].contains("<desc>")) {
                         i++;
-                        while (!bodyAfterSplit[i].contains("<narr>")) {
+                        while (i<bodyAfterSplit.length && !bodyAfterSplit[i].contains("<narr>")) {
                             if (!bodyAfterSplit[i].equals(null)) {
                                 if (bodyAfterSplit[i].contains("Description:")) {
                                     i++;
