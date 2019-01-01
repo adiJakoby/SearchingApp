@@ -94,28 +94,37 @@ public class CitiesIndexer {
                     if (citiesDetails.containsKey(cityName)) {
                         city = citiesDetails.get(cityName);
                         allCitiesInCorpus.put(cityName, city);
-                    } else {
+                    } else if(!allCitiesInCorpus.containsKey(cityName)){
                         city = new City(cityName, "", "", "");
                         allCitiesInCorpus.put(cityName, city);
+                    }
+                    else{
+                        city = allCitiesInCorpus.get(cityName);
                     }
                 } else if (allCapitalParts.length == 2) {
                     cityName = (allCapitalParts[0] + " " + allCapitalParts[1]).toUpperCase();
                     if (citiesDetails.containsKey(cityName)) {
                         city = citiesDetails.get(cityName);
                         allCitiesInCorpus.put(cityName, city);
-                    } else {
+                    } else if(!allCitiesInCorpus.containsKey(cityName)){
                         city = new City(cityName, "", "", "");
                         allCitiesInCorpus.put(cityName, city);
+                    }
+                    else{
+                        city = allCitiesInCorpus.get(cityName);
                     }
                 } else if (allCapitalParts.length == 1) {
                     if (citiesDetails.containsKey(allCapitalParts[0].toUpperCase())) {
                         cityName = allCapitalParts[0].toUpperCase();
                         city = citiesDetails.get(cityName);
                         allCitiesInCorpus.put(cityName, city);
-                    } else {
+                    } else if(!allCitiesInCorpus.containsKey(allCapitalParts[0].toUpperCase())){
                         cityName = allCapitalParts[0].toUpperCase();
                         city = new City(cityName, "", "", "");
                         allCitiesInCorpus.put(cityName, city);
+                    }
+                    else{
+                        city = allCitiesInCorpus.get(allCapitalParts[0].toUpperCase());
                     }
                 }
                 docsInformation.addOriginCity(doc, cityName);
@@ -189,7 +198,6 @@ public class CitiesIndexer {
             return Double.toString(pop);
         }
     }
-
 
     //checking if natural number
     private boolean isNaturalNumber(double number) {

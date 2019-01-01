@@ -280,9 +280,13 @@ public class Searcher {
             City currentCity = CitiesIndexer.allCitiesInCorpus.get(city);
             Map<String, String> allDocsByCity = currentCity.getDocsList();
             Map<String, Integer> allDocsContainsCity = new HashMap<>();
+            HashSet <String> allDocsWrittenInCity = currentCity.getAllDocsWrittenHere();
             for (String doc : allDocsByCity.keySet()) {
                 String[] allLocationsOfCity = mySplit(allDocsByCity.get(doc), ",");
                 int numOfAppearsInDoc = allLocationsOfCity.length;
+                if(allDocsWrittenInCity.contains(doc)){
+                    numOfAppearsInDoc++;
+                }
                 allDocsContainsCity.put(doc, numOfAppearsInDoc);
             }
             for (String doc: allDocsContainsCity.keySet()

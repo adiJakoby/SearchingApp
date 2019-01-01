@@ -14,6 +14,8 @@ public class City implements Serializable{
     private Map<String, String> docsContainMe = new HashMap<>();
     private HashSet<String> allDocsWrittenHere=new HashSet<>();
 
+
+
     public City(String capital, String country, String code, String pop) {
         this.name=capital;
         this.country=country;
@@ -56,4 +58,13 @@ public class City implements Serializable{
     public Map<String, String> getDocsList(){
         return docsContainMe;
     }
+
+    public HashSet<String> getAllDocsWrittenHere() {
+        return allDocsWrittenHere;
+    }
+
+    public void setAllDocsWrittenHere(HashSet<String> allDocsWrittenHere) {
+        this.allDocsWrittenHere = allDocsWrittenHere;
+    }
+
 }
