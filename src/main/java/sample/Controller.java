@@ -331,12 +331,6 @@ public class Controller {
         if (dictionaryLoaded && resultPath) {
             Searcher searcher = new Searcher(txt_savePath.getText());
             cities = citiesController.getCitiesSelected();
-            System.out.println(cities);
-
-//            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
-//            for (int cityIdex : allCitiesChoosenIdex) {
-//                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
-//            }
             if (!txt_queryLabel.getText().trim().isEmpty()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Good news");

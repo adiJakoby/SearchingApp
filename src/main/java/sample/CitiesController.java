@@ -20,7 +20,7 @@ import java.util.TreeMap;
 public class CitiesController {
     @FXML
     public TableView table = new TableView();
-    static List<String> allCitiesSelected = null;
+    static List<String> allCitiesSelected = new LinkedList<>();
 
 
     public void displayCities() {
