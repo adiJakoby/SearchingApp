@@ -52,7 +52,7 @@ public class Parse {
             filePath+="\\corpus\\stop_words.txt";
         }
         else{
-            filePath += "\\stop_words.txt";
+            filePath = System.getProperty("user.dir") + "\\src\\main\\java\\stop_words.txt";
         }
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));

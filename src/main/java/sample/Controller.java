@@ -127,79 +127,87 @@ public class Controller {
     }
 
     public void handlePlay() {
-        File corpus = new File(txt_corpusPath.getText() + "//corpus");
-        File save = new File(txt_savePath.getText());
-        if (!corpus.exists() || !save.exists()) {
+        if(txt_savePath.getText() != null && txt_corpusPath.getText() != null) {
+            File corpus = new File(txt_corpusPath.getText() + "//corpus");
+            File save = new File(txt_savePath.getText());
+            if (!corpus.exists() || !save.exists()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Wrong Input");
+                alert.setHeaderText("One of your paths is wrong! please enter another one");
+                alert.show();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Good news, it's loading");
+                alert.setHeaderText("The engine is working hard for you :-)");
+                alert.show();
+                btn_initialMemory.setDisable(true);
+                btn_loadDictionary.setDisable(true);
+                btn_play.setDisable(true);
+                btn_searchCorpusPath.setDisable(true);
+                btn_searchSavePath.setDisable(true);
+                Indexer.dictionary = new HashMap<>();
+                Indexer.postingIndex = 0;
+                DocsInformation docsInformation = new DocsInformation();
+                ReadFile myReader = new ReadFile();
+                Indexer indexer = new Indexer(txt_savePath.getText());
+                CitiesIndexer citiesIndexer = new CitiesIndexer();
+                boolean stemmer = checkBox_stemming.isSelected();
+
+                String workingDir = txt_corpusPath.getText();
+
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                Date date = new Date();
+                Long startTime = System.currentTimeMillis();
+
+                try {
+                    myReader.ReadFile(workingDir, stemmer);
+                } catch (IOException e) {
+                    e.getStackTrace();
+                }
+
+                indexer.mergePostingFile(stemmer);
+                docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
+                citiesIndexer.writeCitiesPosting(txt_savePath.getText());
+
+                alert.close();
+                Date date1 = new Date();
+                Long endTime = System.currentTimeMillis();
+
+                btn_displayDictionary.setDisable(false);
+                alert.setTitle("Information");
+                alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
+                        "Number of unique terms: " + indexer.dictionary.size() + "\n" +
+                        "Time in seconds: " + ((endTime - startTime) / 1000));
+                alert.show();
+                dictionaryLoaded = true;
+                btn_initialMemory.setDisable(false);
+                btn_loadDictionary.setDisable(false);
+                btn_play.setDisable(false);
+                btn_searchCorpusPath.setDisable(false);
+                btn_searchSavePath.setDisable(false);
+                choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
+                //handleCitiesFilter();
+            }
+        }else{
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Wrong Input");
-            alert.setHeaderText("One of your paths is wrong! please enter another one");
+            alert.setHeaderText("Please fill all the required fields");
             alert.show();
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Good news, it's loading");
-            alert.setHeaderText("The engine is working hard for you :-)");
-            alert.show();
-            btn_initialMemory.setDisable(true);
-            btn_loadDictionary.setDisable(true);
-            btn_play.setDisable(true);
-            btn_searchCorpusPath.setDisable(true);
-            btn_searchSavePath.setDisable(true);
-            Indexer.dictionary = new HashMap<>();
-            Indexer.postingIndex = 0;
-            DocsInformation docsInformation = new DocsInformation();
-            ReadFile myReader = new ReadFile();
-            Indexer indexer = new Indexer(txt_savePath.getText());
-            CitiesIndexer citiesIndexer = new CitiesIndexer();
-            boolean stemmer = checkBox_stemming.isSelected();
-
-            String workingDir = txt_corpusPath.getText();
-
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
-            Long startTime = System.currentTimeMillis();
-
-            try {
-                myReader.ReadFile(workingDir, stemmer);
-            } catch (IOException e) {
-                e.getStackTrace();
-            }
-
-            indexer.mergePostingFile(stemmer);
-            docsInformation.saveTheInformation(txt_savePath.getText(), stemmer);
-            citiesIndexer.writeCitiesPosting(txt_savePath.getText());
-
-            alert.close();
-            Date date1 = new Date();
-            Long endTime = System.currentTimeMillis();
-
-            btn_displayDictionary.setDisable(false);
-            alert.setTitle("Information");
-            alert.setHeaderText("Number of document: " + docsInformation.allDocsInformation.size() + "\n" +
-                    "Number of unique terms: " + indexer.dictionary.size() + "\n" +
-                    "Time in seconds: " + ((endTime - startTime) / 1000));
-            alert.show();
-            dictionaryLoaded = true;
-            btn_initialMemory.setDisable(false);
-            btn_loadDictionary.setDisable(false);
-            btn_play.setDisable(false);
-            btn_searchCorpusPath.setDisable(false);
-            btn_searchSavePath.setDisable(false);
-            choiceBox_Language.setItems(FXCollections.observableArrayList(DocsInformation.allLanguages));
-            //handleCitiesFilter();
         }
     }
 
     //the function set up the choice combo box for cities filter
     @FXML
     private void handleCitiesFilter() {
-//        final ObservableList<String> allCities = FXCollections.observableArrayList();
-//        TreeMap<String, City> sortedAllCities = new TreeMap<>();
-//        sortedAllCities.putAll(CitiesIndexer.allCitiesInCorpus);
-//        for (String city : sortedAllCities.keySet()) {
-//            allCities.add(city);
-//        }
-//        citiesFilter.getItems().setAll(allCities);
-        citiesController.displayCities();
+        if (!dictionaryLoaded) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Oooops!");
+            alert.setHeaderText("Before running some queries you have to load a dictionary!");
+            alert.show();
+        }
+        else {
+            citiesController.displayCities();
+        }
     }
 
     public void handleDisplayDictionary(ActionEvent actionEvent) {
@@ -339,7 +347,7 @@ public class Controller {
                 List<String> result = searcher.getRelevantDocuments(txt_queryLabel.getText(), "NO DESCRIPTION", "", checkBox_stemming.isSelected(), checkBox_semanticCare.isSelected(), cities);
                 if (result != null) {
                     try {
-                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(System.getProperty("user.dir") + "\\results.txt"), "UTF-8"));
+                        BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txt_queriesResultPath.getText() + "\\results.txt"), "UTF-8"));
                         for (int i = 0; i < result.size(); i++) {
                             WriteFileBuffer.write(queryID + " 0 " + result.get(i) + " 0 0 mt\n");
                             queriesResult.put(Integer.toString(queryID), result);
@@ -426,6 +434,7 @@ public class Controller {
         txt_queriesResultPath.setText("");
         checkBox_semanticCare.setSelected(false);
         btn_runSearch.setDisable(false);
+        txt_queryLabel.setDisable(false);
     }
 
 }
