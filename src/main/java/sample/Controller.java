@@ -362,6 +362,7 @@ public class Controller {
                     displayerController.displayrelevantDocs(queriesResult);
                     queryID++;
                 } else {
+                    alert.close();
                     alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Ho NO!");
                     alert.setHeaderText("There is no relevant documents to your query, Please try again");

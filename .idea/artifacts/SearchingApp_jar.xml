@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="SearchingApp:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/SearchingApp_jar</output-path>
+    <output-path>$PROJECT_DIR$/SearchingApp_jar</output-path>
     <root id="archive" name="SearchingApp.jar">
       <element id="module-output" name="SearchingApp" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/junit/junit/4.10/junit-4.10.jar" path-in-jar="/" />
