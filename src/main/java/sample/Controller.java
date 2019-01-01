@@ -78,7 +78,7 @@ public class Controller {
     boolean dictionaryLoaded;
     static int queryID;
     boolean resultPath;
-    CitiesController citiesController;
+    CitiesController citiesController = new CitiesController();
 
 
     @FXML
@@ -199,7 +199,6 @@ public class Controller {
 //            allCities.add(city);
 //        }
 //        citiesFilter.getItems().setAll(allCities);
-        citiesController = new CitiesController();
         citiesController.displayCities();
     }
 
@@ -328,10 +327,12 @@ public class Controller {
     public void handleSearch() {
         DisplayerController displayerController = new DisplayerController();
         LinkedHashMap<String, List<String>> queriesResult = new LinkedHashMap();
+        List<String> cities = null;
         if (dictionaryLoaded && resultPath) {
             Searcher searcher = new Searcher(txt_savePath.getText());
-            List<String> cities = citiesController.getCitiesSelected();
+            cities = citiesController.getCitiesSelected();
             System.out.println(cities);
+
 //            final ObservableList<Integer> allCitiesChoosenIdex = citiesFilter.getCheckModel().getCheckedIndices();
 //            for (int cityIdex : allCitiesChoosenIdex) {
 //                cities.add(citiesFilter.getCheckModel().getItem(cityIdex));
