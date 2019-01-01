@@ -45,7 +45,7 @@ public class DictionaryController {
             Scene scene = new Scene(new Group());
             stage.setTitle("Dictionary");
             stage.setWidth(440);
-            stage.setHeight(940);
+            stage.setHeight(900);
             final Label lable = new Label("Dictionary");
             lable.setFont(new Font("Ariel" , 22));
             table.setEditable(false);
@@ -60,7 +60,7 @@ public class DictionaryController {
 
             table.setItems(getData());
             table.getColumns().addAll(term,value);
-            table.setMinHeight(800);
+            table.setMinHeight(750);
 
             final VBox vbox = new VBox();
             vbox.setSpacing(20);
