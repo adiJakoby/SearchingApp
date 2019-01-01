@@ -50,8 +50,8 @@ public class DisplayerController {
 
             table.setItems(getData(allDocs));
             table.getColumns().addAll(queyNmber, Documents, entities);
-            table.setMinHeight(800);
-            table.setMinHeight(800);
+            table.setMinHeight(700);
+            table.setMinHeight(700);
             ObservableList<DocumentsDisplayer> dict = table.getItems();
             final VBox vbox = new VBox();
             vbox.setSpacing(20);

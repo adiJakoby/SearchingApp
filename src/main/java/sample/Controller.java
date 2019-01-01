@@ -225,6 +225,7 @@ public class Controller {
             alert.show();
             DictionaryController dictController = new DictionaryController();
             dictController.displayDictionary();
+            alert.close();
         }
     }
 
