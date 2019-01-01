@@ -7,10 +7,6 @@ Part B of the retrival engine project
 Open the project by double click or with CMD by the command: 
 ###
 java -jar SearchingApp.jar 
-###
-*you have to be in the folder that contains the jar file
-###
-The jar is located in the path SearchingApp\out\artifacts\SearchingApp_jar
 
 ### Prerequisites
 
