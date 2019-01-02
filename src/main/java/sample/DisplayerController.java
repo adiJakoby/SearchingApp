@@ -25,6 +25,10 @@ public class DisplayerController {
     public TableView table = new TableView();
 
 
+    /**
+     * open the table view for the queries's results
+     * @param allDocs
+     */
     public void displayrelevantDocs (LinkedHashMap <String,List<String>> allDocs){
         try {
             Stage stage = new Stage();
@@ -67,6 +71,11 @@ public class DisplayerController {
         }
     }
 
+    /**
+     *
+     * @param allDocs
+     * @return the relevant documents of the queries
+     */
     private ObservableList<DocumentsDisplayer> getData(LinkedHashMap <String,List<String>>  allDocs) {
         ObservableList<DocumentsDisplayer> dict = FXCollections.observableArrayList();
         for (String querynum:allDocs.keySet()

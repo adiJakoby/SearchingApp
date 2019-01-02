@@ -3,11 +3,18 @@ package sample;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.CheckBox;
 
+/**
+ * required object for the cities table view
+ */
 public class CitiesDisplayer {
 
     private  final SimpleStringProperty cityName;
     private final CheckBox cityChooser;
 
+    /**
+     * constructor
+     * @param city
+     */
     public CitiesDisplayer(String city) {
         cityName = new SimpleStringProperty(city);
         cityChooser = new CheckBox();

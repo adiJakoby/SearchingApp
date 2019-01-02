@@ -11,6 +11,9 @@ import java.util.TreeMap;
 
 public class DocumentsDisplayer {
 
+    /**
+     * required object for the query table view
+     */
 
     private final SimpleStringProperty queyNmber;
     private final SimpleStringProperty Documents;

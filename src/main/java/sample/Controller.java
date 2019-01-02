@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Controller of the gui of the app.
+ */
 
 public class Controller {
 
@@ -437,6 +440,7 @@ public class Controller {
         checkBox_semanticCare.setSelected(false);
         btn_runSearch.setDisable(false);
         txt_queryLabel.setDisable(false);
+        txt_queryLabel.setEditable(true);
     }
 
 }

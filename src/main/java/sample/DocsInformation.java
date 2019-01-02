@@ -13,6 +13,11 @@ public class DocsInformation {
     static HashSet<String> allLanguages = new HashSet<>();
     static double avdl = 0;
 
+    /**
+     * set the max term frequency of a doc
+     * @param max_tf
+     * @param docName
+     */
     public void addMaxTf(int max_tf, String docName){
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
@@ -26,6 +31,11 @@ public class DocsInformation {
         }
     }
 
+    /**
+     * set the number of the unique terms of a doc
+     * @param docName
+     * @param amount
+     */
     public void addUniqueTermsAmount(String docName, int amount){
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
@@ -39,6 +49,11 @@ public class DocsInformation {
         }
     }
 
+    /**
+     * set the city that the doc has been written in
+     * @param docName
+     * @param city
+     */
     public void addOriginCity(String docName, String city){
         if(city==null){
             city="No City";
@@ -55,6 +70,11 @@ public class DocsInformation {
         }
     }
 
+    /**
+     * set the doc length
+     * @param docName
+     * @param length
+     */
     public void addDocLength(String docName, int length){
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
@@ -69,6 +89,11 @@ public class DocsInformation {
         avdl = ((avdl*(allDocsInformation.size()-1))+length)/allDocsInformation.size();
     }
 
+    /**
+     * set the posting date of the doc
+     * @param docName
+     * @param date
+     */
     public void addDateOfWrite(String docName, String date){
         if(allDocsInformation.containsKey(docName)){
             String[] temp = allDocsInformation.get(docName);
@@ -82,6 +107,12 @@ public class DocsInformation {
         }
      }
 
+    /**
+     * add a dominant entity of the doc
+     * @param docName
+     * @param newEntity
+     * @param numOfAppearances
+     */
     public static void addDominantEntities(String docName, String newEntity, int numOfAppearances){
         if(entities.containsKey(docName)){
             HashMap<String, Integer> currentDocEntities = entities.get(docName);
@@ -102,6 +133,11 @@ public class DocsInformation {
         }
     }
 
+    /**
+     * write all the information about documents on the disk
+     * @param path
+     * @param stemmer
+     */
      public void saveTheInformation(String path, boolean stemmer){
         String[] avdlVal = {Double.toString(avdl)};
         allDocsInformation.put("avdl", avdlVal);
@@ -136,6 +172,11 @@ public class DocsInformation {
          }
      }
 
+    /**
+     * reading and setting all the information on the documents from the disk to the app memory
+     * @param path
+     * @param stemmer
+     */
      public void setAllDocsInformation(String path, boolean stemmer){
          String fileName = "";
          if(stemmer){
@@ -162,6 +203,12 @@ public class DocsInformation {
              System.out.println(e);
          }
      }
+
+    /**
+     *
+     * @param docNum
+     * @return the entity with the minimum rank of the given document
+     */
      private static String getMinEntityString(String docNum){
         int min = Integer.MAX_VALUE;
         String result = "";

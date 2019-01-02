@@ -13,6 +13,11 @@ import java.util.regex.Pattern;
 
 public class ReadQuery {
 
+    /**
+     * reading the query file
+     * @param path
+     * @return a list of the queries and it's details
+     */
     public ArrayList<String[]> getQueryFromFile(String path) {
         ArrayList<String[]> queriesArray = new ArrayList<>();
         int queynum = 1;

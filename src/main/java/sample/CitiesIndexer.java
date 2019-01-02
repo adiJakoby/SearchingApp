@@ -1,14 +1,6 @@
 
 package sample;
 
-/*
-import com.wirefreethought.geodb.client.GeoDbApi;
-import com.wirefreethought.geodb.client.model.*;
-import com.wirefreethought.geodb.client.net.GeoDbApiClient;
-import com.wirefreethought.geodb.client.request.FindCitiesRequest;
-import com.wirefreethought.geodb.client.request.FindCityRequest;
-import com.wirefreethought.geodb.client.request.FindCurrenciesRequest;
-*/
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -25,8 +17,6 @@ import java.util.regex.Pattern;
 public class CitiesIndexer {
 
     static Map<String, City> citiesDetails = new HashMap<>();
-    //contain for each doc where it was write
-    //static Map<String, City> cities = new HashMap<>();
     private org.json.simple.parser.JSONParser myParser;
     static String workingDir = System.getProperty("user.dir");
     DocsInformation docsInformation = new DocsInformation();
@@ -133,47 +123,6 @@ public class CitiesIndexer {
         }
     }
 
-/*    private void getCityDetails(String city, String doc) {
-        GeoDbApiClient apiClient = new GeoDbApiClient(GeoDbInstanceType.FREE);
-        GeoDbApi geoDbApi = new GeoDbApi(apiClient);
-
-        CitiesResponse citiesResponse = geoDbApi.findCities(
-                FindCitiesRequest.builder()
-                        .namePrefix(city)
-                        .build()
-        );
-
-        try {
-            if (!citiesResponse.getData().isEmpty()) {
-                CitySummary c = citiesResponse.getData().get(0);
-
-                CityResponse cityResponse = geoDbApi.findCity(
-                        FindCityRequest.builder()
-                                .cityId(c.getWikiDataId())
-                                .build()
-                );
-
-
-                CurrenciesResponse currenciesResponse = geoDbApi.findCurrencies(
-                        FindCurrenciesRequest.builder()
-                                .countryId(c.getCountryCode())
-                                .build()
-                );
-
-                String capital = c.getCity();
-                String country = c.getCountry();
-                String currency = currenciesResponse.toString();
-                int population = cityResponse.getData().getPopulation();
-
-                //population = divideNumbers(population);
-                citiesDetails.put(capital.toUpperCase(), new City(capital.toUpperCase(), country, currency, Integer.toString(population)));
-                allCitiesInCorpus.put(capital, citiesDetails.get(city));
-            }
-        } catch (Exception e) {
-            System.out.println(city);
-        }
-    }
-*/
     /**
      * @param pop
      * @return the population divide by 1000000,or more..
@@ -254,28 +203,12 @@ public class CitiesIndexer {
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(allCitiesInCorpus);
             oos.close();
-            /*
-            //FileWriter fw = new FileWriter(path + "\\Cities Information.txt");
-            BufferedWriter WriteFileBuffer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path + "\\Cities Information.txt"), "UTF-8"));
-            StringBuilder toWrite = new StringBuilder();
-            for (City val : allCitiesInCorpus.values()) {
-                if (!val.getCountry().equals("")) {
-                    WriteFileBuffer.write("City:" + val.getName() + " " + "Country:" + val.getCountry() + " "
-                            + "Coin:" + val.getCoin() + "\n" + "Documents:");
-                    for (Map.Entry<String, String> entry : val.getDocsList().entrySet()) {
-                        WriteFileBuffer.write(entry.getKey() + ": " + entry.getValue() + ";");
-                    }
-                    WriteFileBuffer.write("\n");
-                }
-            }
-            WriteFileBuffer.write(toWrite.toString());
-            WriteFileBuffer.flush();
-            WriteFileBuffer.close();*/
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    //reading and setting the allCitiesInCorpus map
     public void setAllCitiesInCorpus(String path){
         try {
             FileInputStream fis = new FileInputStream(path + "\\Cities Information.txt");

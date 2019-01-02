@@ -2,6 +2,9 @@ package sample;
 
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * required object for the dictionary table view
+ */
 public class TermsDisplayer {
     public String getTerm() {
         return term.get();

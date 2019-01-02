@@ -322,6 +322,10 @@ public class Indexer {
         }
     }
 
+    /**
+     * reading and setting the dictionary from the disk to the app memory
+     * @param stemmer
+     */
     public void setDictionary(boolean stemmer){
         dictionary = new HashMap<>();
         String fileName = "";

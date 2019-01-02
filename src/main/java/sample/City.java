@@ -15,7 +15,13 @@ public class City implements Serializable{
     private HashSet<String> allDocsWrittenHere=new HashSet<>();
 
 
-
+    /**
+     * constructor
+     * @param capital
+     * @param country
+     * @param code
+     * @param pop
+     */
     public City(String capital, String country, String code, String pop) {
         this.name=capital;
         this.country=country;

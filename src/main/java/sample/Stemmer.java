@@ -14,6 +14,11 @@ public class Stemmer {
     Indexer indexer = new Indexer();
     DocsInformation docsInformation = new DocsInformation();
 
+    /**
+     *
+     * @param tokens
+     * @return a map with the given words of a query after stemming
+     */
     public Map<String, Integer> queryStemmer(Map<String, Integer> tokens){
         Map<String, Integer> stems = new HashMap<>();
         for (String key : tokens.keySet()) {
@@ -35,6 +40,15 @@ public class Stemmer {
         return stems;
     }
 
+    /**
+     * stemmer for the corpus texts send the result to the indexer
+     * @param tokens
+     * @param docNo
+     * @param doneFile
+     * @param stemmer
+     * @param max_tf
+     * @param maxTerm
+     */
     public void stemming(Map<String, Integer> tokens, String docNo, boolean doneFile, boolean stemmer, int max_tf, String maxTerm) {
         TreeMap<String, Integer> stems = new TreeMap<>(new MyComp());
         if (stemmer) {

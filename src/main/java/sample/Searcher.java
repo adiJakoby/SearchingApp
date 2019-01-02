@@ -20,6 +20,7 @@ public class Searcher {
     private org.json.simple.parser.JSONParser myParser;
 
 
+    //constructor
     public Searcher(String postingPath) {
         dictionary = Indexer.dictionary;
         this.postingPath = postingPath;
@@ -185,22 +186,39 @@ public class Searcher {
                 //System.out.println("the word: " + token + " is not exist in dictionary");
             }
         }
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fullPostingPath), "UTF-8"));
-            int pointer = 0;
-            int nextLine = tokensToFind.firstKey();
-            while (!tokensToFind.isEmpty()) {
-                String line = reader.readLine();
-                while (pointer != nextLine) {
-                    line = reader.readLine();
-                    pointer++;
-                }
-                String[] splitByColon = mySplit(line, ":");
-                if (splitByColon[0].equals(tokensToFind.firstEntry().getValue())) {
-                    String[] splitBySpace = mySplit(splitByColon[1], " ");
-                    for (int i = 0; i < splitBySpace.length - 1; i = i + 2) {
-                        if(cityFilter){
-                            if(allDocsByCity.containsKey(splitBySpace[i])){
+        if(!tokensToFind.isEmpty()) {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fullPostingPath), "UTF-8"));
+                int pointer = 0;
+                int nextLine = tokensToFind.firstKey();
+                while (!tokensToFind.isEmpty()) {
+                    String line = reader.readLine();
+                    while (pointer != nextLine) {
+                        line = reader.readLine();
+                        pointer++;
+                    }
+                    String[] splitByColon = mySplit(line, ":");
+                    if (splitByColon[0].equals(tokensToFind.firstEntry().getValue())) {
+                        String[] splitBySpace = mySplit(splitByColon[1], " ");
+                        for (int i = 0; i < splitBySpace.length - 1; i = i + 2) {
+                            if (cityFilter) {
+                                if (allDocsByCity.containsKey(splitBySpace[i])) {
+                                    if (result.containsKey(splitBySpace[i])) {
+                                        ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
+                                        String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
+                                        currentValue.add(newArr);
+                                        result.put(splitBySpace[i], currentValue);
+                                    } else {
+                                        ArrayList<String[]> currentValue = new ArrayList<>();
+                                        //0: the term from the query, 1: number of appearance of this word in the document, 2: number of appearance of the word in the corpus (without duplicate)
+                                        String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
+                                        currentValue.add(newArr);
+                                        result.put(splitBySpace[i], currentValue);
+                                    }
+                                } else {
+                                    //the document doesn't contain the city so it's not relevant.
+                                }
+                            } else {
                                 if (result.containsKey(splitBySpace[i])) {
                                     ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
                                     String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
@@ -213,42 +231,33 @@ public class Searcher {
                                     currentValue.add(newArr);
                                     result.put(splitBySpace[i], currentValue);
                                 }
-                            }else{
-                                //the document doesn't contain the city so it's not relevant.
-                            }
-                        }else {
-                            if (result.containsKey(splitBySpace[i])) {
-                                ArrayList<String[]> currentValue = result.get(splitBySpace[i]);
-                                String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
-                                currentValue.add(newArr);
-                                result.put(splitBySpace[i], currentValue);
-                            } else {
-                                ArrayList<String[]> currentValue = new ArrayList<>();
-                                //0: the term from the query, 1: number of appearance of this word in the document, 2: number of appearance of the word in the corpus (without duplicate)
-                                String[] newArr = {splitByColon[0], splitBySpace[i + 1], Integer.toString(splitBySpace.length / 2)};
-                                currentValue.add(newArr);
-                                result.put(splitBySpace[i], currentValue);
                             }
                         }
-                    }
-                } else {
-                    System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
-                    System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
+                    } else {
+                        System.out.println("Problem!! the line in posting ( " + splitByColon[0] + " ) is not match to the term ( " + tokensToFind.firstEntry().getValue() + " ).");
+                        System.out.println("the pointer is: " + pointer + " BUT the line number from the dictionary is: " + nextLine);
 
+                    }
+                    tokensToFind.pollFirstEntry();
+                    pointer++;
+                    if (!tokensToFind.isEmpty()) {
+                        nextLine = tokensToFind.firstKey();
+                    }
                 }
-                tokensToFind.pollFirstEntry();
-                pointer++;
-                if (!tokensToFind.isEmpty()) {
-                    nextLine = tokensToFind.firstKey();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return result;
     }
 
 
+    /**
+     *
+     * @param str
+     * @param regex
+     * @return split string by the given regex
+     */
     private static String[] mySplit(String str, String regex) {
         Vector<String> result = new Vector<String>();
         int start = 0;
@@ -304,11 +313,14 @@ public class Searcher {
         return allDocsForAllCities;
     }
 
+    /**
+     *
+     * @param tokens
+     * @return map with all the words with similar mining of the given tokens (for each token the 5 semantic match word)
+     */
     private Map<String, Integer> getSemanticWords(Map<String, Integer> tokens) {
         Map<String, Integer> semanticWords = new HashMap<>();
         OkHttpClient myClient = new OkHttpClient();
-        //String[] queryAfterSplit = mySplit(query, " ");
-        //for(int i=0;i<queryAfterSplit.length;i++) {
         for (String key : tokens.keySet()
                 ) {
             String url = "https://api.datamuse.com/words?ml=" + key;

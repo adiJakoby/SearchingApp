@@ -23,7 +23,11 @@ public class CitiesController {
     static List<String> allCitiesSelected = new LinkedList<>();
 
 
+    /**
+     * open the table view for the city filter
+     */
     public void displayCities() {
+        table = new TableView();
         try {
             allCitiesSelected = new LinkedList<>();
             Stage stage = new Stage();
@@ -63,6 +67,10 @@ public class CitiesController {
         }
     }
 
+    /**
+     *
+     * @return a list of the cities existing in the corpus
+     */
     private ObservableList<CitiesDisplayer> getData() {
         ObservableList<CitiesDisplayer> dict = FXCollections.observableArrayList();
         TreeMap<String, City> sortedCities = new TreeMap<>();
@@ -74,6 +82,10 @@ public class CitiesController {
         return dict;
     }
 
+    /**
+     *
+     * @return a list of the selected cities
+     */
     public List<String> getCitiesSelected() {
         return allCitiesSelected;
     }

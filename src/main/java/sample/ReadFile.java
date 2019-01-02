@@ -21,6 +21,12 @@ public class ReadFile {
 
     DocsInformation docsInformation = new DocsInformation();
 
+    /**
+     * reading the corpus file
+     * @param path
+     * @param stemmer
+     * @throws IOException
+     */
     public void ReadFile(String path, boolean stemmer) throws IOException {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date = new Date();
